@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
@@ -85,7 +86,7 @@ namespace Server.MirObjects.Monsters
             }
 
 
-            if (!Target.Buffs.Any(e => e.Type == BuffType.诅咒术) && Envir.Random.Next(8) == 0)
+            if (!Target.Buffs.Any(e => e.Type == BuffType.Curse) && Envir.Random.Next(8) == 0)
             {
                 Broadcast(new S.ObjectMagic { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Spell = Spell.Curse, TargetID = Target.ObjectID, Target = Target.CurrentLocation, Cast = true, Level = 3 });
                 PoisonTarget(Target, 1, 5, PoisonType.Slow, 1000);
@@ -274,7 +275,7 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < Buffs.Count; i++)
                 {
-                    if (Buffs[i].Type != BuffType.隐身术) continue;
+                    if (Buffs[i].Type != BuffType.Hiding) continue;
 
                     Buffs[i].ExpireTime = 0;
                     break;
@@ -359,8 +360,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = MirClass.道士,
-                Gender = master != null ? master.Gender : Envir.Random.Next(1, 2) == 1 ? MirGender.男性 : MirGender.女性,
+                Class = MirClass.Taoist,
+                Gender = master != null ? master.Gender : Envir.Random.Next(1, 2) == 1 ? MirGender.Male : MirGender.Female,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)Envir.Random.Next(0, 5),

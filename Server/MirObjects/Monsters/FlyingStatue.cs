@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
@@ -98,7 +98,7 @@ namespace Server.MirObjects.Monsters
 
                     if (!cell.Valid) continue;
 
-                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
+                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MinMC]);
 
                     var start = 500;
 

@@ -8,6 +8,7 @@
         public NPCActions(ActionType action, params string[] p)
         {
             Type = action;
+
             Params.AddRange(p);
         }
     }
@@ -104,7 +105,14 @@
         ReviveHero,
         SealHero,
         DeleteHero,
-		ConquestRepairAll,
-		GiveGuildExp
+        ConquestRepairAll,
+        BuyGT,
+        TeleportGT,
+        ExtendGT,
+        GTAllRecall,
+        GTRecall,
+        DisplayGTRentalDays,
+        GTSale,
+        GTCancelSale,
     }
 }

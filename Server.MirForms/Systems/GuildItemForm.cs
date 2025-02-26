@@ -34,21 +34,21 @@ namespace Server.Systems
         #region Load Member Count
         public void SetMemberCount(int memberCount, int memberCap)
         {
-            MemberCountLabel.Text = $"成员数量: {memberCount}/{memberCap}";
+            MemberCountLabel.Text = $"Members: {memberCount}/{memberCap}";
         }
         #endregion
 
         #region Load Guild Points
         public void SetGuildPoints(byte sparePoints)
         {
-            GuildPointsLabel.Text = $"公会点数: {sparePoints}";
+            GuildPointsLabel.Text = $"Points: {sparePoints}";
         }
         #endregion
 
         #region Load Guild EXP
         public void SetGuildExperience(long experience)
         {
-            GuildEXPLabel.Text = $"公会经验: {experience}";
+            GuildEXPLabel.Text = $"EXP: {experience}";
         }
         #endregion
 
@@ -76,7 +76,7 @@ namespace Server.Systems
 
             foreach (var line in chatLogLines)
             {
-                if (line.Contains($"由系统发送给公会: '{GuildName}':"))
+                if (line.Contains($"SYSTEM to Guild: '{GuildName}':"))
                 {
                     GuildChatBox.AppendText(line + Environment.NewLine);
                     continue;
@@ -121,13 +121,13 @@ namespace Server.Systems
                 if (activeBuffsById.TryGetValue(buffInfo.Id, out GuildBuff activeBuff))
                 {
                     // Buff is active
-                    item.SubItems.Add("激活特效");
+                    item.SubItems.Add("Active");
                     item.SubItems.Add(activeBuff.ActiveTimeRemaining.ToString());
                 }
                 else
                 {
                     // Buff is inactive
-                    item.SubItems.Add("尚未激活");
+                    item.SubItems.Add("Inactive");
                     item.SubItems.Add("0"); // No time remaining for inactive buff
                 }
 
@@ -166,7 +166,7 @@ namespace Server.Systems
             List<string> newNotice = GuildNoticeBox.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
 
             // Log the guild notice update
-            string noticeUpdateLog = $"公会: '{GuildName}' 的公告由系统修改";
+            string noticeUpdateLog = $"Guild: '{GuildName}' notice changed by SYSTEM.";
             SMain.EnqueueChat(noticeUpdateLog);
 
             Logger.GetLogger(LogType.Server).Info(noticeUpdateLog);
@@ -187,12 +187,12 @@ namespace Server.Systems
 
             if (string.IsNullOrEmpty(message)) return;
 
-            guild.SendMessage($"系统信息: {message}", ChatType.Guild);
+            guild.SendMessage($"SYSTEM: {message}", ChatType.Guild);
 
             string timestamp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            GuildChatBox.AppendText($"[{timestamp}]: 系统信息: {message}" + Environment.NewLine);
+            GuildChatBox.AppendText($"[{timestamp}]: SYSTEM: {message}" + Environment.NewLine);
 
-            string logMessage = $"由系统发送给公会: '{GuildName}': {message}";
+            string logMessage = $"SYSTEM to Guild: '{GuildName}': {message}";
             SMain.EnqueueChat(logMessage);
 
             SendGuildMesageBox.Clear();

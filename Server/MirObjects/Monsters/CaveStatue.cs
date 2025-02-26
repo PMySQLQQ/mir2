@@ -2,13 +2,13 @@
 
 namespace Server.MirObjects.Monsters
 {
-    public class ArcaneTotem : MonsterObject
+    public class CaveStatue : MonsterObject
     {
         protected override bool CanMove { get { return false; } }
         protected override bool CanAttack { get { return false; } }
         protected override bool CanRegen { get { return false; } }
 
-        protected internal ArcaneTotem(MonsterInfo info)
+        protected internal CaveStatue(MonsterInfo info)
             : base(info)
         {
             if (info.Effect == 1)

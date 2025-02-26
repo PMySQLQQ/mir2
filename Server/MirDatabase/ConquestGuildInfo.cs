@@ -135,13 +135,13 @@ namespace Server.MirDatabase
             MonsterInfo monsterInfo = Envir.GetMonsterInfo(Info.MobIndex);
 
             if (monsterInfo == null) return;
-            if (monsterInfo.AI != 243) return;
+            if (monsterInfo.AI != 72) return;
 
-            if (monsterInfo.AI == 243)
+            if (monsterInfo.AI == 72)
             {
                 Gate = (Gate)MonsterObject.GetMonster(monsterInfo);
             }
-            else if (monsterInfo.AI == 244)
+            else if (monsterInfo.AI == 73)
             {
                 //Gate = (GateWest)MonsterObject.GetMonster(monsterInfo);
             }
@@ -318,7 +318,7 @@ namespace Server.MirDatabase
 
             if (monsterInfo == null) return;
 
-            if (monsterInfo.AI != 951) return;
+            if (monsterInfo.AI != 82) return;
 
             Wall = (Wall)MonsterObject.GetMonster(monsterInfo);
 
@@ -417,7 +417,7 @@ namespace Server.MirDatabase
             MonsterInfo monsterInfo = Envir.GetMonsterInfo(Info.MobIndex);
 
             if (monsterInfo == null) return;
-            if (monsterInfo.AI != 950) return;
+            if (monsterInfo.AI != 81) return;
 
             Gate = (Gate)MonsterObject.GetMonster(monsterInfo);
 
@@ -468,8 +468,10 @@ namespace Server.MirDatabase
             }
             else
             {
-                Gate.RepairGate();
+                Gate.HP = Gate.Stats[Stat.HP];
             }
+
+            Gate.CheckDirection();
         }
     }
 
@@ -520,7 +522,7 @@ namespace Server.MirDatabase
             MonsterInfo monsterInfo = Envir.GetMonsterInfo(Info.MobIndex);
 
             if (monsterInfo == null) return;
-            if (monsterInfo.AI != 960) return;
+            if (monsterInfo.AI != 80) return;
 
             ArcherMonster = (ConquestArcher)MonsterObject.GetMonster(monsterInfo);
 

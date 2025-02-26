@@ -58,7 +58,7 @@ namespace Server.MirObjects.Monsters
             {
                 DropInfo drop = Info.Drops[i];
 
-                var reward = drop.AttemptDrop(EXPOwner?.Stats[Stat.物品掉落数率] ?? 0, EXPOwner?.Stats[Stat.金币收益数率] ?? 0);
+                var reward = drop.AttemptDrop(EXPOwner?.Stats[Stat.ItemDropRatePercent] ?? 0, EXPOwner?.Stats[Stat.GoldDropRatePercent] ?? 0);
 
                 if (reward != null)
                 {
@@ -72,7 +72,7 @@ namespace Server.MirObjects.Monsters
                             if (!player.CheckGroupQuestItem(item, false)) continue;
                         }
 
-                        if (item.Info.Type == ItemType.肉)
+                        if (item.Info.Type == ItemType.Meat)
                         {
                             item.CurrentDura = (ushort)Math.Max(0, item.CurrentDura + Quality);
                         }
@@ -84,7 +84,7 @@ namespace Server.MirObjects.Monsters
 
             if (_drops.Count == 0)
             {
-                player.ReceiveChat("没有发现任何物品", ChatType.System);
+                player.ReceiveChat("Nothing was found.", ChatType.System);
                 Harvested = true;
                 _drops = null;
                 Broadcast(new S.ObjectHarvested { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });

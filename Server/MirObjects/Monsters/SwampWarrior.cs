@@ -71,7 +71,7 @@ namespace Server.MirObjects.Monsters
 
             target.Attacked(this, damage, defence);
 
-            if (Envir.Random.Next(1) > 0) // 毒药随机几率为绿色或红色（设置为50/50几率）
+            if (Envir.Random.Next(1) > 0) // Random chance for poison to be either Green or Red (set to 50/50 chance)
             {
                 PoisonTarget(target, 8, 5, PoisonType.Green, 2000);
             }

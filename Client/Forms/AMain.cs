@@ -5,6 +5,7 @@ using Microsoft.Web.WebView2.Core;
 using System.Net.Http.Headers;
 using System.Net.Http.Handlers;
 using Client.Utils;
+using System.Security.Cryptography;
 
 namespace Launcher
 {
@@ -87,7 +88,7 @@ namespace Launcher
             }
             catch (EndOfStreamException ex)
             {
-                MessageBox.Show("发现数据流已结束。主机可能正在使用早于版本 1.1.0.0 的补丁系统");
+                MessageBox.Show("End of stream found. Host is likely using a pre version 1.1.0.0 patch system");
                 Completed = true;
                 SaveError(ex.ToString());
             }
@@ -277,18 +278,18 @@ namespace Launcher
                             SaveError(ex.ToString());
                             errorcount++;
                             if (errorcount == 5)
-                                MessageBox.Show("出现了太多问题，将不再显示以后的错误");
+                                MessageBox.Show("Too many problems occured, no longer displaying future errors");
                             if (errorcount < 5)
-                                MessageBox.Show("保存此文件时发生问题: " + fileNameOut);
+                                MessageBox.Show("Problem occured saving this file: " + fileNameOut);
                         }
                         catch (Exception ex)
                         {
                             SaveError(ex.ToString());
                             errorcount++;
                             if (errorcount == 5)
-                                MessageBox.Show("出现了太多问题，将不再显示以后的错误");
+                                MessageBox.Show("Too many problems occured, no longer displaying future errors");
                             if (errorcount < 5)
-                                MessageBox.Show("保存此文件时发生问题: " + fileNameOut);
+                                MessageBox.Show("Problem occured saving this file: " + fileNameOut);
                         }
                         finally
                         {
@@ -304,7 +305,7 @@ namespace Launcher
             catch (HttpRequestException e)
             {
                 File.AppendAllText(@".\Error.txt",
-                                       $"[{DateTime.Now}] {info.FileName} 无法下载 ({e.Message}) {Environment.NewLine}");
+                                       $"[{DateTime.Now}] {info.FileName} could not be downloaded. ({e.Message}) {Environment.NewLine}");
                 ErrorFound = true;
             }
             catch (Exception ex)
@@ -312,15 +313,15 @@ namespace Launcher
                 SaveError(ex.ToString());
                 errorcount++;
                 if (errorcount == 5)
-                    MessageBox.Show("出现了太多问题，将不再显示以后的错误");
+                    MessageBox.Show("Too many problems occured, no longer displaying future errors");
                 if (errorcount < 5)
-                    MessageBox.Show("保存此文件时发生问题: " + dl.Info.FileName);
+                    MessageBox.Show("Problem occured saving this file: " + dl.Info.FileName);
             }
             finally
             {
                 if (ErrorFound)
                 {
-                MessageBox.Show(string.Format("下载文件失败: {0}", fileName));
+                    MessageBox.Show(string.Format("Failed to download file: {0}", fileName));
                 }
             }
 
@@ -357,7 +358,7 @@ namespace Launcher
                 }
                 else
                 {
-                    MessageBox.Show(string.Format("请检查启动器的 HOST 设置格式是否正确\n可能是缺少或多余的斜杠或拼写错误造成的。\n如果不需要补丁，可以忽略此错误。"), "HOST 格式错误");
+                    MessageBox.Show(string.Format("Please Check Launcher HOST Setting is formatted correctly\nCan be caused by missing or extra slashes and spelling mistakes.\nThis error can be ignored if patching is not required."), "Bad HOST Format");
                     return null;
                 }
             }
@@ -390,7 +391,7 @@ namespace Launcher
                 }
                 else
                 {
-                    MessageBox.Show(string.Format("请检查启动器的 BROWSER 设置格式是否正确。\n可能是缺少或多余的斜杠或拼写错误造成的。\n如果不需要特别注意此设置，可以忽略此错误。"), "BROWSER 格式错误");
+                    MessageBox.Show(string.Format("Please Check Launcher BROWSER Setting is formatted correctly.\nCan be caused by missing or extra slashes and spelling mistakes.\nThis error can be ignored."), "Bad BROWSER Format");
                 }
             }
 
@@ -399,7 +400,7 @@ namespace Launcher
             Launch_pb.Enabled = false;
             ProgressCurrent_pb.Width = 5;
             TotalProg_pb.Width = 5;
-            Version_label.Text = string.Format("版本: {0}.{1}.{2}", Globals.ProductCodename, Settings.UseTestConfig ? "Debug" : "Release", Application.ProductVersion);
+            Version_label.Text = string.Format("Build: {0}.{1}.{2}", Globals.ProductCodename, Settings.UseTestConfig ? "Debug" : "Release", Application.ProductVersion);
 
             if (Settings.P_ServerName != String.Empty)
             {
@@ -545,7 +546,7 @@ namespace Launcher
                 if (Completed && ActiveDownloads.Count == 0)
                 {
                     ActionLabel.Text = "";
-                    CurrentFile_label.Text = "数据更新";
+                    CurrentFile_label.Text = "Up to date.";
                     SpeedLabel.Text = "";
                     ProgressCurrent_pb.Width = 550;
                     TotalProg_pb.Width = 550;
@@ -556,13 +557,13 @@ namespace Launcher
                     TotalPercent_label.Text = "100%";
                     InterfaceTimer.Enabled = false;
                     Launch_pb.Enabled = true;
-                    if (ErrorFound) MessageBox.Show("一个或多个文件下载失败，请检查错误", "下载失败");
+                    if (ErrorFound) MessageBox.Show("One or more files failed to download, check Error.txt for details.", "Failed to Download.");
                     ErrorFound = false;
 
                     if (CleanFiles)
                     {
                         CleanFiles = false;
-                        MessageBox.Show("文件已清理", "清理文件");
+                        MessageBox.Show("Your files have been cleaned up.", "Clean Files");
                     }
 
                     if (Restart)
@@ -614,8 +615,8 @@ namespace Launcher
                 CurrentPercent_label.Visible = true;
                 TotalPercent_label.Visible = true;
 
-                if (LabelSwitch) ActionLabel.Text = string.Format("{0} 剩余文件", _fileCount - _currentCount);
-                else ActionLabel.Text = string.Format("{0:#,##0}MB 待更文件", ((_totalBytes) - (_completedBytes + currentBytes)) / 1024 / 1024);
+                if (LabelSwitch) ActionLabel.Text = string.Format("{0} Files Remaining", _fileCount - _currentCount);
+                else ActionLabel.Text = string.Format("{0:#,##0}MB Remaining", ((_totalBytes) - (_completedBytes + currentBytes)) / 1024 / 1024);
 
                 if (Settings.P_Concurrency > 1)
                 {
@@ -659,8 +660,8 @@ namespace Launcher
 
         private void Credit_label_Click(object sender, EventArgs e)
         {
-            if (Credit_label.Text == "技术支持水晶传奇：CrystalM2") Credit_label.Text = "致敬设计者：Breezer";
-            else Credit_label.Text = "技术支持水晶传奇：CrystalM2";
+            if (Credit_label.Text == "Powered by Crystal M2") Credit_label.Text = "Designed by Breezer";
+            else Credit_label.Text = "Powered by Crystal M2";
         }
 
         private void AMain_FormClosed(object sender, FormClosedEventArgs e)

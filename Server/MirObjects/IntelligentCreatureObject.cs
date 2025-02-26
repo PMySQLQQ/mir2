@@ -70,7 +70,7 @@ namespace Server.MirObjects
 
         public override string Name
         {
-            get { return Master == null ? CustomName : (Dead ? CustomName : string.Format("{0}_{1}的灵物", CustomName, Master.Name)); }
+            get { return Master == null ? CustomName : (Dead ? CustomName : string.Format("{0}_{1}'s Pet", CustomName, Master.Name)); }
             set { throw new NotSupportedException(); }
         }
         protected override bool CanAttack
@@ -136,7 +136,7 @@ namespace Server.MirObjects
 
             if (Fullness == 0)//unable to operate with food level 0
             {
-                CreatureTimedSay("我很饥饿");
+                CreatureTimedSay("I'm starving!!.");
                 return;
             }
 
@@ -194,19 +194,38 @@ namespace Server.MirObjects
 
                 switch (PetType)
                 {
-                    case IntelligentCreatureType.雪人:
-                        int attackType2 = Envir.Random.Next(0, 2);
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = (byte)attackType2 });
+                    case IntelligentCreatureType.BabyDragon:
+                    case IntelligentCreatureType.OlympicFlame:
+                        if (Envir.Random.Next(10) > 5)
+                            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
+                        else
+                            Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2 });
                         break;
-                    case IntelligentCreatureType.龙蛋:
-                    case IntelligentCreatureType.火娃:
-                    case IntelligentCreatureType.龙宝宝:
-                        int attackType3 = Envir.Random.Next(0, 3);
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = (byte)attackType3 });
+                    case IntelligentCreatureType.BabySnowMan:
+                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
                         break;
                     default:
-                        int attackType4 = Envir.Random.Next(0, 4);
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = (byte)attackType4 });
+                        switch(Envir.Random.Next(10))
+                        {
+                            case 0:
+                                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });
+                                break;
+                            case 1:
+                            case 2:
+                            case 3:
+                                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
+                                break;
+                            case 4:
+                            case 5:
+                            case 6:
+                                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2 });
+                                break;
+                            case 7:
+                            case 8:
+                            case 9:
+                                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 3 });
+                                break;
+                        }
                         break;
                 }
             }
@@ -272,7 +291,7 @@ namespace Server.MirObjects
             if (Master != null)
             {
                 if (!Functions.InRange(CurrentLocation, Master.CurrentLocation, 2))
-                    MoveTo(Functions.PointMove(Master.CurrentLocation, Master.Direction, -2));
+                    MoveTo(Functions.PointMove(Master.CurrentLocation,Master.Direction, -2));
                 else
                     if (Envir.Random.Next(100) >= 60) ProcessAnimVariant();//random anims
             }
@@ -596,19 +615,15 @@ namespace Server.MirObjects
                 if (item == null) continue;
                 if (item.Item != null)
                 {
-                    if (!((PlayerObject)Master).CanGainItem(item.Item))
-                    {
-                        CreatureSay("*背包已满*");
-                        continue;
-                    }
+                    if (!((PlayerObject)Master).CanGainItem(item.Item)) continue;
 
                     if (item.Item.Info.ShowGroupPickup && IsMasterGroupMember(Master))
                         for (int j = 0; j < Master.GroupMembers.Count; j++)
-                            Master.GroupMembers[j].ReceiveChat(Name + " 捡起 {" + item.Item.FriendlyName + "}", ChatType.Hint);
+                            Master.GroupMembers[j].ReceiveChat(Name + " Picked up: {" + item.Item.FriendlyName + "}", ChatType.Hint);
 
-                    if (item.Item.Info.Grade == ItemGrade.神物 || item.Item.Info.Grade == ItemGrade.圣物 || item.Item.Info.Grade == ItemGrade.英雄)
+                    if (item.Item.Info.Grade == ItemGrade.Mythical || item.Item.Info.Grade == ItemGrade.Legendary || item.Item.Info.Grade == ItemGrade.Heroic)
                     {
-                        Master.ReceiveChat("灵物捡起 {" + item.Item.FriendlyName + "}", ChatType.Hint);
+                        Master.ReceiveChat("Pet Picked up: {" + item.Item.FriendlyName + "}", ChatType.Hint);
                         ((PlayerObject)Master).Enqueue(new S.IntelligentCreaturePickup { ObjectID = ObjectID });
                     }
 
@@ -637,21 +652,21 @@ namespace Server.MirObjects
 
             switch (iType)
             {
-                case ItemType.杂物:// <---- im not sure if any item will ever hold this ItemType but better to prevent then cure
+                case ItemType.Nothing:// <---- im not sure if any item will ever hold this ItemType but better to prevent then cure
                     return false;
-                case ItemType.武器:
+                case ItemType.Weapon:
                     return ItemFilter.PetPickupWeapons;
-                case ItemType.盔甲:
+                case ItemType.Armour:
                     return ItemFilter.PetPickupArmours;
-                case ItemType.头盔:
+                case ItemType.Helmet:
                     return ItemFilter.PetPickupHelmets;
-                case ItemType.靴子:
+                case ItemType.Boots:
                     return ItemFilter.PetPickupBoots;
-                case ItemType.腰带:
+                case ItemType.Belt:
                     return ItemFilter.PetPickupBelts;
-                case ItemType.项链:
-                case ItemType.手镯:
-                case ItemType.戒指:
+                case ItemType.Necklace:
+                case ItemType.Bracelet:
+                case ItemType.Ring:
                     return ItemFilter.PetPickupAccessories;
                 default:
                     return ItemFilter.PetPickupOthers;
@@ -682,8 +697,8 @@ namespace Server.MirObjects
             if (Fullness >= 10000) return;
             FullnessTicker = Envir.Time + FullnessDelay;
             Fullness += amount;
-            if (Fullness < CreatureRules.MinimalFullness) CreatureSay("*嗯嗯*");
-            else CreatureSay("*嗝嗝*");
+            if (Fullness < CreatureRules.MinimalFullness) CreatureSay("*Hmmm*");
+            else CreatureSay("*Burp*");
             if (Fullness > 10000) Fullness = 10000;
         }
 
@@ -696,7 +711,7 @@ namespace Server.MirObjects
                 FullnessTicker = Envir.Time + FullnessDelay;
                 Fullness -= amount;
                 if (Fullness < 0) Fullness = 0;
-                if (Fullness < CreatureRules.MinimalFullness) CreatureTimedSay("*我很饥饿*");
+                if (Fullness < CreatureRules.MinimalFullness) CreatureTimedSay("*Me Hungry*");
             }
         }
 
@@ -765,7 +780,7 @@ namespace Server.MirObjects
 
         public override void ReceiveChat(string text, ChatType type)
         {
-            if (type == ChatType.WhisperIn) CreatureSay("什么？");
+            if (type == ChatType.WhisperIn) CreatureSay("What?");
         }
 
         public override bool IsAttackTarget(HumanObject attacker)

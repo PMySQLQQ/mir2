@@ -77,8 +77,6 @@ namespace Server.MirObjects
         public bool CoolEye;
         private bool _hidden;
 
-        public bool BufffNoDrug { get; set; }
-
         public bool Hidden
         {
             get
@@ -247,14 +245,14 @@ namespace Server.MirObjects
             if (min < 0) min = 0;
             if (min > max) max = min;
 
-            if (Stats[Stat.幸运] > 0)
+            if (Stats[Stat.Luck] > 0)
             {
-                if (Stats[Stat.幸运] > Envir.Random.Next(Settings.MaxLuck))
+                if (Stats[Stat.Luck] > Envir.Random.Next(Settings.MaxLuck))
                     return max;
             }
-            else if (Stats[Stat.幸运] < 0)
+            else if (Stats[Stat.Luck] < 0)
             {
-                if (Stats[Stat.幸运] < -Envir.Random.Next(Settings.MaxLuck))
+                if (Stats[Stat.Luck] < -Envir.Random.Next(Settings.MaxLuck))
                     return min;
             }
 
@@ -341,7 +339,7 @@ namespace Server.MirObjects
         public virtual void Spawned()
         {
             if (Node != null)
-                throw new InvalidOperationException("节点不为空，对象已经生成");
+                throw new InvalidOperationException("Node is not null, Object already spawned");
 
             Node = Envir.Objects.AddLast(this);
             if ((Race == ObjectType.Monster) && Settings.Multithreaded)
@@ -360,7 +358,7 @@ namespace Server.MirObjects
         public virtual void Despawn()
         {
             if (Node == null)
-                throw new InvalidOperationException("节点为空，对象已经消失");
+                throw new InvalidOperationException("Node is null, Object already Despawned");
             
             Broadcast(new S.ObjectRemove { ObjectID = ObjectID });
             Envir.Objects.Remove(Node);
@@ -436,7 +434,7 @@ namespace Server.MirObjects
             if (Race == ObjectType.Monster)
             {
                 // Check if we are a training AI - we can be attacked in safezones
-                if (((MonsterObject)this).Info.AI == 984)
+                if (((MonsterObject)this).Info.AI == 56)
                     flag = false;
             }
             if (flag && (InSafeZone || attacker.InSafeZone)) return false;
@@ -466,7 +464,7 @@ namespace Server.MirObjects
             switch (type)
             {
                 case DefenceType.ACAgility:
-                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
+                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -477,12 +475,12 @@ namespace Server.MirObjects
                     armour = GetDefencePower(Stats[Stat.MinAC], Stats[Stat.MaxAC]);
                     break;
                 case DefenceType.MACAgility:
-                    if (Envir.Random.Next(Settings.MagicResistWeight) < Stats[Stat.魔法躲避])
+                    if (Envir.Random.Next(Settings.MagicResistWeight) < Stats[Stat.MagicResist])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
                     }
-                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
+                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -490,7 +488,7 @@ namespace Server.MirObjects
                     armour = GetDefencePower(Stats[Stat.MinMAC], Stats[Stat.MaxMAC]);
                     break;
                 case DefenceType.MAC:
-                    if (Envir.Random.Next(Settings.MagicResistWeight) < Stats[Stat.魔法躲避])
+                    if (Envir.Random.Next(Settings.MagicResistWeight) < Stats[Stat.MagicResist])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -498,7 +496,7 @@ namespace Server.MirObjects
                     armour = GetDefencePower(Stats[Stat.MinMAC], Stats[Stat.MaxMAC]);
                     break;
                 case DefenceType.Agility:
-                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
+                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -514,15 +512,15 @@ namespace Server.MirObjects
             {
                 ApplyPoison(new Poison { PType = PoisonType.Paralysis, Duration = 5, TickSpeed = 1000 }, attacker);
             }
-            if ((attacker.Stats[Stat.冰冻伤害] > 0) && (Settings.PvpCanFreeze || Race != ObjectType.Player) && type != DefenceType.MAC && type != DefenceType.MACAgility)
+            if ((attacker.Stats[Stat.Freezing] > 0) && (Settings.PvpCanFreeze || Race != ObjectType.Player) && type != DefenceType.MAC && type != DefenceType.MACAgility)
             {
-                if ((Envir.Random.Next(Settings.FreezingAttackWeight) < attacker.Stats[Stat.冰冻伤害]) && (Envir.Random.Next(levelOffset) == 0))
-                    ApplyPoison(new Poison { PType = PoisonType.Slow, Duration = Math.Min(10, (3 + Envir.Random.Next(attacker.Stats[Stat.冰冻伤害]))), TickSpeed = 1000 }, attacker);
+                if ((Envir.Random.Next(Settings.FreezingAttackWeight) < attacker.Stats[Stat.Freezing]) && (Envir.Random.Next(levelOffset) == 0))
+                    ApplyPoison(new Poison { PType = PoisonType.Slow, Duration = Math.Min(10, (3 + Envir.Random.Next(attacker.Stats[Stat.Freezing]))), TickSpeed = 1000 }, attacker);
             }
-            if (attacker.Stats[Stat.毒素伤害] > 0 && type != DefenceType.MAC && type != DefenceType.MACAgility)
+            if (attacker.Stats[Stat.PoisonAttack] > 0 && type != DefenceType.MAC && type != DefenceType.MACAgility)
             {
-                if ((Envir.Random.Next(Settings.PoisonAttackWeight) < attacker.Stats[Stat.毒素伤害]) && (Envir.Random.Next(levelOffset) == 0))
-                    ApplyPoison(new Poison { PType = PoisonType.Green, Duration = 5, TickSpeed = 1000, Value = Math.Min(10, 3 + Envir.Random.Next(attacker.Stats[Stat.毒素伤害])) }, attacker);
+                if ((Envir.Random.Next(Settings.PoisonAttackWeight) < attacker.Stats[Stat.PoisonAttack]) && (Envir.Random.Next(levelOffset) == 0))
+                    ApplyPoison(new Poison { PType = PoisonType.Green, Duration = 5, TickSpeed = 1000, Value = Math.Min(10, 3 + Envir.Random.Next(attacker.Stats[Stat.PoisonAttack])) }, attacker);
             }
         }
 
@@ -608,19 +606,6 @@ namespace Server.MirObjects
                                 }
                             }
                             break;
-                        case BuffStackType.AttrStackStat:
-                            if (stats != null)
-                            {
-                                foreach (var stat in stats.Values)
-                                {
-                                    if (buff.Stats.Values.ContainsKey(stat.Key))
-                                    {
-                                        continue;
-                                    }
-                                    buff.Stats[stat.Key] = stat.Value;
-                                }
-                            }
-                            break;
                         case BuffStackType.StackStatAndDuration:
                             {
                                 if (stats != null)
@@ -630,20 +615,6 @@ namespace Server.MirObjects
 
                                 buff.ExpireTime += duration;
                             }
-                            break;
-                        case BuffStackType.AttrStackStatAndDuration:
-                            if (stats != null)
-                            {
-                                foreach (var stat in stats.Values)
-                                {
-                                    if (buff.Stats.Values.ContainsKey(stat.Key))
-                                    {
-                                        continue;
-                                    }
-                                    buff.Stats[stat.Key] = stat.Value;
-                                }
-                            }
-                            buff.ExpireTime += duration;
                             break;
                         case BuffStackType.ResetStat:
                         {
@@ -682,19 +653,16 @@ namespace Server.MirObjects
 
             switch (buff.Type)
             {
-                case BuffType.月影术:
-                case BuffType.烈火身:
+                case BuffType.MoonLight:
+                case BuffType.DarkBody:
                     Hidden = true;
                     Sneaking = true;
                     HideFromTargets();
                     break;
-                case BuffType.隐身术:
-                case BuffType.隐身戒指:
+                case BuffType.Hiding:
+                case BuffType.ClearRing:
                     Hidden = true;
                     HideFromTargets();
-                    break;
-                case BuffType.绝对封锁:
-                    BufffNoDrug = true;
                     break;
             }
 
@@ -713,18 +681,12 @@ namespace Server.MirObjects
 
                 switch(b)
                 {
-                    case BuffType.隐身术:
-                    case BuffType.月影术:
-                    case BuffType.烈火身:
-                        if (!HasAnyBuffs(b, BuffType.隐身戒指, BuffType.隐身术, BuffType.月影术, BuffType.烈火身))
+                    case BuffType.Hiding:
+                    case BuffType.MoonLight:
+                    case BuffType.DarkBody:
+                        if (!HasAnyBuffs(b, BuffType.ClearRing, BuffType.Hiding, BuffType.MoonLight, BuffType.DarkBody))
                         {
                             Hidden = false;
-                        }
-                        break;
-                    case BuffType.绝对封锁:
-                        if (!HasAnyBuffs(BuffType.绝对封锁))
-                        {
-                            BufffNoDrug = false;
                         }
                         break;
                 }

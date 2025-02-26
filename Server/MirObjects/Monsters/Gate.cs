@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
@@ -10,7 +10,7 @@ namespace Server.MirObjects.Monsters
         {
             switch (info.Effect)
             {
-                case 1: //沙巴克城门
+                case 1: //Sabuk Door
                     BlockArray = new Point[]
                     {
                         new Point(0, -1),
@@ -63,13 +63,13 @@ namespace Server.MirObjects.Monsters
                         new Point(-1, -1),
                         new Point(1, 1),
                         };
+
                     }
                     break;
             }
-
+           
             Direction = MirDirection.Up;
         }
-
         public override void Despawn()
         {
             base.Despawn();
@@ -79,7 +79,7 @@ namespace Server.MirObjects.Monsters
             CheckDirection();
 
             if (!Conquest.WarIsOn || attacker.MyGuild != null && Conquest.GuildInfo.Owner == attacker.MyGuild.Guildindex) damage = 0;
-
+             
             return base.Attacked(attacker, damage, type, damageWeapon);
         }
 
@@ -94,10 +94,9 @@ namespace Server.MirObjects.Monsters
 
         public override void OpenDoor()
         {
-            if (!Closed || HP <= 0) return;
+            if (!Closed) return;
 
-            Direction = (MirDirection)8;
-
+            Direction = (MirDirection)6;
             Closed = false;
 
             Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
@@ -118,7 +117,7 @@ namespace Server.MirObjects.Monsters
 
         public override void CloseDoor()
         {
-            if (Closed || HP <= 0) return;
+            if (Closed) return;
 
             Direction = (MirDirection)(3 - GetDamageLevel());
 
@@ -131,19 +130,12 @@ namespace Server.MirObjects.Monsters
 
         public override void RepairGate()
         {
-            {
-                MirDirection originalDirection = Direction;
+            if (HP == 0)
+                Revive(Stats[Stat.HP], false);
+            else
+                SetHP(Stats[Stat.HP]);
 
-                if (HP <= 0)
-                {
-                    Revive(Stats[Stat.HP], false);
-                    CheckDirection();
-                }
-                else
-                    SetHP(Stats[Stat.HP]);
-                Direction = originalDirection;
-                Broadcast(new S.ObjectTurn { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });
-            }
+            CheckDirection();
         }
 
         protected override int GetDamageLevel()

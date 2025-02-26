@@ -94,7 +94,6 @@ namespace Client.MirScenes.Dialogs
         {
             Index = 820;
             Library = Libraries.Title;
-            Movable = true;
             Sort = true;
             Location = Center;
             NotControl = false;
@@ -196,7 +195,7 @@ namespace Client.MirScenes.Dialogs
                 Library = Libraries.Prguse2,
                 Parent = this,
                 Sound = SoundList.ButtonA,
-                Hint = "搜索NPC"
+                Hint = "Search for NPCs"
             };
             SearchButton.Click += (o, e) => Search();
 
@@ -401,12 +400,12 @@ namespace Client.MirScenes.Dialogs
         {
             if (SelectedNPC == null || !SelectedNPC.Info.CanTeleportTo) return;
 
-            MirMessageBox messageBox = new MirMessageBox($" 花费{GameScene.TeleportToNPCCost}金币移动到此NPC ", MirMessageBoxButtons.YesNo);
+            MirMessageBox messageBox = new MirMessageBox($"Teleport to this NPC for {GameScene.TeleportToNPCCost} Gold?", MirMessageBoxButtons.YesNo);
             messageBox.YesButton.Click += (o, e) =>
             {
                 if (GameScene.Gold < GameScene.TeleportToNPCCost)
                 {
-                    MirMessageBox messageBox2 = new MirMessageBox("金币不足", MirMessageBoxButtons.OK);
+                    MirMessageBox messageBox2 = new MirMessageBox("Not enough Gold.", MirMessageBoxButtons.OK);
                     messageBox2.Show();
                     return;
                 }
@@ -582,7 +581,7 @@ namespace Client.MirScenes.Dialogs
             {
                 Players[i] = new MirImageControl
                 {
-                    Index = 1351,
+                    Index = 1350,
                     Library = Libraries.Prguse2,
                     Parent = this,
                     NotControl = false,
@@ -619,7 +618,7 @@ namespace Client.MirScenes.Dialogs
 
             if (path == null || path.Count == 0)
             {
-                GameScene.Scene.ChatDialog.ReceiveChat("目标地点不可用,无适宜的路线", ChatType.System);
+                GameScene.Scene.ChatDialog.ReceiveChat("Could not find suitable path.", ChatType.System);
             }
             else
             {
@@ -699,7 +698,7 @@ namespace Client.MirScenes.Dialogs
                     else
                         if (ob is PlayerObject)
                         colour = Color.FromArgb(255, 255, 255);
-                    else if (ob is NPCObject || ob.AI == 980)
+                    else if (ob is NPCObject || ob.AI == 6)
                         colour = Color.FromArgb(0, 255, 50);
                     else
                         colour = Color.FromArgb(255, 0, 0);
@@ -743,6 +742,11 @@ namespace Client.MirScenes.Dialogs
                         Players[i].Visible = false;
                     }
                 }
+
+
+
+
+
             }
             else
             {
@@ -802,7 +806,7 @@ namespace Client.MirScenes.Dialogs
                     if (splitName[s] == string.Empty) continue;
                     if (s == splitName.Count() - 1)
                         name += splitName[s];
-                    else name += $"『{splitName[s]}』";
+                    else name += $"({splitName[s]})";
                 }
             }
 

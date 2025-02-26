@@ -4,7 +4,7 @@ using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
 {
-    //TODO
+    //TODO - Has a retreat Animation, can't get motion accurate
 
     public class ChieftainArcher : MonsterObject
     {

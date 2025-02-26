@@ -4,7 +4,7 @@ using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
 {
-    class PurpleFaeFlower : MonsterObject
+    class PurpleFaeFlower : ZumaMonster
     {
         protected override bool CanMove { get { return false; } }
 
@@ -16,7 +16,7 @@ namespace Server.MirObjects.Monsters
         protected override bool InAttackRange()
         {
             return CurrentMap == Target.CurrentMap && CanFly(Target.CurrentLocation) && Functions.InRange(CurrentLocation, Target.CurrentLocation, Info.ViewRange);
-            // 增加了CANFLY，使投掷物无法穿过墙壁
+            // ADDED CANFLY SO THAT PROJECTILE MOBS CANNOT SHOOT THROUGH WALLS
         }
 
         protected override void Attack()

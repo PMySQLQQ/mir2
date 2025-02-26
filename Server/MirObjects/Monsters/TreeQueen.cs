@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -7,11 +7,11 @@ namespace Server.MirObjects.Monsters
 {
     public class TreeQueen : MonsterObject
     {
-        protected override bool CanMove { get { return false; } } //不能移动
-        protected override bool CanRegen { get { return false; } } //不能再生
+        protected override bool CanMove { get { return false; } }
+        protected override bool CanRegen { get { return false; } }
 
-        private readonly int _rootSpreadMin = 5; //根须伸展最小范围
-        private readonly int _rootSpreadMax = 15; //根须伸展最大范围
+        private readonly int _rootSpreadMin = 5;
+        private readonly int _rootSpreadMax = 15;
         private readonly int _rootCount = 5;
         private long _rootSpawnTime;
 
@@ -183,7 +183,7 @@ namespace Server.MirObjects.Monsters
             }
         }
 
-        private void SpawnMassRoots() //？？？
+        private void SpawnMassRoots()
         {
             if (Dead) return;
 
@@ -213,7 +213,7 @@ namespace Server.MirObjects.Monsters
 
                     if (!cell.Valid) continue;
 
-                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
+                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MinMC]);
 
                     var start = 500;
 
@@ -261,7 +261,7 @@ namespace Server.MirObjects.Monsters
 
                         if (!cell.Valid) continue;
 
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MinDC]);
 
                         var start = Envir.Random.Next(4000);
 
@@ -302,19 +302,20 @@ namespace Server.MirObjects.Monsters
                 Skeleton = Harvested,
                 Poison = CurrentPoison,
                 Hidden = Hidden,
+                Buffs = Buffs.Where(d => d.Info.Visible).Select(e => e.Type).ToList()
             };
         }
 
         public override void Spawned()
         {
-            // 开始计时（阻止玩家进入房间/地图时受到攻击）
+            // Begin timers (stops players from being bombarded with attacks when they enter the room / map).
             _rootSpawnTime = Envir.Time + (Settings.Second * 5);
             _groundRootSpawnTime = Envir.Time + (Settings.Second * 15);
 
             base.Spawned();
         }
 
-        protected override void ProcessTarget() //？？？？
+        protected override void ProcessTarget()
         {
             if (CurrentMap.Players.Count == 0) return;
 

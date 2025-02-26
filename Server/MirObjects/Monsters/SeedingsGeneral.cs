@@ -46,7 +46,7 @@ namespace Server.MirObjects.Monsters
                 {
                     Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation });
 
-                    //血腥撕咬攻击
+                    //Blood Attack
                     int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
                     if (damage == 0) return;
 
@@ -57,7 +57,7 @@ namespace Server.MirObjects.Monsters
                 {
                     Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
 
-                    //狂抓绿色攻击
+                    //Green Splash Attack
                     int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
                     if (damage == 0) return;
 
@@ -77,7 +77,7 @@ namespace Server.MirObjects.Monsters
                     Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, TargetID = Target.ObjectID, Type = 0 });
                     if (damage == 0) return;
 
-                    //咆哮
+                    //Echo Shout
                     DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 300, Target, damage, DefenceType.MACAgility, false);
                     ActionList.Add(action);
                 }
@@ -86,7 +86,7 @@ namespace Server.MirObjects.Monsters
                     Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, TargetID = Target.ObjectID, Type = 1 });
                     if (damage == 0) return;
 
-                    //怒吼
+                    //Stomp
                     DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 300, Target, damage, DefenceType.MACAgility, true);
                     ActionList.Add(action);
                 }

@@ -75,7 +75,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (LoverName != "")
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("你已经结婚了", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("You're already married.", ChatType.System);
                     return;
                 }
 
@@ -97,7 +97,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (LoverName == "")
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("未婚", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("You're not married.", ChatType.System);
                     return;
                 }
 
@@ -119,7 +119,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (LoverName == "")
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("未婚", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("You're not married.", ChatType.System);
                     return;
                 }
 
@@ -141,17 +141,17 @@ namespace Client.MirScenes.Dialogs
             {
                 if (LoverName == "")
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("未婚", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("You're not married.", ChatType.System);
                     return;
                 }
 
                 if (MapName == "")
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("伴侣不在线", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("Lover is not online", ChatType.System);
                     return;
                 }
                 GameScene.Scene.ChatDialog.ChatTextBox.SetFocus();
-                GameScene.Scene.ChatDialog.ChatTextBox.Text = "情人密语";
+                GameScene.Scene.ChatDialog.ChatTextBox.Text = ":)";
                 GameScene.Scene.ChatDialog.ChatTextBox.Visible = true;
                 GameScene.Scene.ChatDialog.ChatTextBox.TextBox.SelectionLength = 0;
                 GameScene.Scene.ChatDialog.ChatTextBox.TextBox.SelectionStart = GameScene.Scene.ChatDialog.ChatTextBox.Text.Length;
@@ -208,37 +208,37 @@ namespace Client.MirScenes.Dialogs
 
         public void UpdateInterface()
         {
-            LoverNameLabel.Text = "伴侣：" + LoverName;
+            LoverNameLabel.Text = "Lover:  " + LoverName;
 
             if (MapName != "")
             {
-                LoverOnlineLabel.Text = "位置：" + MapName;
+                LoverOnlineLabel.Text = "Location:  " + MapName;
             }
             else
-                LoverOnlineLabel.Text = "位置：离线";
+                LoverOnlineLabel.Text = "Location:  Offline";
 
             if ((LoverName == "") && (Date != default))
             {
                 if (Date < new DateTime(2000))
                 {
-                    LoverDateLabel.Text = "日期：";
-                    LoverLengthLabel.Text = "时长：";
+                    LoverDateLabel.Text = "Date: ";
+                    LoverLengthLabel.Text = "Length: ";
                 }
                 else
                 {
-                    LoverDateLabel.Text = "离婚日期：" + Date.ToShortDateString();
-                    LoverLengthLabel.Text = "开始时间：" + MarriedDays + "天";
+                    LoverDateLabel.Text = "Divorced Date:  " + Date.ToShortDateString();
+                    LoverLengthLabel.Text = "Time Since: " + MarriedDays + " Days";
                 }
 
 
-                LoverOnlineLabel.Text = "位置：";
+                LoverOnlineLabel.Text = "Location: ";
                 AllowButton.Hint = GameLanguage.SwitchMarriage;
             }
             else
             {
-                LoverDateLabel.Text = "结婚日期：" + Date.ToShortDateString();
-                LoverLengthLabel.Text = "时长：" + MarriedDays.ToString() + "天";
-                AllowButton.Hint = "允许/阻止召唤";
+                LoverDateLabel.Text = "Marriage Date:  " + Date.ToShortDateString();
+                LoverLengthLabel.Text = "Length: " + MarriedDays.ToString() + " Days";
+                AllowButton.Hint = "Allow/Block Recall";
             }
 
 

@@ -174,7 +174,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (SelectedFriend == null) return;
 
-                MirMessageBox messageBox = new MirMessageBox(string.Format("是否要删除 '{0}'?", SelectedFriend.Name), MirMessageBoxButtons.YesNo);
+                MirMessageBox messageBox = new MirMessageBox(string.Format("Are you sure you wish to remove '{0}'?", SelectedFriend.Name), MirMessageBoxButtons.YesNo);
 
                 messageBox.YesButton.Click += (o1, e1) =>
                 {

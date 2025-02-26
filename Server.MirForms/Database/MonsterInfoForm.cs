@@ -28,7 +28,7 @@ namespace Server
         {
             if (_selectedMonsterInfos.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定怪物信息", "删除怪物", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected Monsters?", "Remove Monsters?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedMonsterInfos.Count; i++) Envir.Remove(_selectedMonsterInfos[i]);
 
@@ -101,10 +101,7 @@ namespace Server
 
             ImageComboBox.SelectedItem = null;
             ImageComboBox.SelectedItem = info.Image;
-            fileNameLabel.Text = ((ushort)info.Image).ToString() + ".Lib";
-            ushort imageValue = (ushort)info.Image;
-            LoadImage(imageValue);
-
+            fileNameLabel.Text = ((int)info.Image).ToString() + ".Lib";
             AITextBox.Text = info.AI.ToString();
             EffectTextBox.Text = info.Effect.ToString();
             LevelTextBox.Text = info.Level.ToString();
@@ -124,8 +121,8 @@ namespace Server
             MaxMCTextBox.Text = info.Stats[Stat.MaxMC].ToString();
             MinSCTextBox.Text = info.Stats[Stat.MinSC].ToString();
             MaxSCTextBox.Text = info.Stats[Stat.MaxSC].ToString();
-            AccuracyTextBox.Text = info.Stats[Stat.准确].ToString();
-            AgilityTextBox.Text = info.Stats[Stat.敏捷].ToString();
+            AccuracyTextBox.Text = info.Stats[Stat.Accuracy].ToString();
+            AgilityTextBox.Text = info.Stats[Stat.Agility].ToString();
             LightTextBox.Text = info.Light.ToString();
 
             ASpeedTextBox.Text = info.AttackSpeed.ToString();
@@ -165,8 +162,8 @@ namespace Server
                 if (MaxMCTextBox.Text != info.Stats[Stat.MaxMC].ToString()) MaxMCTextBox.Text = string.Empty;
                 if (MinSCTextBox.Text != info.Stats[Stat.MinSC].ToString()) MinSCTextBox.Text = string.Empty;
                 if (MaxSCTextBox.Text != info.Stats[Stat.MaxSC].ToString()) MaxSCTextBox.Text = string.Empty;
-                if (AccuracyTextBox.Text != info.Stats[Stat.准确].ToString()) AccuracyTextBox.Text = string.Empty;
-                if (AgilityTextBox.Text != info.Stats[Stat.敏捷].ToString()) AgilityTextBox.Text = string.Empty;
+                if (AccuracyTextBox.Text != info.Stats[Stat.Accuracy].ToString()) AccuracyTextBox.Text = string.Empty;
+                if (AgilityTextBox.Text != info.Stats[Stat.Agility].ToString()) AgilityTextBox.Text = string.Empty;
                 if (LightTextBox.Text != info.Light.ToString()) LightTextBox.Text = string.Empty;
                 if (ASpeedTextBox.Text != info.AttackSpeed.ToString()) ASpeedTextBox.Text = string.Empty;
                 if (MSpeedTextBox.Text != info.MoveSpeed.ToString()) MSpeedTextBox.Text = string.Empty;
@@ -209,9 +206,9 @@ namespace Server
         {
             if (ActiveControl != sender) return;
 
-            ushort temp;
+            byte temp;
 
-            if (!ushort.TryParse(ActiveControl.Text, out temp))
+            if (!byte.TryParse(ActiveControl.Text, out temp))
             {
                 ActiveControl.BackColor = Color.Red;
                 return;
@@ -511,7 +508,7 @@ namespace Server
 
 
             for (int i = 0; i < _selectedMonsterInfos.Count; i++)
-                _selectedMonsterInfos[i].Stats[Stat.准确] = temp;
+                _selectedMonsterInfos[i].Stats[Stat.Accuracy] = temp;
         }
         private void AgilityTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -529,7 +526,7 @@ namespace Server
 
 
             for (int i = 0; i < _selectedMonsterInfos.Count; i++)
-                _selectedMonsterInfos[i].Stats[Stat.敏捷] = temp;
+                _selectedMonsterInfos[i].Stats[Stat.Agility] = temp;
         }
         private void ASpeedTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -606,7 +603,7 @@ namespace Server
 
             if (!data.StartsWith("Monster", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("无法粘贴，复制的数据不是怪物信息");
+                MessageBox.Show("Cannot Paste, Copied data is not Monster Information.");
                 return;
             }
 
@@ -649,22 +646,6 @@ namespace Server
                 fileNameLabel.Text = ((int)((Monster)ImageComboBox.SelectedItem)).ToString() + ".Lib";
             }
         }
-        private void LoadImage(ushort imageValue)
-        {
-            string filename = $"{imageValue}.bmp";
-            string imagePath = Path.Combine(Environment.CurrentDirectory, "Envir", "Previews", "Monsters", filename);
-
-            if (File.Exists(imagePath))
-            {
-                using FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-
-                MonstersPreview.Image = Image.FromStream(fs);
-            }
-            else
-            {
-                MonstersPreview.Image = null;
-            }
-        }
 
         private void ExportAllButton_Click(object sender, EventArgs e)
         {
@@ -685,7 +666,7 @@ namespace Server
 
             File.WriteAllLines(MonsterListPath, list);
 
-            MessageBox.Show(monsterInfos.Count() + " 信息已导出");
+            MessageBox.Show(monsterInfos.Count() + " Items have been exported");
         }
 
         private void ImportButton_Click(object sender, EventArgs e)
@@ -734,33 +715,6 @@ namespace Server
 
             for (int i = 0; i < _selectedMonsterInfos.Count; i++)
                 _selectedMonsterInfos[i].DropPath = text;
-        }
-        private void TxtSearchMonster_TextChanged(object sender, EventArgs e)
-        {
-            string searchText = TxtSearchMonster.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(searchText))
-            {
-                ResetMonsterList();
-                return;
-            }
-
-            MonsterInfo foundMonster = Envir.MonsterInfoList.FirstOrDefault(info => info.Name.Equals(searchText, StringComparison.OrdinalIgnoreCase));
-
-            if (foundMonster != null)
-            {
-                MonsterInfoListBox.SelectedItem = foundMonster;
-            }
-        }
-
-        private void ResetMonsterList()
-        {
-            MonsterInfoListBox.Items.Clear();
-            foreach (var monsterInfo in Envir.MonsterInfoList)
-            {
-                MonsterInfoListBox.Items.Add(monsterInfo);
-            }
-            TxtSearchMonster.Text = string.Empty;
         }
     }
 }

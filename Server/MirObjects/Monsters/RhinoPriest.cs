@@ -93,7 +93,7 @@ namespace Server.MirObjects.Monsters
                     [Stat.MaxSC] = damage * -1
                 };
 
-                target.AddBuff(BuffType.惩戒真言, this, Settings.Second * (5 + damage), stats);
+                target.AddBuff(BuffType.RhinoPriestDebuff, this, Settings.Second * (5 + damage), stats);
             }
         }
     }

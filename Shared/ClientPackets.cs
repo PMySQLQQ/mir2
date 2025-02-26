@@ -751,12 +751,12 @@ namespace ClientPackets
         protected override void ReadPacket(BinaryReader reader)
         {
             Direction = (MirDirection) reader.ReadByte();
-            Spell = (Spell) reader.ReadUInt16();
+            Spell = (Spell) reader.ReadByte();
         }
         protected override void WritePacket(BinaryWriter writer)
         {
             writer.Write((byte)Direction);
-            writer.Write((ushort)Spell);
+            writer.Write((byte)Spell);
         }
     }
     public sealed class RangeAttack : Packet //ArcherTest
@@ -992,13 +992,13 @@ namespace ClientPackets
 
         protected override void ReadPacket(BinaryReader reader)
         {
-            Spell = (Spell) reader.ReadUInt16();
+            Spell = (Spell) reader.ReadByte();
             Key = reader.ReadByte();
             OldKey = reader.ReadByte();
         }
         protected override void WritePacket(BinaryWriter writer)
         {
-            writer.Write((ushort) Spell);
+            writer.Write((byte) Spell);
             writer.Write(Key);
             writer.Write(OldKey);
         }
@@ -1017,7 +1017,7 @@ namespace ClientPackets
         protected override void ReadPacket(BinaryReader reader)
         {
             ObjectID = reader.ReadUInt32();
-            Spell = (Spell) reader.ReadUInt16();
+            Spell = (Spell) reader.ReadByte();
             Direction = (MirDirection)reader.ReadByte();
             TargetID = reader.ReadUInt32();
             Location = new Point(reader.ReadInt32(), reader.ReadInt32());
@@ -1026,7 +1026,7 @@ namespace ClientPackets
         protected override void WritePacket(BinaryWriter writer)
         {
             writer.Write(ObjectID);
-            writer.Write((ushort) Spell);
+            writer.Write((byte) Spell);
             writer.Write((byte)Direction);
             writer.Write(TargetID);
             writer.Write(Location.X);
@@ -1396,12 +1396,12 @@ namespace ClientPackets
 
         protected override void ReadPacket(BinaryReader reader)
         {
-            Spell = (Spell)reader.ReadUInt16();
+            Spell = (Spell)reader.ReadByte();
             canUse = (SpellToggleState)reader.ReadSByte();
         }
         protected override void WritePacket(BinaryWriter writer)
         {
-            writer.Write((ushort)Spell);
+            writer.Write((byte)Spell);
             writer.Write((sbyte)canUse);
         }
     }
@@ -1424,6 +1424,36 @@ namespace ClientPackets
             writer.Write(UniqueID);
             writer.Write(Price);
             writer.Write((byte)Type);
+        }
+    }
+
+    public sealed class GuildTerritoryPage : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.GuildTerritoryPage; } }
+        public int Page;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Page = reader.ReadInt32();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Page);
+        }
+    }
+
+    public sealed class PurchaseGuildTerritory : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.PurchaseGuildTerritory; } }
+        public string Owner;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Owner = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Owner);
         }
     }
     public sealed class MarketSearch : Packet

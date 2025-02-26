@@ -29,8 +29,8 @@ namespace Server.MirDatabase
         public byte StartHour = 0;
         public int WarLength = 60;
 
-        public ConquestType Type = ConquestType.申请启动;
-        public ConquestGame Game = ConquestGame.占领皇宫;
+        public ConquestType Type = ConquestType.Request;
+        public ConquestGame Game = ConquestGame.CapturePalace;
 
         public bool Monday;
         public bool Tuesday;

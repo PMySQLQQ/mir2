@@ -23,9 +23,9 @@ namespace Client.MirScenes.Dialogs
         public MirTextBox Search;
         public MirImageControl TitleLabel, FilterBackground;
 
-        public string ClassFilter = "显示所有";
-        public string TypeFilter = "显示所有";
-        public string SectionFilter = "显示所有";
+        public string ClassFilter = "Show All";
+        public string TypeFilter = "Show All";
+        public string SectionFilter = "Show All";
 
         public int StartIndex = 0;
         public int Page = 0;
@@ -184,10 +184,10 @@ namespace Client.MirScenes.Dialogs
 
             PaymentTypeGold = new MirCheckBox
             {
-                LabelText = "金币购买",
+                LabelText = "Buy with Gold",
                 Location = new Point(250, 449),
                 Parent = this,
-                Hint = "勾选项为金币购买",
+                Hint = "Buy item(s) with Gold.",
                 Index = 2086,
                 UnTickedIndex = 2086,
                 TickedIndex = 2087,
@@ -198,10 +198,10 @@ namespace Client.MirScenes.Dialogs
 
             PaymentTypeCredit = new MirCheckBox
             {
-                LabelText = "信用购买",
+                LabelText = "Buy with Credits",
                 Location = new Point(340, 449),
                 Parent = this,
-                Hint = "勾选项为信用点购买",
+                Hint = "Buy item(s) with Credits.",
                 Index = 2086,
                 UnTickedIndex = 2086,
                 TickedIndex = 2087,
@@ -221,7 +221,7 @@ namespace Client.MirScenes.Dialogs
             };
             allItems.Click += (o, e) =>
             {
-                SectionFilter = "显示所有";
+                SectionFilter = "Show All";
                 ResetTabs();
                 GetCategories();
             };
@@ -285,8 +285,8 @@ namespace Client.MirScenes.Dialogs
             };
             ALL.Click += (o, e) =>
             {
-                ClassFilter = "显示所有";
-                TypeFilter = "显示所有";
+                ClassFilter = "Show All";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -302,8 +302,8 @@ namespace Client.MirScenes.Dialogs
             };
             War.Click += (o, e) =>
             {
-                ClassFilter = "战士";
-                TypeFilter = "显示所有";
+                ClassFilter = "Warrior";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -319,8 +319,8 @@ namespace Client.MirScenes.Dialogs
             };
             Sin.Click += (o, e) =>
             {
-                ClassFilter = "刺客";
-                TypeFilter = "显示所有";
+                ClassFilter = "Assassin";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -336,8 +336,8 @@ namespace Client.MirScenes.Dialogs
             };
             Tao.Click += (o, e) =>
             {
-                ClassFilter = "道士";
-                TypeFilter = "显示所有";
+                ClassFilter = "Taoist";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -353,8 +353,8 @@ namespace Client.MirScenes.Dialogs
             };
             Wiz.Click += (o, e) =>
             {
-                ClassFilter = "法师";
-                TypeFilter = "显示所有";
+                ClassFilter = "Wizard";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -370,8 +370,8 @@ namespace Client.MirScenes.Dialogs
             };
             Arch.Click += (o, e) =>
             {
-                ClassFilter = "弓箭";
-                TypeFilter = "显示所有";
+                ClassFilter = "Archer";
+                TypeFilter = "Show All";
                 GetCategories();
                 ResetClass();
             };
@@ -506,7 +506,7 @@ namespace Client.MirScenes.Dialogs
             if (Visible) return;
             Visible = true;
             ClassFilter = GameScene.User.Class.ToString();
-            SectionFilter = "显示所有";
+            SectionFilter = "Show All";
             ResetTabs();
             ResetClass();
             GetCategories();
@@ -622,7 +622,7 @@ namespace Client.MirScenes.Dialogs
             Deals.Index = 772;
             New.Index = 774;
 
-            if (SectionFilter == "显示所有") allItems.Index = 771;
+            if (SectionFilter == "Show All") allItems.Index = 771;
             if (SectionFilter == "TopItems") topItems.Index = 777;
             if (SectionFilter == "DealItems") Deals.Index = 773;
             if (SectionFilter == "NewItems") New.Index = 775;
@@ -637,17 +637,17 @@ namespace Client.MirScenes.Dialogs
             Wiz.Index = 763;
             Arch.Index = 766;
 
-            if (ClassFilter == "显示所有") ALL.Index = 752;
-            if (ClassFilter == "战士") War.Index = 755;
-            if (ClassFilter == "刺客") Sin.Index = 758;
-            if (ClassFilter == "道士") Tao.Index = 761;
-            if (ClassFilter == "法师") Wiz.Index = 764;
-            if (ClassFilter == "弓箭") Arch.Index = 767;
+            if (ClassFilter == "Show All") ALL.Index = 752;
+            if (ClassFilter == "Warrior") War.Index = 755;
+            if (ClassFilter == "Assassin") Sin.Index = 758;
+            if (ClassFilter == "Taoist") Tao.Index = 761;
+            if (ClassFilter == "Wizard") Wiz.Index = 764;
+            if (ClassFilter == "Archer") Arch.Index = 767;
         }
 
         public void GetCategories()
         {
-            TypeFilter = "显示所有";
+            TypeFilter = "Show All";
             Page = 0;
             StartIndex = 0;
             List<GameShopItem> shopList;
@@ -659,15 +659,15 @@ namespace Client.MirScenes.Dialogs
 
             CategoryList.Clear();
             PositionBar.Location = new Point(120, 117);
-            CategoryList.Add("显示所有");
+            CategoryList.Add("Show All");
 
             for (int i = 0; i < shopList.Count; i++)
             {
                 if (!CategoryList.Contains(shopList[i].Category) && shopList[i].Category != "")
                 {
-                    if (shopList[i].Class == ClassFilter || shopList[i].Class == "All" || ClassFilter == "显示所有")
+                    if (shopList[i].Class == ClassFilter || shopList[i].Class == "All" || ClassFilter == "Show All")
                     {
-                        if (SectionFilter == "显示所有" || SectionFilter == "TopItems" && shopList[i].TopItem || SectionFilter == "DealItems" && shopList[i].Deal || SectionFilter == "NewItems" && shopList[i].Date > CMain.Now.AddDays(-7))
+                        if (SectionFilter == "Show All" || SectionFilter == "TopItems" && shopList[i].TopItem || SectionFilter == "DealItems" && shopList[i].Deal || SectionFilter == "NewItems" && shopList[i].Date > CMain.Now.AddDays(-7))
                             CategoryList.Add(shopList[i].Category);
                     }
 
@@ -717,10 +717,10 @@ namespace Client.MirScenes.Dialogs
 
             for (int i = 0; i < ShopList.Count; i++)
             {
-                if (ShopList[i].Class == ClassFilter || ShopList[i].Class == "All" || ClassFilter == "显示所有")
-                    if (ShopList[i].Category == TypeFilter || TypeFilter == "显示所有")
+                if (ShopList[i].Class == ClassFilter || ShopList[i].Class == "All" || ClassFilter == "Show All")
+                    if (ShopList[i].Category == TypeFilter || TypeFilter == "Show All")
                     {
-                        if (SectionFilter == "显示所有" || SectionFilter == "TopItems" && ShopList[i].TopItem || SectionFilter == "DealItems" && ShopList[i].Deal || SectionFilter == "NewItems" && ShopList[i].Date > CMain.Now.AddDays(-7))
+                        if (SectionFilter == "Show All" || SectionFilter == "TopItems" && ShopList[i].TopItem || SectionFilter == "DealItems" && ShopList[i].Deal || SectionFilter == "NewItems" && ShopList[i].Date > CMain.Now.AddDays(-7))
                             filteredShop.Add(ShopList[i]);
                     }
             }

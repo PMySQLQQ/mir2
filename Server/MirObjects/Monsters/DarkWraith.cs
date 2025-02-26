@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -89,25 +89,21 @@ namespace Server.MirObjects.Monsters
                 Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
                 for (int i = 0; i < targets.Count; i++)
                 {
-                    HalfmoonAttack(damage);
-                    DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 600, targets[i], damage * 2, DefenceType.AC);
+                    DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 600, targets[i], damage, DefenceType.AC);
                     ActionList.Add(action);
                 }
             }
             else
             {
-                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
-
-                if (damage == 0) return;
-                HalfmoonAttack(damage);
-
-                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 300, Target, damage, DefenceType.ACAgility);
-                ActionList.Add(action);
+                base.Attack();
             }
+
 
             ActionTime = Envir.Time + 500;
             AttackTime = Envir.Time + AttackSpeed;
             ShockTime = 0;
+
+
         }
 
         private void LineAttack(int distance)

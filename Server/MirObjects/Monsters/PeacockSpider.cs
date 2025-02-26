@@ -38,15 +38,15 @@ namespace Server.MirObjects.Monsters
             {
                 //TODO - Animation broken as too large
 
-                Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, TargetID = Target.ObjectID, Type = 1 });
-                int damage = GetAttackPower(Stats[Stat.MinSC], Stats[Stat.MaxSC] * 2);
-                if (damage == 0) return;
+                //Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, TargetID = Target.ObjectID, Type = 1 });
+                //int damage = GetAttackPower(Stats[Stat.MinSC], Stats[Stat.MaxSC] * 2);
+                //if (damage == 0) return;
 
-                DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 500, Target, damage, DefenceType.ACAgility, true);
-                ActionList.Add(action);
+                //DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 500, Target, damage, DefenceType.ACAgility, true);
+                //ActionList.Add(action);
 
                 _PoisonRainTime = Envir.Time + 30000;
-                return;
+                //return;
             }
 
             if (!ranged && Envir.Random.Next(4) > 0)

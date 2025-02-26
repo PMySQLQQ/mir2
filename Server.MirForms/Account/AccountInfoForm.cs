@@ -222,24 +222,24 @@ namespace Server
                     }
                     else
                     {
-                        listItem.SubItems.Add("未加入");
+                        listItem.SubItems.Add("No Guild");
                     }
 
                     string status = $"";
 
                     if (character.LastLoginDate > character.LastLogoutDate)
                     {
-                        status = $"在线: {(SMain.Envir.Now - character.LastLoginDate).TotalMinutes.ToString("##")} 分钟";
+                        status = $"Online: {(SMain.Envir.Now - character.LastLoginDate).TotalMinutes.ToString("##")} minutes";
                         listItem.ForeColor = Color.Green;
                     }
                     else
                     {
-                        status = $"离线: {character.LastLogoutDate}";
+                        status = $"Offline: {character.LastLogoutDate}";
                     }
 
                     if (character.Deleted)
                     {
-                        status = $"注销: {character.DeleteDate}";
+                        status = $"Deleted: {character.DeleteDate}";
                         listItem.ForeColor = Color.Red;
                     }
 
@@ -346,7 +346,7 @@ namespace Server
 
         private void DayBanButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("是否禁用选定账户", "禁用账户", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to ban the selected Accounts?", "Ban Selected.", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
 
             DateTime expiry = SMain.Envir.Now.AddDays(1);
 
@@ -365,7 +365,7 @@ namespace Server
 
         private void WeekBanButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("是否禁用选定账户", "禁用账户", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to ban the selected Accounts?", "Ban Selected.", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
 
             DateTime expiry = SMain.Envir.Now.AddDays(7);
 
@@ -384,7 +384,7 @@ namespace Server
 
         private void PermBanButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("是否禁用选定账户", "禁用账户", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to ban the selected Accounts?", "Ban Selected.", MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
 
 
             AccountInfoListView.BeginUpdate();
@@ -483,12 +483,12 @@ namespace Server
         {
             if (SMain.Envir.Running)
             {
-                MessageBox.Show("服务器运行中不能删除账户数据", "通知",
+                MessageBox.Show("Cannot wipe characters whilst the server is running", "Notice",
                 MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
-            if (MessageBox.Show("是否删除数据库中所有账户数据", "通知",
+            if (MessageBox.Show("Are you sure you want to wipe all characters from the database?", "Notice",
                  MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
             {
                 for (int i = 0; i < SMain.Envir.AccountList.Count; i++)
@@ -501,7 +501,7 @@ namespace Server
                 SMain.Envir.Auctions.Clear();
                 SMain.Envir.GuildList.Clear();
 
-                MessageBox.Show("所有账户相关数据已清除", "通知", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show("All characters and associated data has been cleared", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 
             }
         }
@@ -519,7 +519,7 @@ namespace Server
                     _selectedAccountInfos[i].RequirePasswordChange = true;
                     PasswordChangeCheckBox.CheckState = CheckState.Checked;
                     Update(AccountInfoListView.SelectedItems[i], _selectedAccountInfos[i]);
-                    MessageBox.Show("密码已变更");
+                    MessageBox.Show("Password Changed");
                 }
 
                 AutoResize();
@@ -546,7 +546,7 @@ namespace Server
         {
             string ipAddress = CreationIPTextBox.Text;
 
-            string url = $"https://127.0.0.1/ip/{ipAddress}";//默认 whatismyipaddress.com
+            string url = $"https://whatismyipaddress.com/ip/{ipAddress}";
 
             try
             {
@@ -558,7 +558,7 @@ namespace Server
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"打开网址时出错: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error opening URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -566,7 +566,7 @@ namespace Server
         {
             string ipAddress = LastIPTextBox.Text;
 
-            string url = $"https://127.0.0.1/ip/{ipAddress}";//默认 whatismyipaddress.com
+            string url = $"https://whatismyipaddress.com/ip/{ipAddress}";
 
             try
             {
@@ -578,7 +578,7 @@ namespace Server
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"打开网址时出错: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error opening URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
@@ -588,7 +588,7 @@ namespace Server
             if (AccountInfoListView.SelectedItems.Count > 0)
             {
                 // Ask for confirmation
-                DialogResult result = MessageBox.Show("您确定要删除此帐户吗？", "永久删除账户确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show("Are you sure you want to delete this account?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
                     // Get the selected account from the ListViewItem's Tag property
@@ -606,7 +606,7 @@ namespace Server
             }
             else
             {
-                MessageBox.Show("请选择要删除的帐户");
+                MessageBox.Show("Please select an account to remove.");
             }
         }
     }

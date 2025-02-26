@@ -50,7 +50,7 @@ namespace Server.MirObjects.Monsters
             }
 
             ShockTime = 0;
-            ActionTime = Envir.Time + 500;
+            ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
         }
     }

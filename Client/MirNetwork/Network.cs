@@ -35,10 +35,10 @@ namespace Client.MirNetwork
 
                 ErrorShown = true;
 
-                MirMessageBox errorBox = new("连接到服务器时出错", MirMessageBoxButtons.Cancel);
+                MirMessageBox errorBox = new("Error Connecting to Server", MirMessageBoxButtons.Cancel);
                 errorBox.CancelButton.Click += (o, e) => Program.Form.Close();
-                errorBox.Label.Text = $"已达最大连接尝试次数： {MaxAttempts}" +
-                                      $"{Environment.NewLine}请稍后再试或检查您的连接设置";
+                errorBox.Label.Text = $"Maximum Connection Attempts Reached: {MaxAttempts}" +
+                                      $"{Environment.NewLine}Please try again later or check your connection settings.";
                 errorBox.Show();
                 return;
             }
@@ -200,7 +200,7 @@ namespace Client.MirNetwork
                         return;
                     }
 
-                    MirMessageBox.Show("与服务器的连接中断", true);
+                    MirMessageBox.Show("Lost connection with the server.", true);
                     Disconnect();
                     return;
                 }

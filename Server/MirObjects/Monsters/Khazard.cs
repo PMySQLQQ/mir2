@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
@@ -73,7 +73,7 @@ namespace Server.MirObjects.Monsters
 
                 if (target == Target.CurrentLocation)
                 {
-                    if (Envir.Random.Next(Settings.MagicResistWeight) < Target.Stats[Stat.魔法躲避]) continue;
+                    if (Envir.Random.Next(Settings.MagicResistWeight) < Target.Stats[Stat.MagicResist]) continue;
                     MirDirection pushdir = Functions.DirectionFromPoint(Target.CurrentLocation, CurrentLocation);
                     Target.Pushed(this, pushdir, i);
                 }

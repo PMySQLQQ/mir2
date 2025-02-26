@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
@@ -96,7 +97,7 @@ namespace Server.MirObjects.Monsters
             Target.Attacked(this, (int)(damage * 0.8), DefenceType.AC);
             ProjectileAttack((int)(damage * 0.8), DefenceType.ACAgility);
 
-            if (((Target.Race != ObjectType.Player || Settings.PvpCanResistPoison) && (Envir.Random.Next(Settings.PoisonAttackWeight) >= Target.Stats[Stat.毒物躲避])) && (Target.Level <= Level + 8 && Envir.Random.Next(20) <= 5))
+            if (((Target.Race != ObjectType.Player || Settings.PvpCanResistPoison) && (Envir.Random.Next(Settings.PoisonAttackWeight) >= Target.Stats[Stat.PoisonResist])) && (Target.Level <= Level + 8 && Envir.Random.Next(20) <= 5))
             {
                 Target.ApplyPoison(new Poison { PType = PoisonType.Stun, Duration = 5, TickSpeed = 1000 }, this);
                 Target.Broadcast(new S.ObjectEffect { ObjectID = Target.ObjectID, Effect = SpellEffect.TwinDrakeBlade });
@@ -239,7 +240,7 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < Buffs.Count; i++)
                 {
-                    if (Buffs[i].Type != BuffType.隐身术) continue;
+                    if (Buffs[i].Type != BuffType.Hiding) continue;
 
                     Buffs[i].ExpireTime = 0;
                     break;
@@ -322,8 +323,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = MirClass.战士,
-                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.男性 : MirGender.女性,
+                Class = MirClass.Warrior,
+                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.Male : MirGender.Female,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)Envir.Random.Next(0, 5),

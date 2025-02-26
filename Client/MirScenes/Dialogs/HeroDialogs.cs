@@ -112,7 +112,7 @@ namespace Client.MirScenes.Dialogs
             };
             HPButton.Click += (o1, e) =>
             {
-                MirAmountBox amountBox = new MirAmountBox("自动生命药水 (最大:99％)", HPItem.Item.Image, 99);
+                MirAmountBox amountBox = new MirAmountBox("Enter a value", 116, 99);
                 amountBox.OKButton.Click += (o, a) => Network.Enqueue(new C.SetAutoPotValue { Stat = Stat.HP, Value = amountBox.Amount });
                 amountBox.Show();
             };
@@ -131,7 +131,7 @@ namespace Client.MirScenes.Dialogs
             };
             MPButton.Click += (o1, e) =>
             {
-                MirAmountBox amountBox = new MirAmountBox("自动法力药水 (最大:99％)", MPItem.Item.Image, 99);
+                MirAmountBox amountBox = new MirAmountBox("Enter a value", 116, 99);
                 amountBox.OKButton.Click += (o, a) => Network.Enqueue(new C.SetAutoPotValue { Stat = Stat.MP, Value = amountBox.Amount });
                 amountBox.Show();
             };
@@ -385,22 +385,15 @@ namespace Client.MirScenes.Dialogs
     public sealed class HeroMenuPanel : MirImageControl
     {
         public MirButton HeroMagicsButton, HeroInventoryButton, HeroEquipmentButton;
-        private readonly int clientWidth = Program.Form.ClientSize.Width;
+
         public HeroMenuPanel(MirControl parent)
         {
             Index = 2179;
             Library = Libraries.Prguse;
             Size = new Size(24, 61);
             Parent = parent;
-           
-            if (clientWidth == 800)
-            {
-                Location = new Point((clientWidth / 2) - (Size.Width / 2) + 250, Program.Form.ClientSize.Height - Size.Height - 77);
-            }
-            else
-            {
-                Location = new Point((clientWidth / 2) - (Size.Width / 2) + 362, Program.Form.ClientSize.Height - Size.Height - 77);
-            }
+
+            Location = new Point(((Settings.ScreenWidth / 2) - (Size.Width / 2)) + 362, Settings.ScreenHeight - Size.Height - 77);
 
             HeroMagicsButton = new MirButton
             {
@@ -570,8 +563,8 @@ namespace Client.MirScenes.Dialogs
             {
                 AutoSize = false,
                 Size = new Size(55, 18),
-                Location = new Point(75, 28),
-                DrawFormat = TextFormatFlags.HorizontalCenter,
+                Location = new Point(71, 28),
+                DrawFormat = TextFormatFlags.Default,
                 Parent = this,
 
             };
@@ -590,10 +583,10 @@ namespace Client.MirScenes.Dialogs
             {
                 AutoSize = false,
                 Size = new Size(55, 18),
-                Location = new Point(75, 41),
-                DrawFormat = TextFormatFlags.HorizontalCenter,
+                Location = new Point(71, 41),
+                DrawFormat = TextFormatFlags.Default,
                 Parent = this,
-            };
+            }; 
             ExperienceBar = new MirImageControl
             {
                 Index = 1953,
@@ -608,9 +601,9 @@ namespace Client.MirScenes.Dialogs
             ExLabel = new MirLabel
             {
                 AutoSize = false,
-                Size = new Size(55, 18),
-                Location = new Point(72, 54),
-                DrawFormat = TextFormatFlags.HorizontalCenter,
+                Size = new Size(65, 18),
+                Location = new Point(71, 54),
+                DrawFormat = TextFormatFlags.Default,
                 Parent = this,
             };
             HPItem = new HeroAutoPotPreview()
@@ -755,90 +748,6 @@ namespace Client.MirScenes.Dialogs
             return count;
         }
     }
-    public sealed class HeroAIDialog : MirImageControl
-    {
-        public MirButton HeroHelpButton, HeroGuardButton, HeroRetreatButton, HeroSummonButton;
-        private HeroBehaviour currentBehaviour;
-        public HeroAIDialog()
-        {
-            Index = 140;
-            Library = Libraries.Prguse2;
-            Movable = false;
-            Sort = true;
-            Visible = true;
-            Location = new Point(GameScene.Scene.MainDialog.Location.X + 150, GameScene.Scene.MainDialog.Location.Y + 13);
-
-            HeroHelpButton = new MirButton
-            {
-                Index = 144,
-                HoverIndex = 142,
-                PressedIndex = 143,
-                DisabledIndex = 141,
-                Parent = this,
-                Library = Libraries.Prguse2,
-                Location = new Point(13, 4),
-                Sound = SoundList.ButtonA,
-                Hint = "英雄帮助"
-            };
-            HeroHelpButton.Click += (o, e) => GameScene.Scene.HelpDialog.DisplayPage("英雄");
-
-            HeroGuardButton = new MirButton
-            {
-                Index = 152,
-                HoverIndex = 150,
-                PressedIndex = 151,
-                DisabledIndex = 149,
-                Parent = this,
-                Library = Libraries.Prguse2,
-                Location = new Point(27, 5),
-                Hint = "守护-攻击",
-                AllowDisabledMouseOver = true
-            };
-            HeroGuardButton.Click += (o, e) => SetBehaviour(HeroBehaviour.守护);
-
-            HeroRetreatButton = new MirButton
-            {
-                Index = 153,
-                HoverIndex = 154,
-                PressedIndex = 155,
-                DisabledIndex = 156,
-                Parent = this,
-                Library = Libraries.Prguse2,
-                Location = new Point(44, 5),
-                Hint = "撤退-反击"
-            };
-            HeroRetreatButton.Click += (o, e) => Network.Enqueue(new C.SetHeroBehaviour { Behaviour = HeroBehaviour.跑回 });
-
-            HeroSummonButton = new MirButton
-            {
-                Index = 145,
-                HoverIndex = 146,
-                PressedIndex = 147,
-                DisabledIndex = 148,
-                Parent = this,
-                Library = Libraries.Prguse2,
-                Location = new Point(61, 5),
-                Hint = "召回-跟随" + Environment.NewLine + "冷却: 3分钟"
-            };
-            HeroSummonButton.Click += (o, e) => Network.Enqueue(new C.SetHeroBehaviour { Behaviour = HeroBehaviour.瞬回 });
-        }
-        private void SetBehaviour(HeroBehaviour behaviour)
-        {
-            Network.Enqueue(new C.SetHeroBehaviour { Behaviour = behaviour });
-            UpdateBehaviour(behaviour);
-        }
-
-        public void UpdateBehaviour(HeroBehaviour behaviour)
-        {
-            currentBehaviour = behaviour;
-
-            HeroGuardButton.Enabled = currentBehaviour != HeroBehaviour.守护;
-            HeroRetreatButton.Enabled = currentBehaviour != HeroBehaviour.跑回;
-            HeroSummonButton.Enabled = currentBehaviour != HeroBehaviour.瞬回;
-        }
-
-    }
-
     public sealed class HeroBehaviourPanel : MirImageControl
     {
         private MirButton[] BehaviourButtons;
@@ -862,11 +771,11 @@ namespace Client.MirScenes.Dialogs
                     Library = Libraries.Prguse,
                     Parent = this,
                     Sound = SoundList.ButtonA,
-                    Hint = $"英雄模式: {Enum.GetName(typeof(HeroBehaviour), i)}",
+                    Hint = $"Hero Behaviour: {Enum.GetName(typeof(HeroBehaviour), i)}",
                     AllowDisabledMouseOver = true
                 };
                 BehaviourButtons[i].Click += (o, e) =>
-                {
+                {                    
                     SetBehaviour(hb);
                 };
             }
@@ -916,7 +825,7 @@ namespace Client.MirScenes.Dialogs
                 Avatars[i] = new HeroManageAvatar() { Parent = this };
                 Avatars[i].Click += (o, e) =>
                 {
-                    MirMessageBox messageBox = new MirMessageBox($"是否将 {Avatars[index].Info.Name} 英雄设为激活状态？", MirMessageBoxButtons.YesNo);
+                    MirMessageBox messageBox = new MirMessageBox($"Would you like to make {Avatars[index].Info.Name} your active Hero?", MirMessageBoxButtons.YesNo);
                     messageBox.YesButton.Click += (o, e) => Network.Enqueue(new C.ChangeHero { ListIndex = index + 1 });
                     messageBox.Show();
                 };
@@ -980,7 +889,8 @@ namespace Client.MirScenes.Dialogs
         public HeroManageAvatar()
         {
             Index = DefaultIndex;
-            Library = Libraries.Prguse;
+            Library = Libraries.Prguse;            
         }
     }
 }
+

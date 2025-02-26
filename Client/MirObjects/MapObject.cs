@@ -65,7 +65,7 @@ namespace Client.MirObjects
         public bool Dead, Hidden, SitDown, Sneaking;
         public PoisonType Poison;
         public long DeadTime;
-        public uint AI;
+        public byte AI;
         public bool InTrapRock;
         public int JumpDistance;
 
@@ -227,37 +227,26 @@ namespace Client.MirObjects
 
             switch (type)
             {
-                case BuffType.血龙剑法:
+                case BuffType.Fury:
                     Effects.Add(new BuffEffect(Libraries.Magic3, 190, 7, 1400, this, true, type) { Repeat = true });
                     break;
-                case BuffType.天务:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 130, 8, 900, this, true, type) { Repeat = false });
-                    SoundManager.PlaySound(20000 + (ushort)Spell.CounterAttack * 10 + 0);
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 140, 2, 800, this, true, type) { Repeat = true });
-                    break;
-                case BuffType.金刚不坏:
+                case BuffType.ImmortalSkin:
                     Effects.Add(new BuffEffect(Libraries.Magic3, 570, 5, 1400, this, true, type) { Repeat = true });
                     break;
-                case BuffType.金刚不坏秘籍:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 570, 5, 1400, this, true, type) { Repeat = true });
-                    break;
-                case BuffType.天上秘术:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 210, 7, 1400, this, true, type) { Repeat = true });
-                    break;
-                case BuffType.轻身步:
+                case BuffType.SwiftFeet:
                     if (ob != null) ob.Sprint = true;
                     break;
-                case BuffType.月影术:
-                case BuffType.烈火身:
+                case BuffType.MoonLight:
+                case BuffType.DarkBody:
                     if (ob != null) ob.Sneaking = true;
                     break;
-                case BuffType.吸血地闪:
+                case BuffType.VampireShot:
                     Effects.Add(new BuffEffect(Libraries.Magic3, 2110, 6, 1400, this, true, type) { Repeat = false });
                     break;
-                case BuffType.毒魔闪:
+                case BuffType.PoisonShot:
                     Effects.Add(new BuffEffect(Libraries.Magic3, 2310, 7, 1400, this, true, type) { Repeat = false });
                     break;
-                case BuffType.先天气功:
+                case BuffType.EnergyShield:
                     BuffEffect effect;
 
                     Effects.Add(effect = new BuffEffect(Libraries.Magic2, 1880, 9, 900, this, true, type) { Repeat = false });
@@ -268,126 +257,44 @@ namespace Client.MirObjects
                         Effects.Add(new BuffEffect(Libraries.Magic2, 1900, 2, 800, this, true, type) { Repeat = true });
                     };
                     break;
-                case BuffType.深延术:
+                case BuffType.MagicBooster:
 					Effects.Add(new BuffEffect(Libraries.Magic3, 90, 6, 1200, this, true, type) { Repeat = true });
                     break;
-                case BuffType.血龙兽:
+                case BuffType.PetEnhancer:
                     Effects.Add(new BuffEffect(Libraries.Magic3, 230, 6, 1200, this, true, type) { Repeat = true });
                     break;
-				case BuffType.游戏管理:
+				case BuffType.GameMaster:
 					Effects.Add(new BuffEffect(Libraries.CHumEffect[5], 0, 1, 1200, this, true, type) { Repeat = true });
 					break;
-                case BuffType.华丽雨光:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 3470, 8, 1400, this, true, type) { Repeat = true });
-                    break;
-                case BuffType.龙之特效:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 7040, 32, 1600, this, true, type, Color.FromArgb(158, 255, 158, 98)) { Blend = true, Repeat = true, Delay = 60000 });
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 7080, 25, 1200, this, true, type, Color.FromArgb(158, 255, 255, 255)) { Repeat = true, DrawBehind = true , Delay = 10000 });
-                    break;
-                case BuffType.龙的特效:
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 7040, 32, 1600, this, true, type, Color.FromArgb(158, 98, 255, 255)) { Blend = true, Repeat = true, Delay = 60000 });
-                    Effects.Add(new BuffEffect(Libraries.Magic3, 7080, 25, 1200, this, true, type, Color.FromArgb(158, 255, 255, 255)) { Repeat = true, DrawBehind = true, Delay = 10000 });
-                    break;
                 case BuffType.GeneralMeowMeowShield:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.GeneralMeowMeow], 569, 7, 700, this, true, type) { Repeat = true, Light = 1 });
-                    SoundManager.PlaySound(8322);
+                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.GeneralMeowMeow], 529, 7, 700, this, true, type) { Repeat = true, Light = 1 });
+                    MirSounds.SoundManager.PlaySound(8322);
                     break;
-                case BuffType.御体之力:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.PowerUpBead], 62, 6, 600, this, true, type) { Blend = true, Repeat = true });
+                case BuffType.PowerBeadBuff:
+                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.PowerUpBead], 64, 6, 600, this, true, type) { Blend = true, Repeat = true });
                     break;
                 case BuffType.HornedArcherBuff:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 524, 6, 600, this, true, type) { Repeat = false });
+                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 468, 6, 600, this, true, type) { Repeat = false });
                     effect.Complete += (o, e) =>
                     {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 530, 3, 1000, this, true, type) { Blend = true, Repeat = true });
+                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 474, 3, 1000, this, true, type) { Blend = true, Repeat = true });
                     };
                     break;
                 case BuffType.ColdArcherBuff:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 533, 7, 700, this, true, type) { Repeat = false });
+                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 477, 7, 700, this, true, type) { Repeat = false });
                     effect.Complete += (o, e) =>
                     {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 540, 3, 1000, this, true, type) { Blend = true, Repeat = true });
-                    };
-                    break;
-                case BuffType.HornedColdArcherBuff:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 543, 7, 700, this, true, type) { Repeat = false });
-                    effect.Complete += (o, e) =>
-                    {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 550, 3, 1000, this, true, type) { Blend = true, Repeat = true });
+                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedArcher], 484, 3, 1000, this, true, type) { Blend = true, Repeat = true });
                     };
                     break;
                 case BuffType.HornedWarriorShield:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedWarrior], 960, 18, 1800, this, true, type) { Repeat = true });
+                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedWarrior], 912, 18, 1800, this, true, type) { Repeat = true });
                     break;
-                case BuffType.Mon409BShieldBuff:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon409B], 1334, 7, 1800, this, true, type) { Repeat = true });
-                    break;		
-                case BuffType.ChieftainSwordBuff:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.ChieftainSword], 1331, 6, 100, this, true, type) { Repeat = false, Light = 1 });
+                case BuffType.HornedCommanderShield:
+                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedCommander], 1173, 1, 100, this, true, type) { Repeat = false, Light = 1 });
                     effect.Complete += (o, e) =>
                     {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.ChieftainSword], 1337, 3, 600, this, true, type) { Repeat = true, Light = 1 });
-                    };
-                    break;
-                case BuffType.寒冰护甲:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.ShardGuardian], 517, 11, 800, this, true, type) { Repeat = false, Light = 1, DrawBehind = true });
-                    effect.Complete += (o, e) =>
-                    {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.ShardGuardian], 528, 8, 1600, this, true, type) { Repeat = true, Light = 1 });
-                    };
-                    break;
-                case BuffType.ReaperPriestBuff:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.ReaperPriest], 497, 16, 800, this, true, type) { Repeat = false, Light = 1, DrawBehind = true });
-                    effect.Complete += (o, e) =>
-                    {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.ReaperPriest], 479, 18, 1600, this, true, type) { Repeat = true, Light = 1 });
-                    };
-                    break;
-                case BuffType.至尊威严:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.NobleWarrior], 472, 6, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.伤口加深:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.NobleAssassin], 544, 6, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.死亡印记:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.Butcher], 690, 1, 100, this, true, type) { Repeat = false, Light = 1 });
-                    effect.Complete += (o, e) =>
-                    {
-                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Butcher], 690, 10, 1600, this, true, type) { Repeat = true, Light = 1 });
-                    };
-                    break;
-                case BuffType.RiklebitesShield:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.Riklebites], 1084, 3, 500, this, true, type) { Repeat = false, Light = 1 });
-                    effect.Complete += (o, e) =>
-                    {
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Riklebites], 1087, 5, 800, this, true, type) { Repeat = true, Light = 1 });
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Riklebites], 1094, 8, 800, this, true, type) { Repeat = true, DrawBehind = true });
-                    };
-                    break;
-                case BuffType.绝对封锁:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon562N], 648, 10, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.Mon564NSealing:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon564N], 1016, 10, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.烈火焚烧:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon571B], 574, 10, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.防御诅咒:
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon573B], 562, 6, 600, this, true, type) { Repeat = true, Light = 1 });
-                    break;
-                case BuffType.Mon579BShield:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon579B], 572, 5, 500, this, true, type) { Repeat = false, Light = 1 });
-                    effect.Complete += (o, e) =>
-                    {
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon579B], 577, 10, 600, this, true, type) { Repeat = true, Light = 1 });
-                    };
-                    break;
-                case BuffType.Mon580BShield:
-                    Effects.Add(effect = new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon580B], 858, 6, 500, this, true, type) { Repeat = false, Light = 1 });
-                    effect.Complete += (o, e) =>
-                    {
-                    Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.Mon580B], 864, 18, 800, this, true, type) { Repeat = true, Light = 1 });
+                        Effects.Add(new BuffEffect(Libraries.Monsters[(ushort)Monster.HornedCommander], 1174, 16, 1600, this, true, type) { Repeat = true, Light = 1 });
                     };
                     break;
             }
@@ -410,11 +317,11 @@ namespace Client.MirObjects
 
             switch (type)
             {
-                case BuffType.轻身步:
+                case BuffType.SwiftFeet:
                     if (ob != null) ob.Sprint = false;
                     break;
-                case BuffType.月影术:
-                case BuffType.烈火身:
+                case BuffType.MoonLight:
+                case BuffType.DarkBody:
                     if (ob != null) ob.Sneaking = false;
                     break;
             }
@@ -589,7 +496,7 @@ namespace Client.MirObjects
                     if (HeroObject.HeroObject?.OwnerName == User.Name)
                     {
                         index = 1; 
-                        if ((MapObject.HeroObject.Class != MirClass.战士 && HeroObject.Level > 7) || (MapObject.HeroObject.Class == MirClass.战士 && HeroObject.Level > 25))
+                        if ((MapObject.HeroObject.Class != MirClass.Warrior && HeroObject.Level > 7) || (MapObject.HeroObject.Class == MirClass.Warrior && HeroObject.Level > 25))
                         {
                            Libraries.Prguse2.Draw(10, new Rectangle(0, 0, (int)(32 * PercentMana / 100F), 4), new Point(DisplayRectangle.X + 8, DisplayRectangle.Y - 60), Color.White, false);
                         }

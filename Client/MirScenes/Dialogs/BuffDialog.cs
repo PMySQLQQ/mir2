@@ -22,7 +22,7 @@ namespace Client.MirScenes.Dialogs
             set { SetExpandedParameter(value); }
         }
 
-        protected const long FadeDelay = 55;
+    protected const long FadeDelay = 55;
         protected const float FadeRate = 0.2f;
 
         public BuffDialog()
@@ -133,22 +133,16 @@ namespace Client.MirScenes.Dialogs
                 var buffLibrary = Libraries.BuffIcon;
 
                 //ArcherSpells - VampireShot,PoisonShot
-                if (buffImage >= 30000)
-                {
-                    buffImage -= 30000;
-                    buffLibrary = Libraries.MagIcon;
-                }
-
                 if (buffImage >= 20000)
                 {
                     buffImage -= 20000;
-                    buffLibrary = Libraries.Prguse2;
+                    buffLibrary = Libraries.MagIcon;
                 }
 
                 if (buffImage >= 10000)
                 {
                     buffImage -= 10000;
-                    buffLibrary = Libraries.Prguse;
+                    buffLibrary = Libraries.Prguse2;
                 }
 
                 var location = new Point(Size.Width - 10 - 23 - (i * 23) + ((10 * 23) * (i / 10)), 6 + ((i / 10) * 24));
@@ -179,7 +173,7 @@ namespace Client.MirScenes.Dialogs
             }
 
             if (IsMouseOver(CMain.MPoint))
-            {
+            { 
                 if (_buffCount == 0 || (!_fadedIn && CMain.Time <= _nextFadeTime))
                     return;
 
@@ -211,7 +205,7 @@ namespace Client.MirScenes.Dialogs
                     _fadedOut = true;
                     _fadedIn = false;
                 }
-
+                    
                 _nextFadeTime = CMain.Time + FadeDelay;
             }
         }
@@ -262,7 +256,7 @@ namespace Client.MirScenes.Dialogs
                 var oldWidth = Size.Width;
 
                 Index = 20;
-
+            
                 var newX = Location.X - Size.Width + oldWidth;
                 var newY = heightOffset;
                 Location = new Point(newX, newY);
@@ -284,135 +278,68 @@ namespace Client.MirScenes.Dialogs
 
             switch (buff.Type)
             {
-                case BuffType.游戏管理:
+                case BuffType.GameMaster:
                     GMOptions options = (GMOptions)buff.Values[0];
 
-                    if (options.HasFlag(GMOptions.GameMaster)) text += "-隐身模式\n";
-                    if (options.HasFlag(GMOptions.Superman)) text += "-无敌模式\n";
-                    if (options.HasFlag(GMOptions.Observer)) text += "-观察模式\n";
+                    if (options.HasFlag(GMOptions.GameMaster)) text += "-Invisible\n";
+                    if (options.HasFlag(GMOptions.Superman)) text += "-Superman\n";
+                    if (options.HasFlag(GMOptions.Observer)) text += "-Observer\n";
                     break;
-                case BuffType.精神状态:
+                case BuffType.MentalState:
                     switch (buff.Values[0])
                     {
                         case 0:
-                            text += "集中 (完全伤害)\n射击不能穿过屏障\n";
+                            text += "Agressive (Full damage)\nCan't shoot over walls.\n";
                             break;
                         case 1:
-                            text += "穿透 (最小伤害)\n射击可以穿过屏障\n";
+                            text += "Trick shot (Minimal damage)\nCan shoot over walls.\n";
                             break;
                         case 2:
-                            text += "组队 (中等伤害)\n不能偷袭\n";
+                            text += "Group Mode (Medium damage)\nDon't steal agro.\n";
                             break;
                     }
                     break;
-                case BuffType.隐身术:
-                    text += "施法后对怪物有隐身效果\n走动或跑动后解除特效\n对反隐身怪物视等级无效\n";
+                case BuffType.Hiding:
+                case BuffType.ClearRing:
+                    text += "Invisible to many monsters.\n";
                     break;
-                case BuffType.隐身戒指:
-                    text += "戒指加持隐身术效果\n";
+                case BuffType.MoonLight:
+                    text += "Invisible to players and many\nmonsters when at a distance.\n";
                     break;
-                case BuffType.月影术:
-                    text += "通过隐身来隐藏自己\n在此状态下攻击造成更高伤害\n";
-                    break;
-                case BuffType.轻身步:
-                    text += "增加移动速度\n";
-                    break;
-                case BuffType.先天气功:
+                case BuffType.EnergyShield:
                     overridestats = true;
-                    text += string.Format("被攻击后有 {0}%几率\n恢复 {1}点生命值\n", buff.Stats[Stat.气功盾恢复数率], buff.Stats[Stat.气功盾恢复生命值]);
+                    text += string.Format("{0}% chance to gain {1} HP when attacked.\n", buff.Stats[Stat.EnergyShieldPercent], buff.Stats[Stat.EnergyShieldHPGain]);
                     break;
-                case BuffType.烈火身:
-                    text += "召唤替身进行一次爆炸攻击\n对非反隐怪物隐身并可移动\n";
+                case BuffType.DarkBody:
+                    text += "Invisible to many monsters and able to move.\n";
                     break;
-                case BuffType.吸血地闪:
-                    text += "释放某些技能\n可以附加吸血效果\n";
+                case BuffType.VampireShot:
+                    text += "Gives you a vampiric ability\nthat can be released with\ncertain skills.\n";
                     break;
-                case BuffType.毒魔闪:
-                    text += "释放某些技能\n可以附加毒素效果\n";
+                case BuffType.PoisonShot:
+                    text += "Gives you a poison ability\nthat can be released with\ncertain skills.\n";
                     break;
-                case BuffType.气流术:
-                    text += "一定时间内获得气\n";
+                case BuffType.Concentration:
+                    text += "Increases chance on element extraction.\n";
                     break;
-                case BuffType.深延术:
+                case BuffType.MagicBooster:
                     overridestats = true;
-                    text += string.Format("增加魔法攻击: {0}-{1}\n法力值消耗增加 {2}%\n", buff.Stats[Stat.MinMC], buff.Stats[Stat.MaxMC], buff.Stats[Stat.法力值消耗数率]);
+                    text += string.Format("Increases MC by: {0}-{1}.\nIncreases consumption by {2}%.\n", buff.Stats[Stat.MinMC], buff.Stats[Stat.MaxMC], buff.Stats[Stat.ManaPenaltyPercent]);
                     break;
-                case BuffType.天上秘术:
-                    text += "开启后(天霜冰环)和(流星火雨)\n无需引导\n";
+                case BuffType.Transform:
+                    text += "Disguises your appearance.\n";
                     break;
-                case BuffType.万效符:
-                    overridestats = true;
-                    text += string.Format("受到的伤害减少{0}%", buff.Stats[Stat.伤害减免数率] );
+                case BuffType.Mentee:
+                    text += "Learn skill points twice as quick.\n";
                     break;
-                case BuffType.万效符秘籍:
-                    overridestats = true;
-                    text += string.Format("受到的伤害减少{0}%", buff.Stats[Stat.伤害减免数率] );
-                    break;
-                case BuffType.变形效果:
-                    text += "改变外形\n功能：免助跑\n";
-                    break;
-                case BuffType.衣钵相传:
-                    text += "拜师后经验加成\n";
-                    break;
-                case BuffType.火传穷薪:
-                    text += "收徒后伤害加成\n";
-                    break;
-                case BuffType.公会特效:
+                case BuffType.Guild:
                     text += GameScene.Scene.GuildDialog.ActiveStats;
                     break;
-                case BuffType.新人特效:
-                    text += "新人公会特效加成\n";
+                case BuffType.Blindness:
+                    text += "Reduces visibility\n";
                     break;
-                case BuffType.失明状态:
-                    overridestats = true;
-                    text += string.Format("进入黑暗状态\n准确度有所降低\n");
-                    break;
-                case BuffType.安息之气:
-                    text += "安息之气的加成\n";
-                    break;
-                case BuffType.远古气息:
-                    text += "远古气息的加成\n";
-                    break;
-                case BuffType.华丽雨光:
-                    text += "来自雨光的加成\n";
-                    break;
-                case BuffType.龙之特效:
-                    text += "特效增益加成\n";
-                    break;
-                case BuffType.龙的特效:
-                    text += "特效增益加成\n";
-                    break;
-                case BuffType.组队加成:
-                    text += "来自组队的加成\n";
-                    break;
-                case BuffType.强化队伍:
-                    text += "来自队伍的加成\n";
-                    break;
-                case BuffType.英雄灵气:
-                    text += "英雄在线加成\n";
-                    break;
-                case BuffType.攻击型绝技://新添加 功能--绝技盒BUFF相关
-                case BuffType.防御型绝技:
-                case BuffType.技能型绝技:
-                case BuffType.共用型绝技:
-                    text += "绝技盒增益加成\n";
-                    break;
-                case BuffType.绝对封锁:
-                    overridestats = true;
-                    text += string.Format("封锁期间禁用药水\n生命值降低 25%\n法力值降低 25%\n");
-                    break;
-                case BuffType.古代宗师祝福:
-                    text += "来自宗师的祝福\n";
-                    break;
-                case BuffType.黄金宗师祝福:
-                    text += "宗师的黄金祝福\n";
-                    break;
-                case BuffType.暗影侵袭:
-                    text += "来自陵寝秘空的侵袭\n";
-                    break;
-                case BuffType.烈火焚烧:
-                    overridestats = true;
-                    text += string.Format("每秒持续 {0}生命值\n", buff.Stats[Stat.HP]);
+                case BuffType.Newbie:
+                    text += "A boost provided to members of your guild.\n";
                     break;
             }
 
@@ -420,19 +347,19 @@ namespace Client.MirScenes.Dialogs
             {
                 foreach (var val in buff.Stats.Values)
                 {
-                    var c = val.Value < 0 ? "降低" : "提高";
+                    var c = val.Value < 0 ? "Decreases" : "Increases";
                     var key = val.Key.ToString();
 
-                    var strKey = RegexFunctions.SeperateCamelCase(key.Replace("速率", "").Replace("倍率", "").Replace("数率", ""));
+                    var strKey = RegexFunctions.SeperateCamelCase(key.Replace("Rate", "").Replace("Multiplier", "").Replace("Percent", ""));
 
                     var sign = "";
 
-                    if (key.Contains("数率"))
+                    if (key.Contains("Percent"))
                         sign = "%";
-                    else if (key.Contains("倍率"))
-                        sign = "倍";
+                    else if (key.Contains("Multiplier"))
+                        sign = "x";
 
-                    var txt = $"{c} {strKey} : {val.Value}{sign}\n";
+                    var txt = $"{c} {strKey} by: {val.Value}{sign}.\n";
 
                     text += txt;
                 }
@@ -451,14 +378,14 @@ namespace Client.MirScenes.Dialogs
                 text += string.Format(GameLanguage.Expire, Functions.PrintTimeSpanFromSeconds(Math.Round((buff.ExpireTime - CMain.Time) / 1000D)));
             }
 
-            if (!string.IsNullOrEmpty(buff.Caster)) text += string.Format("\n特效来源: {0}", buff.Caster);
+            if (!string.IsNullOrEmpty(buff.Caster)) text += string.Format("\nCaster: {0}", buff.Caster);
 
             return text;
         }
 
         private string CombinedBuffText()
         {
-            string text = "激活特效\n";
+            string text = "Active Buffs\n";
             var stats = new Stats();
 
             for (var i = 0; i < _buffList.Count; i++)
@@ -470,19 +397,19 @@ namespace Client.MirScenes.Dialogs
 
             foreach (var val in stats.Values)
             {
-                var c = val.Value < 0 ? "降低" : "提高";
+                var c = val.Value < 0 ? "Decreased" : "Increased";
                 var key = val.Key.ToString();
 
-                var strKey = RegexFunctions.SeperateCamelCase(key.Replace("速率", "").Replace("倍率", "").Replace("数率", ""));
+                var strKey = RegexFunctions.SeperateCamelCase(key.Replace("Rate", "").Replace("Multiplier", "").Replace("Percent", ""));
 
                 var sign = "";
 
-                if (key.Contains("数率"))
+                if (key.Contains("Percent"))
                     sign = "%";
-                else if (key.Contains("倍率"))
-                    sign = "倍";
+                else if (key.Contains("Multiplier"))
+                    sign = "x";
 
-                var txt = $"{c} {strKey} : {val.Value}{sign}\n";
+                var txt = $"{c} {strKey} by: {val.Value}{sign}.\n";
 
                 text += txt;
             }
@@ -495,183 +422,113 @@ namespace Client.MirScenes.Dialogs
             switch (type)
             {
                 //Skills
-                case BuffType.血龙剑法:
-                    return 30152;
-                case BuffType.天上秘术:
-                    return 30154;
-                case BuffType.剑气爆:
-                    return 30098;
-                case BuffType.金刚不坏:
-                    return 30160;
-                case BuffType.金刚不坏秘籍:
-                    return 30168;
-                case BuffType.天务:
-                    return 30144;
-                case BuffType.深延术:
-                    return 30146;
-                case BuffType.魔法盾:
-                    return 30060;
-                case BuffType.金刚术:
-                    return 30196;
-                case BuffType.隐身术:
-                    return 30034;
-                case BuffType.体迅风:
-                    return 30120;
-                case BuffType.幽灵盾:
-                    return 30026;
-                case BuffType.神圣战甲术:
-                    return 30028;
-                case BuffType.护身气幕:
-                    return 30100;
-                case BuffType.无极真气:
-                    return 30070;
-                case BuffType.诅咒术:
-                    return 30090;
-                case BuffType.先天气功:
-                    return 30114;
-                case BuffType.万效符:
-                case BuffType.万效符秘籍:
-                    return 184;
+                case BuffType.Fury:
+                    return 76;
+                case BuffType.Rage:
+                    return 49;
+                case BuffType.ImmortalSkin:
+                    return 80;
+                case BuffType.CounterAttack:
+                    return 7;
 
-                case BuffType.轻身步:
-                    return 30134;
-                case BuffType.风身术:
-                    return 30136;
-                case BuffType.月影术:
-                    return 30130;
-                case BuffType.烈火身:
-                    return 30140;
+                case BuffType.MagicBooster:
+                    return 73;
+                case BuffType.MagicShield:
+                    return 30;
 
-                case BuffType.气流术:
-                    return 30192;
-                case BuffType.吸血地闪:
-                    return 30200;
-                case BuffType.毒魔闪:
-                    return 30204;
-                case BuffType.精神状态:
-                    return 59;
+                case BuffType.Hiding:
+                case BuffType.ClearRing:
+                    return 17;
+                case BuffType.Haste:
+                    return 60;
+                case BuffType.SoulShield:
+                    return 13;
+                case BuffType.BlessedArmour:
+                    return 14;
+                case BuffType.ProtectionField:
+                    return 50;
+                case BuffType.UltimateEnhancer:
+                    return 35;
+                case BuffType.Curse:
+                    return 45;
+                case BuffType.EnergyShield:
+                    return 57;
+
+                case BuffType.SwiftFeet:
+                    return 67;
+                case BuffType.LightBody:
+                    return 68;
+                case BuffType.MoonLight:
+                    return 65;
+                case BuffType.DarkBody:
+                    return 70;
+
+                case BuffType.Concentration:
+                    return 96;
+                case BuffType.VampireShot:
+                    return 100;
+                case BuffType.PoisonShot:
+                    return 102;
+                case BuffType.MentalState:
+                    return 199;
 
                 //Monster
-                case BuffType.惩戒真言:
-                    return 115;
-                case BuffType.至尊威严:
-                    return 122;
-                case BuffType.组队加成:
-                    return 106;
-                case BuffType.御体之力:
-                    return 107;
-                case BuffType.失明状态:
-                    return 88;
-                case BuffType.死亡印记:
-                    return 111;
-                case BuffType.寒冰护甲:
-                    return 4;
-                case BuffType.伤口加深:
-                    return 94;
-                case BuffType.麻痹状态:
-                    return 96;
-                case BuffType.绝对封锁:
-                    return 61;
-                case BuffType.Mon564NSealing:
-                    return 61;
-                case BuffType.防御诅咒:
-                    return 67;
-                case BuffType.万效符爆杀:
-                    return 193;
-                case BuffType.烈火焚烧:
-                    return 548;
+                case BuffType.RhinoPriestDebuff:
+                    return 217;
+                case BuffType.Blindness:
+                    return 226;
 
                 //Special
-                case BuffType.游戏管理:
-                    return 20121;
+                case BuffType.GameMaster:
+                    return 173;
                 case BuffType.General:
-                    return 20122;
-                case BuffType.隐身戒指:
-                    return 24;
-                case BuffType.金币辉煌:
-                    return 10907;
-                case BuffType.包容万斤:
-                    return 10872;
-                case BuffType.变形效果:
-                    return 10890;
-                case BuffType.火传穷薪:
-                case BuffType.衣钵相传:
-                    return 80;
-                case BuffType.心心相映:
-                    return 179;
-                case BuffType.公会特效:
-                    return 63;
-                case BuffType.精力充沛:
-                    return 508;
-                case BuffType.时间之殇:
-                    return 75;
-                case BuffType.技巧项链:
-                    return 60;
-                case BuffType.新人特效:
-                    return 10903;
-                case BuffType.安息之气:
-                    return 334;
-                case BuffType.远古气息:
-                    return 334;
-                case BuffType.华丽雨光:
-                    return 30;
-                case BuffType.龙之特效:
-                    return 31;
-                case BuffType.龙的特效:
-                    return 32;
-                case BuffType.奇异药水:
-                    return 510;
-                case BuffType.天灵水:
-                    return 326;
-                case BuffType.玉清水:
-                    return 327;
-                case BuffType.甜筒HP:
-                    return 33;
-                case BuffType.甜筒MP:
-                    return 34;
-                case BuffType.内尔族的灵药:
-                    return 352;
-                case BuffType.英雄灵气:
-                    return 44;
-                case BuffType.攻击型绝技:
-                    return 136;
-                case BuffType.防御型绝技:
-                    return 137;
-                case BuffType.技能型绝技:
-                    return 138;
-                case BuffType.共用型绝技:
-                    return 139;
-                case BuffType.强化队伍:
-                    return 540;
-                case BuffType.暗影侵袭:
-                    return 541;
-                case BuffType.古代宗师祝福:
-                    return 542;
-                case BuffType.黄金宗师祝福:
-                    return 543;
-                case BuffType.摩鲁的赤色药剂:
-                    return 544;
-                case BuffType.摩鲁的青色药剂:
-                    return 545;
-                case BuffType.摩鲁的黄色药剂:
-                    return 546;
+                    return 182;
+                case BuffType.Exp:
+                    return 260;
+                case BuffType.Drop:
+                    return 162;
+                case BuffType.Gold:
+                    return 168;
+                case BuffType.Knapsack:
+                case BuffType.BagWeight:
+                    return 235;
+                case BuffType.Transform:
+                    return 241;
+                case BuffType.Mentor:
+                case BuffType.Mentee:
+                    return 248;
+                case BuffType.Lover:
+                    return 201;
+                case BuffType.Guild:
+                    return 203;
+                case BuffType.Rested:
+                    return 240;
+                case BuffType.TemporalFlux:
+                    return 261;
+                case BuffType.Skill:
+                    return 200;
+                case BuffType.Newbie:
+                    return 182;
 
                 //Stats
-                case BuffType.攻击力提升:
-                case BuffType.魔法力提升:
-                case BuffType.道术力提升:
-                case BuffType.攻击速度提升:
-                case BuffType.生命值提升:
-                case BuffType.法力值提升:
-                case BuffType.防御提升:
-                case BuffType.魔法防御提升:
-                case BuffType.背包负重提升:
-                case BuffType.准确命中提升:
-                case BuffType.敏捷躲避提升:
-                case BuffType.获取经验提升:
-                case BuffType.物品掉落提升:
-                case BuffType.技能经验提升:
-                    return 10893;
+                case BuffType.Impact:
+                    return 249;
+                case BuffType.Magic:
+                    return 165;
+                case BuffType.Taoist:
+                    return 250;
+                case BuffType.Storm:
+                    return 170;
+                case BuffType.HealthAid:
+                    return 161;
+                case BuffType.ManaAid:
+                    return 169;
+                case BuffType.Defence:
+                    return 166;
+                case BuffType.MagicDefence:
+                    return 158;
+                case BuffType.WonderDrug:
+                    return 252;
                 default:
                     return 0;
             }
@@ -804,45 +661,45 @@ namespace Client.MirScenes.Dialogs
                         var tick = buff.TickSpeed / 1000;
                         var tickName = tick > 1 ? "seconds" : "second";
 
-                        text += $"减少护甲防御 10% {tick} {tickName}\n";
+                        text += $"Reduces armour rate by 10% every {tick} {tickName}.\n";
                     }
                     break;
                 case PoisonType.Slow:
-                    text += "移动速度降低\n";
+                    text += "Reduces movement speed.\n";
                     break;
                 case PoisonType.Frozen:
-                    text += "不能施法及移动\n和攻击\n";
+                    text += "Prevents casting, movin\nand attacking.\n";
                     break;
                 case PoisonType.Stun:
                     {
                         var tick = buff.TickSpeed / 1000;
                         var tickName = tick > 1 ? "seconds" : "second";
 
-                        text += $"提高伤害 20% {tick} {tickName}.\n";
+                        text += $"Increases damage received by 20% every {tick} {tickName}.\n";
                     }
                     break;
                 case PoisonType.Paralysis:
-                    text += "麻痹状态：不能攻击和移动\n";
+                    text += "Prevents moving and attacking.\n";
                     break;
                 case PoisonType.DelayedExplosion:
-                    text += "定时爆破\n";
+                    text += "Ticking time bomb.\n";
                     break;
                 case PoisonType.Bleeding:
                     {
                         var tick = buff.TickSpeed / 1000;
                         var tickName = tick > 1 ? "seconds" : "second";
 
-                        text += $"赋予 {buff.Value} 每次伤害 {tick} {tickName}.\n";
+                        text += $"Recieve {buff.Value} damage every {tick} {tickName}.\n";
                     }
                     break;
                 case PoisonType.LRParalysis:
-                    text += "不能攻击和移动\n受到攻击后失效\n";
+                    text += "Prevents moving and attacking.\nCancels when attacked\n";
                     break;
                 case PoisonType.Blindness:
-                    text += "失明状态\n";
+                    text += "Causes temporary blindness.\n";
                     break;
                 case PoisonType.Dazed:
-                    text += "降低攻击\n";
+                    text += "Prevents attacking.\n";
                     break;
             }
 
@@ -1032,7 +889,7 @@ namespace Client.MirScenes.Dialogs
 
         private string CombinedBuffText()
         {
-            string text = "中毒\n";
+            string text = "Active Poisons\n";
 
             return text;
         }

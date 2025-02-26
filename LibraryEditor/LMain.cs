@@ -98,7 +98,7 @@ namespace LibraryEditor
                     }));
 
                     MessageBox.Show(
-                        string.Format("已成功转换 {0} {1}",
+                        string.Format("Successfully converted {0} {1}",
                             (files.Length).ToString(),
                             (files.Length > 1) ? "libraries" : "library"));
                 }).BeginInvoke(null, null);
@@ -135,8 +135,8 @@ namespace LibraryEditor
             ImageBox.Image = null;
             ZoomTrackBar.Value = 1;
 
-            WidthLabel.Text = "<空>";
-            HeightLabel.Text = "<空>";
+            WidthLabel.Text = "<No Image>";
+            HeightLabel.Text = "<No Image>";
             numericUpDownX.Value = 0;
             numericUpDownY.Value = 0;
         }
@@ -267,12 +267,12 @@ namespace LibraryEditor
             if (PreviewListView.SelectedIndices.Count > 1)
             {
                 toolStripStatusLabel.ForeColor = Color.Red;
-                toolStripStatusLabel.Text = "选择多个图像";
+                toolStripStatusLabel.Text = "Multiple images selected.";
             }
             else
             {
                 toolStripStatusLabel.ForeColor = SystemColors.ControlText;
-                toolStripStatusLabel.Text = "选定的图像: " + string.Format("{0} / {1}",
+                toolStripStatusLabel.Text = "Selected Image: " + string.Format("{0} / {1}",
                 PreviewListView.SelectedIndices[0].ToString(),
                 (PreviewListView.Items.Count - 1).ToString());
             }
@@ -482,8 +482,8 @@ namespace LibraryEditor
             if (_library.FileName == null) return;
             if (PreviewListView.SelectedIndices.Count == 0) return;
 
-            if (MessageBox.Show("确定要删除所选图像？",
-                "删除所选内容",
+            if (MessageBox.Show("Are you sure you want to delete the selected Image?",
+                "Delete Selected.",
                 MessageBoxButtons.YesNoCancel) != DialogResult.Yes) return;
 
             List<int> removeList = new List<int>();
@@ -543,7 +543,7 @@ namespace LibraryEditor
 
             toolStripProgressBar.Value = 0;
 
-            MessageBox.Show(string.Format("已成功转换 {0} {1}",
+            MessageBox.Show(string.Format("Successfully converted {0} {1}",
                 (OpenWeMadeDialog.FileNames.Length).ToString(),
                 (OpenWeMadeDialog.FileNames.Length > 1) ? "libraries" : "library"));
         }
@@ -573,8 +573,8 @@ namespace LibraryEditor
 
         private void removeBlanksToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("确定要删除空白图像？",
-                "删除空白图像",
+            if (MessageBox.Show("Are you sure you want to remove the blank images?",
+                "Remove Blanks",
                 MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             _library.RemoveBlanks();
@@ -677,8 +677,8 @@ namespace LibraryEditor
 
         private void safeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("确定要删除空白图像？",
-                "删除空白图像", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the blank images?",
+                "Remove Blanks", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             _library.RemoveBlanks(true);
             ImageList.Images.Clear();
@@ -750,8 +750,9 @@ namespace LibraryEditor
         // Export a single image.
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            if (_library == null || _library.FileName == null || PreviewListView.SelectedIndices.Count == 0)
-                return;
+            if (_library == null) return;
+            if (_library.FileName == null) return;
+            if (PreviewListView.SelectedIndices.Count == 0) return;
 
             string _fileName = Path.GetFileName(OpenLibraryDialog.FileName);
             string _newName = _fileName.Remove(_fileName.IndexOf('.'));
@@ -767,25 +768,16 @@ namespace LibraryEditor
             toolStripProgressBar.Value = 0;
             toolStripProgressBar.Maximum = _col.Count;
 
-            DialogResult result = MessageBox.Show("是保存为BMP格式、否保存PNG格式？或取消操作", "选择保存格式", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            if (result == DialogResult.Cancel)
-            {
-                toolStripProgressBar.Value = 0;
-                return;
-            }
-            string fileExtension = (result == DialogResult.Yes) ? ".bmp" : ".png";
-            ImageFormat imageFormat = (result == DialogResult.Yes) ? ImageFormat.Bmp : ImageFormat.Png;
-
             for (int i = _col[0]; i < (_col[0] + _col.Count); i++)
             {
                 _exportImage = _library.GetMImage(i);
                 if (_exportImage.Image == null)
                 {
-                    blank.Save(_folder + i.ToString() + fileExtension, imageFormat);
+                    blank.Save(_folder + i.ToString() + ".bmp", ImageFormat.Bmp);
                 }
                 else
                 {
-                    _exportImage.Image.Save(_folder + i.ToString() + fileExtension, imageFormat);
+                    _exportImage.Image.Save(_folder + i.ToString() + ".bmp", ImageFormat.Bmp);
                 }
 
                 toolStripProgressBar.Value++;
@@ -797,7 +789,7 @@ namespace LibraryEditor
             }
 
             toolStripProgressBar.Value = 0;
-            MessageBox.Show("图像保存到 " + _folder + "...", "已完成", MessageBoxButtons.OK);
+            MessageBox.Show("Saving to " + _folder + "...", "Image Saved", MessageBoxButtons.OK);
         }
 
         // Don't let the splitter go out of sight on resizing.
@@ -851,7 +843,7 @@ namespace LibraryEditor
                     ImageBox.Image = _newBMP;
 
                     toolStripStatusLabel.ForeColor = SystemColors.ControlText;
-                    toolStripStatusLabel.Text = "选定的图像: " + string.Format("{0} / {1}",
+                    toolStripStatusLabel.Text = "Selected Image: " + string.Format("{0} / {1}",
                         PreviewListView.SelectedIndices[0].ToString(),
                         (PreviewListView.Items.Count - 1).ToString());
                 }
@@ -883,7 +875,7 @@ namespace LibraryEditor
             if (_col.Count > 1)
             {
                 toolStripStatusLabel.ForeColor = Color.Red;
-                toolStripStatusLabel.Text = "选择了多个图像";
+                toolStripStatusLabel.Text = "Multiple images selected.";
             }
         }
 
@@ -1088,9 +1080,7 @@ namespace LibraryEditor
 
         private void defaultPlayerFramesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _library.Frames.Clear();
-
-            UpdateFrameGridView();
+            throw new NotImplementedException();
         }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -1127,8 +1117,8 @@ namespace LibraryEditor
 
             var files = Directory.GetFiles(path, "*.Lib");
 
-            if (MessageBox.Show($"确定要用 {files.Count()} Libs及其匹配的框架集",
-                "自动填充 Libs.",
+            if (MessageBox.Show($"Are you sure you want to populate {files.Count()} Libs with their matching FrameSet?",
+                "Autofill Libs.",
                 MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             foreach (var file in files)
@@ -1159,7 +1149,7 @@ namespace LibraryEditor
                 if (!int.TryParse(e.FormattedValue.ToString(), out _))
                 {
                     e.Cancel = true;
-                    frameGridView.Rows[e.RowIndex].ErrorText = "该值必须是整数";
+                    frameGridView.Rows[e.RowIndex].ErrorText = "the value must be an integer";
                 }
             }
         }
@@ -1221,7 +1211,7 @@ namespace LibraryEditor
 
                 if (_library.Frames.ContainsKey(action))
                 {
-                    MessageBox.Show(string.Format($"操作的 '{action}' 存在多次，因此将不会保存"));
+                    MessageBox.Show(string.Format($"The action '{action}' exists more than once so will not be saved."));
                     continue;
                 }
 
@@ -1350,7 +1340,7 @@ namespace LibraryEditor
         private FrameSet GetFrameSetByImage(Monster image)
         {
             //REMOVE THE BELOW EXCEPTION ONCE THE DESIRED CODE HAS BEEN ADDED          
-            throw new NotImplementedException("必须先更新 'GetFrameSetByImage' 后才能使用此函数");
+            throw new NotImplementedException("The method 'GetFrameSetByImage' must be updated before this function can be used");
 
             //UNCOMMENT THE CODE BELOW, IT SERVES AS AN EXAMPLE OF HOW TO MATCH IMAGES UP TO THE CORRECT FRAMES
             //List<FrameSet> FrameList = new List<FrameSet>();
@@ -1443,11 +1433,6 @@ namespace LibraryEditor
                 image.Y = (short)numericUpDownY.Value;
             }
             PreviewListView.Invoke(new EventHandler(PreviewListView_SelectedIndexChanged), EventArgs.Empty);
-        }
-
-        private void frameGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
     }
 }

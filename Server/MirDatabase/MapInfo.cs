@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using Server.MirEnvir;
 
 namespace Server.MirDatabase
@@ -19,11 +19,11 @@ namespace Server.MirDatabase
         public string FileName = string.Empty, Title = string.Empty;
         public ushort MiniMap, BigMap, Music;
         public LightSetting Light;
-        public byte MapDarkLight = 0, MineIndex = 0;
+        public byte MapDarkLight = 0, MineIndex = 0, GTIndex = 0;
 
         public bool NoTeleport, NoReconnect, NoRandom, NoEscape, NoRecall, NoDrug, NoPosition, NoFight,
             NoThrowItem, NoDropPlayer, NoDropMonster, NoNames, NoMount, NeedBridle, Fight, NeedHole, Fire, Lightning,
-            NoTownTeleport, NoReincarnation;
+            NoTownTeleport, NoReincarnation, GT;
 
         public string NoReconnectMap = string.Empty;
         public int FireDamage, LightningDamage;
@@ -34,7 +34,7 @@ namespace Server.MirDatabase
         public List<NPCInfo> NPCs = new List<NPCInfo>();
         public List<MineZone> MineZones = new List<MineZone>();
         public List<Point> ActiveCoords = new List<Point>();
-        public WeatherSetting WeatherParticles = WeatherSetting.无效果;
+        public WeatherSetting WeatherParticles = WeatherSetting.None;
 
         public MapInfo()
         {
@@ -100,6 +100,12 @@ namespace Server.MirDatabase
             {
                 WeatherParticles = (WeatherSetting)reader.ReadUInt16();
             }
+
+            if (Envir.LoadVersion >= 111)
+            {
+                GT = reader.ReadBoolean();
+                GTIndex = reader.ReadByte();
+            }
         }
 
         public void Save(BinaryWriter writer)
@@ -157,6 +163,9 @@ namespace Server.MirDatabase
 
             writer.Write((UInt16)WeatherParticles);
 
+            writer.Write(GT);
+            writer.Write(GTIndex);
+
         }
 
 
@@ -211,7 +220,7 @@ namespace Server.MirDatabase
 
             if (data.Length < 8) return;
 
-            MapInfo info = new MapInfo { FileName = data[0], Title = data[1] };
+            MapInfo info = new MapInfo {FileName = data[0], Title = data[1]};
 
 
             if (!ushort.TryParse(data[2], out info.MiniMap)) return;

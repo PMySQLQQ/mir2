@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
 using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
@@ -87,7 +89,7 @@ namespace Server.MirObjects.Monsters
                 return;
             }
 
-            bool hasPoisonBuff = (Buffs.Where(x => x.Type == BuffType.毒魔闪).ToList().Count() > 0);
+            bool hasPoisonBuff = (Buffs.Where(x => x.Type == BuffType.PoisonShot).ToList().Count() > 0);
 
 
             if (hasPoisonBuff && Envir.Random.Next(2) == 0)
@@ -126,7 +128,7 @@ namespace Server.MirObjects.Monsters
                                     Value = damage / 25 + 4,
                                 }, this);
                                 targetob.OperateTime = 0;
-                                RemoveBuff(BuffType.毒魔闪);
+                                RemoveBuff(BuffType.PoisonShot);
                             }
                         }
                     }
@@ -140,7 +142,7 @@ namespace Server.MirObjects.Monsters
             {
                 if (!hasPoisonBuff)
                 {
-                    Target.AddBuff(BuffType.毒魔闪, Target, Settings.Second * 10, new Stats());
+                    Target.AddBuff(BuffType.PoisonShot, Target, Settings.Second * 10, new Stats());
                 }
             }
 
@@ -291,7 +293,7 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < Buffs.Count; i++)
                 {
-                    if (Buffs[i].Type != BuffType.隐身术) continue;
+                    if (Buffs[i].Type != BuffType.Hiding) continue;
 
                     Buffs[i].ExpireTime = 0;
                     break;
@@ -375,8 +377,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = MirClass.弓箭,
-                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.男性 : MirGender.女性,
+                Class = MirClass.Archer,
+                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.Male : MirGender.Female,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)Envir.Random.Next(0, 5),

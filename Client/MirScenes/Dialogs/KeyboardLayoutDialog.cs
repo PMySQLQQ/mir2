@@ -42,7 +42,7 @@ namespace Client.MirScenes.Dialogs
 
             PageLabel = new MirLabel
             {
-                Text = "键盘设置",
+                Text = "Keyboard Settings",
                 Font = new Font(Settings.FontName, Settings.FontSize + 2, FontStyle.Bold),
                 DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
                 Parent = this,
@@ -160,7 +160,7 @@ namespace Client.MirScenes.Dialogs
 
                 UpdateText();
 
-                MirMessageBox messageBox = new MirMessageBox("键盘已重置为默认", MirMessageBoxButtons.OK);
+                MirMessageBox messageBox = new MirMessageBox("Keyboard settings have been reset back to default.", MirMessageBoxButtons.OK);
                 messageBox.Show();
             };
 
@@ -192,7 +192,7 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Location = new Point(120, 404),
                 AutoSize = true,
-                Text = "设定规则: 常规"
+                Text = "Assign Rule: Strict"
             };
 
             UpdateText();
@@ -204,8 +204,8 @@ namespace Client.MirScenes.Dialogs
 
             EnforceButtonChecked.Visible = Enforce;
 
-            if (Enforce) EnforceButtonLabel.Text = "指定规则：常规";
-            else EnforceButtonLabel.Text = "指定规则：自定义";
+            if (Enforce) EnforceButtonLabel.Text = "Assign Rule: Strict";
+            else EnforceButtonLabel.Text = "Assign Rule: Relaxed";
         }
 
         public void UpdateText()

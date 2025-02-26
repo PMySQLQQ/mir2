@@ -6,7 +6,7 @@ namespace Server.MirObjects.Monsters
 {
     public class FrozenMagician : MonsterObject
     {
-        private const byte AttackRange = 7;
+        private const byte AttackRange = 9;
 
         protected internal FrozenMagician(MonsterInfo info)
             : base(info)

@@ -40,7 +40,7 @@ namespace Server
         public static string VersionPath = Path.Combine(".", "Mir2.Exe");
         public static bool CheckVersion = true;
         public static List<byte[]> VersionHashes;
-        public static string GMPassword = "@9396399";
+        public static string GMPassword = "C#Mir 4.0";
         public static bool Multithreaded = true;
         public static int ThreadLimit = 2;
         public static bool TestServer = false;
@@ -61,7 +61,7 @@ namespace Server
 
         public static ushort Port = 7000,
                              TimeOut = 10000,
-                             MaxUser = 500,
+                             MaxUser = 50,
                              RelogDelay = 50,
                              MaxIP = 5,
                              MaxPacket = 50;
@@ -99,6 +99,7 @@ namespace Server
 
         //Game
         public static List<long> ExperienceList = new List<long>();
+        public static List<long> HeroExperienceList = new List<long>();
         public static List<long> OrbsExpList = new List<long>();
         public static List<long> OrbsDefList = new List<long>();
         public static List<long> OrbsDmgList = new List<long>();
@@ -120,66 +121,60 @@ namespace Server
                           RestedMaxBonus = 24,
                           NewbieGuildMaxSize = 1000;
 
-        public static string NewbieGuild = "新人公会",
-                             SkeletonName = "变异骷髅",
-                             ShinsuName = "神兽",
-                             BugBatName = "小蝙蝠",
-                             Zuma1 = "祖玛雕像",
-                             Zuma2 = "祖玛卫士",
-                             Zuma3 = "祖玛弓箭手",
-                             Zuma4 = "楔蛾",
-                             Zuma5 = "祖玛弓箭手3",
-                             Zuma6 = "祖玛雕像3",
-                             Zuma7 = "祖玛卫士3",
-                             Turtle1 = "红龟",
-                             Turtle2 = "绿龟",
-                             Turtle3 = "蓝龟",
-                             Turtle4 = "塔龟",
-                             Turtle5 = "寿龟",
-                             BoneMonster1 = "骷髅士兵",
-                             BoneMonster2 = "骷髅武士",
-                             BoneMonster3 = "骷髅弓箭手",
-                             BoneMonster4 = "骷髅武将",
-                             BehemothMonster1 = "抱脸虫1",
-                             BehemothMonster2 = "抱脸虫2",
-                             BehemothMonster3 = "抱脸虫3",
-                             HellKnight1 = "玄冰守护将",
-                             HellKnight2 = "魔焰守护将",
-                             HellKnight3 = "暗黑守护将",
-                             HellKnight4 = "光明守护将",
-                             HellBomb1 = "冰弹",
-                             HellBomb2 = "雷弹",
-                             HellBomb3 = "焰弹",
-                             WhiteSnake = "白蛇",
-                             AngelName = "月灵",
-                             BombSpiderName = "炸弹蜘蛛",
+        public static string NewbieGuild = "NewbieGuild",
+                             SkeletonName = "BoneFamiliar",
+                             ShinsuName = "Shinsu",
+                             BugBatName = "BugBat",
+                             Zuma1 = "ZumaStatue",
+                             Zuma2 = "ZumaGuardian",
+                             Zuma3 = "ZumaArcher",
+                             Zuma4 = "WedgeMoth",
+                             Zuma5 = "ZumaArcher3",
+                             Zuma6 = "ZumaStatue3",
+                             Zuma7 = "ZumaGuardian3",
+                             Turtle1 = "RedTurtle",
+                             Turtle2 = "GreenTurtle",
+                             Turtle3 = "BlueTurtle",
+                             Turtle4 = "TowerTurtle",
+                             Turtle5 = "FinialTurtle",
+                             BoneMonster1 = "BoneSpearman",
+                             BoneMonster2 = "BoneBlademan",
+                             BoneMonster3 = "BoneArcher",
+                             BoneMonster4 = "BoneCaptain",
+                             BehemothMonster1 = "Hugger",
+                             BehemothMonster2 = "PoisonHugger",
+                             BehemothMonster3 = "MutatedHugger",
+                             HellKnight1 = "HellKnight1",
+                             HellKnight2 = "HellKnight2",
+                             HellKnight3 = "HellKnight3",
+                             HellKnight4 = "HellKnight4",
+                             HellBomb1 = "HellBomb1",
+                             HellBomb2 = "HellBomb2",
+                             HellBomb3 = "HellBomb3",
+                             WhiteSnake = "WhiteSerpent",
+                             AngelName = "HolyDeva",
+                             BombSpiderName = "BombSpider",
                              CloneName = "Clone",
                              AssassinCloneName = "AssassinClone",
-                             StoneName = "蜘蛛柱", //弓箭技能：地柱钉-怪物：蜘蛛柱
-                             VampireName = "血蛛",
-                             ToadName = "火蟾",
-                             SnakeTotemName = "蛇柱",
-                             SnakesName = "魅蛇",
-                             AncientBatName = "恶魔蝙蝠",
-                             TucsonGeneralEgg = "瘟疫统领",
-                             GeneralMeowMeowMob1 = "铁锤猫卫",
-                             GeneralMeowMeowMob2 = "黑锤猫卫",
-                             GeneralMeowMeowMob3 = "陵庙刀卫",
-                             GeneralMeowMeowMob4 = "陵庙巫师",
-                             KingHydraxMob = "大蟒",
-                             Mon409BMob1 = "魔风旋",
-                             Mon409BMob2 = "魔角大巫",
-                             Mon409BBombMob = "岩弹",
-                             SnowWolfKingMob = "雪狼",
-                             CallScrollMob = "冰蛇",
-                             ShardMaidenMob1 = "地宫勇士",
-                             ShardMaidenMob2 = "地宫修道者",
-                             ShardMaidenMob3 = "冰封学者",
-                             ShardMaidenMob4 = "冰封贤者",
-                             Mon570BMob = "江白1",
-                             Mon573BMob = "飞燕魔蛛",
-                             Mon580BMob = "冰墙1",
-                             Mon603BMob = "变异骨怪",
+                             VampireName = "VampireSpider",
+                             ToadName = "SpittingToad",
+                             SnakeTotemName = "SnakeTotem",
+                             SnakesName = "CharmedSnake",
+                             AncientBatName = "AncientBat",
+                             TucsonGeneralEgg = "GeneralTucson",
+                             GeneralMeowMeowMob1 = "StainHammerCat",
+                             GeneralMeowMeowMob2 = "BlackHammerCat",
+                             GeneralMeowMeowMob3 = "StrayCat",
+                             GeneralMeowMeowMob4 = "CatShaman",
+                             KingHydraxMob = "Hydrax",
+                             HornedCommanderMob = "HornedSorceror",
+                             HornedCommanderBombMob = "BoulderSpirit",
+                             SnowWolfKingMob = "SnowWolf",
+                             ScrollMob1 = "WarriorScroll",
+                             ScrollMob2 = "TaoistScroll",
+                             ScrollMob3 = "WizardScroll",
+                             ScrollMob4 = "AssassinScroll",
+                             StoneName = "StoneTrap",
                              HeroName = "Hero";
 
         public static string HealRing = "Healing",
@@ -194,7 +189,7 @@ namespace Server
         public static uint MaxDropGold = 2000;
         public static bool DropGold = true;
 
-        public static string CreatureBlackStoneName = "蓝色生物石";
+        public static string CreatureBlackStoneName = "BlackCreatureStone";
 
         //Fishing Settings
         public static int FishingAttempts = 30;
@@ -202,7 +197,7 @@ namespace Server
         public static int FishingSuccessMultiplier = 10;
         public static long FishingDelay = 0;
         public static int FishingMobSpawnChance = 5;
-        public static string FishingMonster = "巨型多角虫";
+        public static string FishingMonster = "GiantKeratoid";
 
         //Mail Settings
         public static bool MailAutoSendGold = false;
@@ -223,7 +218,7 @@ namespace Server
         public static byte RefineItemStatReduce = 15;
         public static int RefineCost = 125;
 
-        public static string RefineOreName = "黑色铁矿石";
+        public static string RefineOreName = "BlackIronOre";
 
         //Marriage Settings
         public static int LoverEXPBonus = 5;
@@ -251,7 +246,7 @@ namespace Server
         public static uint GoodsBuyBackMaxStored = 20;
         public static bool GoodsHideAddedStats = true;
 
-        public static BaseStats[] ClassBaseStats = new BaseStats[5] { new BaseStats(MirClass.战士), new BaseStats(MirClass.法师), new BaseStats(MirClass.道士), new BaseStats(MirClass.刺客), new BaseStats(MirClass.弓箭) };
+        public static BaseStats[] ClassBaseStats = new BaseStats[5] { new BaseStats(MirClass.Warrior), new BaseStats(MirClass.Wizard), new BaseStats(MirClass.Taoist), new BaseStats(MirClass.Assassin), new BaseStats(MirClass.Archer) };
 
         public static List<RandomItemStat> RandomItemStatsList = new List<RandomItemStat>();
         public static List<MineSet> MineSetList = new List<MineSet>();
@@ -305,6 +300,7 @@ namespace Server
         public static int ArchiveInactiveCharacterAfterMonths = 12;
         public static int ArchiveDeletedCharacterAfterMonths = 1;
 
+        public static int BuyGTGold = 10000000, ExtendGT = 1000000, GTDays = 30;
         public static void LoadVersion()
         {
             try
@@ -428,19 +424,13 @@ namespace Server
             GeneralMeowMeowMob3 = Reader.ReadString("Game", "GeneralMeowMeowMob3", GeneralMeowMeowMob3);
             GeneralMeowMeowMob4 = Reader.ReadString("Game", "GeneralMeowMeowMob4", GeneralMeowMeowMob4);
             KingHydraxMob = Reader.ReadString("Game", "KingHydraxMob", KingHydraxMob);
-            Mon409BMob1 = Reader.ReadString("Game", "Mon409BMob1", Mon409BMob1);
-            Mon409BMob2 = Reader.ReadString("Game", "Mon409BMob2", Mon409BMob2);
-            Mon409BBombMob = Reader.ReadString("Game", "Mon409BBombMob", Mon409BBombMob);
+            HornedCommanderMob = Reader.ReadString("Game", "HornedCommanderMob", HornedCommanderMob);
+            HornedCommanderBombMob = Reader.ReadString("Game", "HornedCommanderBombMob", HornedCommanderBombMob);
             SnowWolfKingMob = Reader.ReadString("Game", "SnowWolfKingMob", SnowWolfKingMob);
-            CallScrollMob = Reader.ReadString("Game", "CallScrollMob", CallScrollMob);
-            ShardMaidenMob1 = Reader.ReadString("Game", "ShardMaidenMob1", ShardMaidenMob1);
-            ShardMaidenMob2 = Reader.ReadString("Game", "ShardMaidenMob2", ShardMaidenMob2);
-            ShardMaidenMob3 = Reader.ReadString("Game", "ShardMaidenMob3", ShardMaidenMob3);
-            ShardMaidenMob4 = Reader.ReadString("Game", "ShardMaidenMob4", ShardMaidenMob4);
-            Mon570BMob = Reader.ReadString("Game", "Mon570BMob", Mon570BMob);
-            Mon573BMob = Reader.ReadString("Game", "Mon573BMob", Mon573BMob);
-            Mon580BMob = Reader.ReadString("Game", "Mon580BMob", Mon580BMob);
-            Mon603BMob = Reader.ReadString("Game", "Mon603BMob", Mon603BMob);
+            ScrollMob1 = Reader.ReadString("Game", "ScrollMob1", ScrollMob1);
+            ScrollMob2 = Reader.ReadString("Game", "ScrollMob2", ScrollMob2);
+            ScrollMob3 = Reader.ReadString("Game", "ScrollMob3", ScrollMob3);
+            ScrollMob4 = Reader.ReadString("Game", "ScrollMob4", ScrollMob4);
             WhiteSnake = Reader.ReadString("Game", "WhiteSnake", WhiteSnake);
             AngelName = Reader.ReadString("Game", "AngelName", AngelName);
             BombSpiderName = Reader.ReadString("Game", "BombSpiderName", BombSpiderName);
@@ -561,6 +551,7 @@ namespace Server
 
             LoadVersion();
             LoadEXP();
+            LoadHeroEXP();
             LoadBaseStats();
             LoadRandomItemStats();
             LoadMines();
@@ -763,22 +754,14 @@ namespace Server
             Reader.Write("Game", "GeneralMeowMeowMob4", GeneralMeowMeowMob4);
 
             Reader.Write("Game", "KingHydraxMob", KingHydraxMob);
-            Reader.Write("Game", "Mon409BMob1", Mon409BMob1);
-            Reader.Write("Game", "Mon409BMob2", Mon409BMob2);
-            Reader.Write("Game", "Mon409BBombMob", Mon409BBombMob);
+            Reader.Write("Game", "HornedCommanderMob", HornedCommanderMob);
+            Reader.Write("Game", "HornedCommanderBombMob", HornedCommanderBombMob);
             Reader.Write("Game", "SnowWolfKingMob", SnowWolfKingMob);
 
-            Reader.Write("Game", "CallScrollMob", CallScrollMob);
-
-            Reader.Write("Game", "ShardMaidenMob1", ShardMaidenMob1);
-            Reader.Write("Game", "ShardMaidenMob2", ShardMaidenMob2);
-            Reader.Write("Game", "ShardMaidenMob3", ShardMaidenMob3);
-            Reader.Write("Game", "ShardMaidenMob4", ShardMaidenMob4);
-
-            Reader.Write("Game", "Mon570BMob", Mon570BMob);
-            Reader.Write("Game", "Mon573BMob", Mon573BMob);
-            Reader.Write("Game", "Mon580BMob", Mon580BMob);
-            Reader.Write("Game", "Mon603BMob", Mon603BMob);
+            Reader.Write("Game", "ScrollMob1", ScrollMob1);
+            Reader.Write("Game", "ScrollMob2", ScrollMob2);
+            Reader.Write("Game", "ScrollMob3", ScrollMob3);
+            Reader.Write("Game", "ScrollMob4", ScrollMob4);
 
             Reader.Write("IntelligentCreatures", "CreatureBlackStoneName", CreatureBlackStoneName);
 
@@ -819,8 +802,18 @@ namespace Server
                 OrbsDmgList.Add(exp);
             }
         }
+        public static void LoadHeroEXP()
+        {
+            long exp = 100;
+            InIReader reader = new InIReader(Path.Combine(ConfigPath, "HeroExpList.ini"));
 
-        public static void LoadWorldMap()
+            for (int i = 1; i <= 500; i++)
+            {
+                exp = reader.ReadInt64("Exp", "Level" + i, exp);
+                HeroExperienceList.Add(exp);
+            }
+        }
+            public static void LoadWorldMap()
         {
             InIReader reader = null;
             string path = Path.Combine(ConfigPath, "WorldMap.ini");
@@ -931,13 +924,13 @@ namespace Server
             if (!File.Exists(Path.Combine(ConfigPath, "RandomItemStats.ini")))
             {
                 RandomItemStatsList.Add(new RandomItemStat());
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.武器));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.盔甲));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.头盔));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.项链));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.手镯));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.戒指));
-                RandomItemStatsList.Add(new RandomItemStat(ItemType.腰带));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Weapon));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Armour));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Helmet));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Necklace));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Bracelet));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Ring));
+                RandomItemStatsList.Add(new RandomItemStat(ItemType.Belt));
                 SaveRandomItemStats();
                 return;
             }
@@ -1320,7 +1313,7 @@ namespace Server
                 Awake.AwakeChanceMax[i] = reader.ReadByte("Value", "ChanceMax_" + ((ItemGrade)(i + 1)).ToString(), Awake.AwakeChanceMax[i]);
             }
 
-            for (int i = 0; i < (int)AwakeType.生命法力值; i++)
+            for (int i = 0; i < (int)AwakeType.HPMP; i++)
             {
                 List<byte>[] value = new List<byte>[2];
 
@@ -1367,7 +1360,7 @@ namespace Server
 
             if (Awake.AwakeMaterials.Count == 0)
             {
-                for (int i = 0; i < (int)AwakeType.生命法力值; i++)
+                for (int i = 0; i < (int)AwakeType.HPMP; i++)
                 {
                     for (int j = 0; j < 4; j++)
                     {
@@ -1378,7 +1371,7 @@ namespace Server
             }
             else
             {
-                for (int i = 0; i < (int)AwakeType.生命法力值; i++)
+                for (int i = 0; i < (int)AwakeType.HPMP; i++)
                 {
                     List<byte>[] value = Awake.AwakeMaterials[i];
 

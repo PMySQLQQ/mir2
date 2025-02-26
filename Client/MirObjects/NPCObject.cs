@@ -172,8 +172,8 @@ namespace Client.MirObjects
 
             switch (CurrentAction)
             {
-                case MirAction.站立动作:
-                case MirAction.挖矿展示:
+                case MirAction.Standing:
+                case MirAction.Harvest:
                     if (CMain.Time >= NextMotion)
                     {
                         GameScene.Scene.MapControl.TextureValid = false;
@@ -231,9 +231,9 @@ namespace Client.MirObjects
             if (ActionFeed.Count == 0)
             {
                 if (CMain.Random.Next(2) == 0 && Frames.Count > 1)
-                    CurrentAction = MirAction.挖矿展示;  
+                    CurrentAction = MirAction.Harvest;  
                 else
-                    CurrentAction = MirAction.站立动作;
+                    CurrentAction = MirAction.Standing;
 
                 Frames.TryGetValue(CurrentAction, out Frame);
 
@@ -430,28 +430,28 @@ namespace Client.MirObjects
             if (quest.MinLevelNeeded > User.Level || quest.MaxLevelNeeded < User.Level)
                 return false;
 
-            if (!quest.ClassNeeded.HasFlag(RequiredClass.全职业))
+            if (!quest.ClassNeeded.HasFlag(RequiredClass.None))
             {
                 switch (User.Class)
                 {
-                    case MirClass.战士:
-                        if (!quest.ClassNeeded.HasFlag(RequiredClass.战士))
+                    case MirClass.Warrior:
+                        if (!quest.ClassNeeded.HasFlag(RequiredClass.Warrior))
                             return false;
                         break;
-                    case MirClass.法师:
-                        if (!quest.ClassNeeded.HasFlag(RequiredClass.法师))
+                    case MirClass.Wizard:
+                        if (!quest.ClassNeeded.HasFlag(RequiredClass.Wizard))
                             return false;
                         break;
-                    case MirClass.道士:
-                        if (!quest.ClassNeeded.HasFlag(RequiredClass.道士))
+                    case MirClass.Taoist:
+                        if (!quest.ClassNeeded.HasFlag(RequiredClass.Taoist))
                             return false;
                         break;
-                    case MirClass.刺客:
-                        if (!quest.ClassNeeded.HasFlag(RequiredClass.刺客))
+                    case MirClass.Assassin:
+                        if (!quest.ClassNeeded.HasFlag(RequiredClass.Assassin))
                             return false;
                         break;
-                    case MirClass.弓箭:
-                        if (!quest.ClassNeeded.HasFlag(RequiredClass.弓箭))
+                    case MirClass.Archer:
+                        if (!quest.ClassNeeded.HasFlag(RequiredClass.Archer))
                             return false;
                         break;
                 }

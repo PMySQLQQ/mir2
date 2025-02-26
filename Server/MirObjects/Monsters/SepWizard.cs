@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
@@ -35,7 +36,7 @@ namespace Server.MirObjects.Monsters
             ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
 
-            int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
+            int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
             if (damage == 0) return;
 
             Direction = Functions.DirectionFromPoint(CurrentLocation, Target.CurrentLocation);
@@ -214,7 +215,7 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < Buffs.Count; i++)
                 {
-                    if (Buffs[i].Type != BuffType.隐身术) continue;
+                    if (Buffs[i].Type != BuffType.Hiding) continue;
 
                     Buffs[i].ExpireTime = 0;
                     break;
@@ -298,8 +299,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = MirClass.法师,
-                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.男性 : MirGender.女性,
+                Class = MirClass.Wizard,
+                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.Male : MirGender.Female,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)Envir.Random.Next(0, 5),

@@ -110,6 +110,8 @@ namespace Server
                 LightningTextbox.Text = string.Empty;
                 MapDarkLighttextBox.Text = string.Empty;
                 //MineIndextextBox.Text = string.Empty;
+                GTBox.Checked = false;
+                GTIndexBox.Text = string.Empty;
                 return;
             }
 
@@ -127,7 +129,7 @@ namespace Server
             MineComboBox.SelectedIndex = mi.MineIndex;
             MusicTextBox.Text = mi.Music.ToString();
 
-            if (mi.WeatherParticles != WeatherSetting.无效果)
+            if (mi.WeatherParticles != WeatherSetting.None)
             {
                 for (int i = 0; i < lstParticles.Items.Count; i++)
                 {
@@ -168,6 +170,9 @@ namespace Server
             NoTownTeleportCheckbox.Checked = mi.NoTownTeleport;
             NoReincarnation.Checked = mi.NoReincarnation;
 
+            GTBox.Checked = mi.GT;
+            GTIndexBox.Text = mi.GTIndex.ToString();
+
             for (int i = 1; i < _selectedMapInfos.Count; i++)
             {
                 mi = _selectedMapInfos[i];
@@ -206,6 +211,9 @@ namespace Server
                 if (NeedBridleCheckbox.Checked != mi.NeedBridle) NeedBridleCheckbox.Checked = false;
                 if (NoTownTeleportCheckbox.Checked != mi.NoTownTeleport) NoTownTeleportCheckbox.Checked = false;
                 if (NoReincarnation.Checked != mi.NoReincarnation) NoReincarnation.Checked = false;
+
+                if (GTBox.Checked != mi.GT) GTBox.Checked = false;
+                if (GTIndexBox.Text != mi.GTIndex.ToString()) GTIndexBox.Text = string.Empty;
             }
 
             UpdateSafeZoneInterface();
@@ -620,7 +628,7 @@ namespace Server
         {
             if (_selectedMapInfos.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定的地图", "删除地图", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected maps?", "Remove Maps?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedMapInfos.Count; i++) Envir.Remove(_selectedMapInfos[i]);
 
@@ -714,7 +722,7 @@ namespace Server
         {
             if (_selectedSafeZoneInfos.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定的安全区", "删除安全区", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected SafeZones?", "Remove SafeZones?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedSafeZoneInfos.Count; i++) _info.SafeZones.Remove(_selectedSafeZoneInfos[i]);
 
@@ -800,7 +808,7 @@ namespace Server
         {
             if (_selectedRespawnInfos.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定的刷怪点", "删除刷怪点", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected Respawns?", "Remove Respawns?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedRespawnInfos.Count; i++) _info.Respawns.Remove(_selectedRespawnInfos[i]);
 
@@ -969,7 +977,7 @@ namespace Server
 
             if (!data.StartsWith("Respawn", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("无法粘贴，复制的数据不是刷怪点信息");
+                MessageBox.Show("Cannot Paste, Copied data is not Respawn Information.");
                 return;
             }
 
@@ -1001,7 +1009,7 @@ namespace Server
         {
             if (_selectedMovementInfos.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定的地图出入点", "删除地图出入点", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected Movements?", "Remove Movements?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedMovementInfos.Count; i++) _info.Movements.Remove(_selectedMovementInfos[i]);
 
@@ -1124,7 +1132,7 @@ namespace Server
 
             if (!data.StartsWith("Map", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("无法粘贴，复制的数据不是有效信息");
+                MessageBox.Show("Cannot Paste, Copied data is not Map Information.");
                 return;
             }
 
@@ -1325,7 +1333,7 @@ namespace Server
         {
             if (_selectedMineZones.Count == 0) return;
 
-            if (MessageBox.Show("是否删除选定矿区", "删除矿区", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to remove the selected MineZones?", "Remove MineZones?", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             for (int i = 0; i < _selectedMineZones.Count; i++) _info.MineZones.Remove(_selectedMineZones[i]);
             UpdateMineZoneInterface();
@@ -1433,7 +1441,6 @@ namespace Server
 
             MirForms.ConvertMapInfo.End();
             UpdateInterface(true);
-            MessageBox.Show("地图数据导入完成");
 
         }
         private void ExportMapInfoButton_Click(object sender, EventArgs e)
@@ -1442,7 +1449,7 @@ namespace Server
 
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.InitialDirectory = Path.Combine(Application.StartupPath, "Exports");
-            sfd.FileName = "1_地图数据";
+            sfd.FileName = "MapInfoExport";
             sfd.Filter = "Text File|*.txt";
             sfd.ShowDialog();
 
@@ -1502,7 +1509,7 @@ namespace Server
                     }
                 }
             }
-            MessageBox.Show("地图数据导出完成");
+            MessageBox.Show("Map Info Export Complete");
         }
         private String PrintMapAttributes(MapInfo map)
         {
@@ -1525,6 +1532,7 @@ namespace Server
             if (map.Fire) textOut += " FIRE(" + map.FireDamage + ")";
             if (map.Lightning) textOut += " LIGHTNING(" + map.LightningDamage + ")";
             if (map.NoTownTeleport) textOut += " NOTownTeleport";
+            if (map.GT) textOut += " GT(" + map.GTIndex + ")";
             return textOut;
         }
         private void ImportMonGenButton_Click(object sender, EventArgs e)
@@ -1570,7 +1578,7 @@ namespace Server
             if (!hasImported) return;
 
             UpdateInterface(true);
-            MessageBox.Show("刷怪数据导入完成");
+            MessageBox.Show("MonGen Import complete");
         }
         private void ExportMonGenButton_Click(object sender, EventArgs e)
         {
@@ -1578,7 +1586,6 @@ namespace Server
 
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.InitialDirectory = Path.Combine(Application.StartupPath, "Exports");
-            sfd.FileName = "6_刷怪数据";
             sfd.Filter = "Text File|*.txt";
             sfd.ShowDialog();
 
@@ -1608,7 +1615,7 @@ namespace Server
                     }
                 }
             }
-            MessageBox.Show("刷怪数据导出完成");
+            MessageBox.Show("MonGen Export complete");
         }
 
         private void VisualizerButton_Click(object sender, EventArgs e)
@@ -1824,19 +1831,19 @@ namespace Server
             RefreshMovementList();
         }
 
-        private void LstParticles_SelectedIndexChanged(object sender, EventArgs e)
+        private void lstParticles_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ActiveControl != sender) return;
 
-            WeatherSetting newvalue = WeatherSetting.无效果;
+            WeatherSetting newvalue = WeatherSetting.None;
             foreach (WeatherSetting item in lstParticles.SelectedItems)
                 newvalue = newvalue | item;
-
 
             for (int i = 0; i < _selectedMapInfos.Count; i++)
             {
                 _selectedMapInfos[i].WeatherParticles = newvalue;
             }
+            //UpdateInterface(true); This isn't needed
         }
 
         private void MapSearchButton_Click(object sender, EventArgs e)
@@ -1846,5 +1853,31 @@ namespace Server
 
             UpdateInterface(true);
         }
+
+        #region GT
+        private void GTBox_CheckedChanged(object sender, EventArgs e)
+        {
+            {
+                if (ActiveControl != sender) return;
+
+                for (int i = 0; i < _selectedMapInfos.Count; i++)
+                    _selectedMapInfos[i].GT = GTBox.Checked;
+            }
+        }
+
+        private void GTIndexBox_TextChanged(object sender, EventArgs e)
+        {
+            if (ActiveControl != sender) return;
+            if (!byte.TryParse(ActiveControl.Text, out byte temp))
+            {
+                ActiveControl.BackColor = Color.Red;
+                return;
+            }
+            ActiveControl.BackColor = SystemColors.Window;
+
+            for (int i = 0; i < _selectedMapInfos.Count; i++)
+                _selectedMapInfos[i].GTIndex = temp;
+        }
     }
+    #endregion
 }

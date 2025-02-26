@@ -34,43 +34,43 @@ namespace Client.MirScenes.Dialogs
             Sort = true;
             Location = new Point((Settings.ScreenWidth - Size.Width) - 150, 5);
 
-            //TitleLabel = new MirImageControl
-            //{
-            //    Index = 7,
-            //    Library = Libraries.Title,
-            //    Location = new Point(18, 9),
-            //    Parent = this
-            //};
+            TitleLabel = new MirImageControl
+            {
+                Index = 7,
+                Library = Libraries.Title,
+                Location = new Point(18, 9),
+                Parent = this
+            };
 
-            //TitleTypeLabel = new MirLabel
-            //{
-            //    Text = "类型",
-            //    Parent = this,
-            //    Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
-            //    DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
-            //    Size = new Size(37, 19),
-            //    Location = new Point(8, 34)
-            //};
+            TitleTypeLabel = new MirLabel
+            {
+                Text = "TYPE",
+                Parent = this,
+                Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
+                DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
+                Size = new Size(37, 19),
+                Location = new Point(8, 34)
+            };
 
-            //TitleSenderLabel = new MirLabel
-            //{
-            //    Text = "发件人",
-            //    Parent = this,
-            //    Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
-            //    DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
-            //    Size = new Size(132, 19),
-            //    Location = new Point(47, 34)
-            //};
+            TitleSenderLabel = new MirLabel
+            {
+                Text = "SENDER",
+                Parent = this,
+                Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
+                DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
+                Size = new Size(132, 19),
+                Location = new Point(47, 34)
+            };
 
-            //TitleMessageLabel = new MirLabel
-            //{
-            //    Text = "信息",
-            //    Parent = this,
-            //    Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
-            //    DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
-            //    Size = new Size(122, 19),
-            //    Location = new Point(181, 34)
-            //};
+            TitleMessageLabel = new MirLabel
+            {
+                Text = "MESSAGE",
+                Parent = this,
+                Font = new Font(Settings.FontName, Settings.FontSize - 1, FontStyle.Italic),
+                DrawFormat = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter,
+                Size = new Size(122, 19),
+                Location = new Point(181, 34)
+            };
 
             CloseButton = new MirButton
             {
@@ -237,7 +237,7 @@ namespace Client.MirScenes.Dialogs
 
                 if (SelectedMail.Items.Count > 0 || SelectedMail.Gold > 0)
                 {
-                    MirMessageBox messageBox = new MirMessageBox("确定要删除邮件中的物品或金币？", MirMessageBoxButtons.YesNo);
+                    MirMessageBox messageBox = new MirMessageBox("This parcel contains items or gold. Are you sure you want to delete it?", MirMessageBoxButtons.YesNo);
 
                     messageBox.YesButton.Click += (o1, e1) =>
                     {
@@ -277,7 +277,7 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Location = new Point(210, 414),
                 Sound = SoundList.ButtonA,
-                Hint = "提交BUG",
+                Hint = "Report Bug",
                 GrayScale = true,
                 Enabled = false
             };
@@ -627,7 +627,7 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Font = new Font(Settings.FontName, 8F),
                 ForeColour = Color.White,
-                Location = new Point(70, 32),
+                Location = new Point(70, 35),
                 Size = new Size(150, 15),
                 NotControl = true,
             };
@@ -809,7 +809,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (GameScene.SelectedCell == null && GameScene.Gold > 0)
                 {
-                    MirAmountBox amountBox = new MirAmountBox("发送数量:", 116, GameScene.Gold);
+                    MirAmountBox amountBox = new MirAmountBox("Send Amount:", 116, GameScene.Gold);
 
                     amountBox.OKButton.Click += (c, a) =>
                     {
@@ -901,7 +901,7 @@ namespace Client.MirScenes.Dialogs
                 for (int i = 0; i < GameScene.User.Inventory.Length; i++)
                 {
                     UserItem item = GameScene.User.Inventory[i];
-                    if (item == null || item.Info.Type != ItemType.杂物 || item.Info.Shape != 1) continue;
+                    if (item == null || item.Info.Type != ItemType.Nothing || item.Info.Shape != 1) continue;
 
                     Stamped = true;
                     break;

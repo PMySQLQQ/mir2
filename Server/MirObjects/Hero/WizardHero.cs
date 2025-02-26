@@ -23,14 +23,14 @@ namespace Server.MirObjects
             if (Target != null)
             {
                 UserMagic magic = GetMagic(Spell.MagicShield);
-                if (CanUseMagic(magic) && !HasBuff(BuffType.魔法盾))
+                if (CanUseMagic(magic) && !HasBuff(BuffType.MagicShield))
                 {
                     BeginMagic(magic.Spell, Direction, ObjectID, CurrentLocation);
                     return;
                 }
 
                 magic = GetMagic(Spell.MagicBooster);
-                if (CanUseMagic(magic) && !HasBuff(BuffType.深延术))
+                if (CanUseMagic(magic) && !HasBuff(BuffType.MagicBooster))
                 {
                     BeginMagic(magic.Spell, Direction, ObjectID, CurrentLocation);
                     return;
@@ -170,7 +170,7 @@ namespace Server.MirObjects
                 return;
             }
 
-            if (CanMove && ((!CanCast || NextMagicSpell == Spell.None) && Owner.Info.HeroBehaviour == HeroBehaviour.反击))
+            if (CanMove && ((!CanCast || NextMagicSpell == Spell.None) && Owner.Info.HeroBehaviour == HeroBehaviour.CounterAttack))
             {
                 MoveTo(Owner.Back);
                 return;
@@ -184,7 +184,7 @@ namespace Server.MirObjects
                 NextMagicSpell = Spell.None;
             }            
 
-            if (CanAttack && (!HasRangedSpell && InAttackRange() || NextMagicSpell == Spell.None && Owner.Info.HeroBehaviour == HeroBehaviour.攻击 && TargetDistance == 1))
+            if (CanAttack && (!HasRangedSpell && InAttackRange() || NextMagicSpell == Spell.None && Owner.Info.HeroBehaviour == HeroBehaviour.Attack && TargetDistance == 1))
             {
                 Attack();
 
@@ -196,7 +196,7 @@ namespace Server.MirObjects
                 return;
             }
 
-            if (CanMove && (!HasRangedSpell || NextMagicSpell == Spell.None && Owner.Info.HeroBehaviour == HeroBehaviour.攻击 && TargetDistance > 1))
+            if (CanMove && (!HasRangedSpell || NextMagicSpell == Spell.None && Owner.Info.HeroBehaviour == HeroBehaviour.Attack && TargetDistance > 1))
                 MoveTo(Target.CurrentLocation);
         }
 

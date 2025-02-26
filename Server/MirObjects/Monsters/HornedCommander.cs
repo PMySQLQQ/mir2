@@ -1,49 +1,58 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
 {
-    public class Mon409B : MonsterObject
-    {
-        protected internal Mon409B(MonsterInfo info)
-            : base(info)
-        {
-        }
-        protected override bool InAttackRange()
-        {
-            return CurrentMap == Target.CurrentMap && Functions.InRange(CurrentLocation, Target.CurrentLocation, 2);
-        }
+    /// <summary>
+    /// Attack1 - Basic melee attack
+    /// Attack2 - Basic melee attack alt
+    /// Attack3 - Charge up then Spin attack (between 5 and 10 damage multiplier) twice
+    /// Attack4 - Charge up then AOE rock fall (between 5 and 10 damage multiplier)
+    /// Attack5 - Immunity shield, Summons slave (Under 10% HP)
+    /// AttackRange1 - Teleport
+    /// AttackRange2 - Hammer smash AOE in front
+    /// AttackRange3 - Summon rock spikes (Between 10% - 30% HP)
+    /// Summons Rock Slaves
+    /// </summary>
 
+    public class HornedCommander : MonsterObject
+    {
         private bool _StartAdvanced;
         private bool _Immune;
 
-        private Point MapCentre
+        private Point _MapCentre
         {
             get
             {
                 if (CurrentMap == null) return Point.Empty;
 
-                int x = Math.Abs(CurrentLocation.X);
-                int y = Math.Abs(CurrentLocation.Y);
-
-                return new Point(x + 2, y);
+                //Should be spawned on "HY01_morae_chon". Change me to correct centre if its spawned on another map.
+                return new Point(26, 32);
             }
         }
 
+        //Phase 0
         private readonly byte _BoulderHealthPercent = 80;
         private bool _CalledBoulders, _StartedBoulderWalk;
 
+        //Phase 1
         private readonly byte _RockHealthPercent = 50;
         private bool _CalledRockSpikes;
         private long _RockSpikeTime;
-        private readonly Point[,] _RockSpikeArea = new Point[5, 5];
+        private readonly Point[,] _RockSpikeArea = new Point[7, 7];
         private readonly List<SpellObject> _RockSpikeEffects = new List<SpellObject>();
 
-        private readonly byte _ShieldHealthPercent = 20;
+        //Phase 2
+        private readonly byte _ShieldHealthPercent = 10;
         private bool _CalledShield;
         private readonly byte _ShieldSeconds = 20;
+
+        protected internal HornedCommander(MonsterInfo info)
+            : base(info)
+        {
+        }
 
         public override bool IsAttackTarget(MonsterObject attacker)
         {
@@ -60,48 +69,22 @@ namespace Server.MirObjects.Monsters
             if ((HealthPercent < _BoulderHealthPercent || _StartedBoulderWalk) && !_CalledBoulders)
             {
                 _StartedBoulderWalk = true;
-
-                Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
                 SpawnBoulder();
-
-                DelayedAction action = new DelayedAction(DelayedType.Spawn, Envir.Time + 3000);
-                ActionList.Add(action);
             }
 
             if (_Immune) return;
 
-            if (HealthPercent < _ShieldHealthPercent && !_CalledShield && (HP > 0))
+            if (HealthPercent < _ShieldHealthPercent && !_CalledShield)
             {
                 KillRockSpikes();
-                KillSlaves();
 
-                var stats = new Stats
-                {
-                };
                 _CalledShield = true;
                 _Immune = true;
 
-                Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2, Level = _ShieldSeconds });
+                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 4, Level = _ShieldSeconds });
 
-                int x = Math.Abs(CurrentLocation.X);
-                int y = Math.Abs(CurrentLocation.Y);
+                AddBuff(BuffType.HornedCommanderShield, this, Settings.Second * _ShieldSeconds, new Stats());
 
-                var spellObj = new SpellObject
-                {
-
-                    Spell = Spell.Mon409BShield,
-                    ExpireTime = Envir.Time + Settings.Second * _ShieldSeconds,
-                    TickSpeed = 1000,
-                    Caster = this,
-                    CurrentLocation = new Point(x, y),
-                    CurrentMap = CurrentMap,
-                    Direction = MirDirection.Up
-                };
-
-                DelayedAction action = new DelayedAction(DelayedType.Spawn, Envir.Time + 2000, spellObj);
-                CurrentMap.ActionList.Add(action);
-
-                AddBuff(BuffType.Mon409BShieldBuff, this, Settings.Second * 12, stats);
                 SpawnSlave();
                 return;
             }
@@ -110,10 +93,10 @@ namespace Server.MirObjects.Monsters
             {
                 if (!_CalledRockSpikes)
                 {
-                    Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
-
                     SetupRockSpike();
+
                     _CalledRockSpikes = true;
+                    Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2 });
                 }
             }
 
@@ -153,6 +136,16 @@ namespace Server.MirObjects.Monsters
             KillSlaves();
         }
 
+        protected override void ProcessBuffEnd(Buff buff)
+        {
+            if (buff.Type == BuffType.HornedCommanderShield)
+            {
+                _Immune = false;
+                AttackTime = Envir.Time + AttackSpeed;
+                ActionTime = Envir.Time + 300;
+            }
+        }
+
         protected override void ProcessTarget()
         {
             if (Target == null || !CanAttack) return;
@@ -186,136 +179,134 @@ namespace Server.MirObjects.Monsters
                 return;
             }
 
-            ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
             ShockTime = 0;
 
             Direction = Functions.DirectionFromPoint(CurrentLocation, Target.CurrentLocation);
 
-            switch (Envir.Random.Next(3))
+            //Charge-Up AOE Rock Fall
+            if (_StartAdvanced && Envir.Random.Next(20) == 0)
             {
-                case 0:
-                    {
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
+                byte rockFallLoops = (byte)Envir.Random.Next(5, 10);
+                int rockFallDuration = rockFallLoops * 500;
 
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-                        if (damage == 0) return;
+                _Immune = true;
+                ActionTime = Envir.Time + (rockFallDuration) + 500;
+                AttackTime = Envir.Time + (rockFallDuration) + 500 + AttackSpeed;
 
-                        HalfmoonAttack(damage);
-                        DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 6000, Target, damage, DefenceType.ACAgility, false);
-                        ActionList.Add(action);
-                    }
-                    break;
-                case 1:
-                    {
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
+                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 3, Level = rockFallLoops });
 
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-                        if (damage == 0) return;
+                var front = Functions.PointMove(CurrentLocation, Direction, 2);
 
-                        TriangleAttack(damage, 3, 2, 500, DefenceType.ACAgility, false);
-                        DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 6000, Target, damage, DefenceType.ACAgility, false);
-                        ActionList.Add(action);
-                    }
-                    break;
-                case 2:
-                    {
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 3 });
+                MassSpawnRockFall(front, rockFallDuration);
 
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-                        if (damage == 0) return;
+                int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]) * rockFallLoops;
 
-                        WideLineAttack(damage, 3, 500, DefenceType.ACAgility, false, 3);
-                        DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 30000, Target, damage, DefenceType.ACAgility, false);
-                        ActionList.Add(action);
-                    }
-                    break;
+                DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + (rockFallDuration) + 500, Target, damage, DefenceType.AC, 5);
+                ActionList.Add(action);
+
+                return;
             }
 
-            if (_StartAdvanced && Envir.Random.Next(45) == 0)
+            //Charge-Up Spin Hit
+            if (_StartAdvanced && Envir.Random.Next(15) == 0)
             {
-                byte spinLoops = (byte)Envir.Random.Next(6, 8);
-                int spinDuration = spinLoops * 500;
-                _Immune = true;
-                ActionTime = Envir.Time + spinDuration + 500;
-                AttackTime = Envir.Time + spinDuration + 500 + AttackSpeed;
+                byte spinLoops = (byte)Envir.Random.Next(5, 10);
+                int spinDuration = spinLoops * 700;
 
-                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2, Level = (byte)(spinLoops - 6) });
+                _Immune = true;
+                ActionTime = Envir.Time + spinDuration + 1500;
+                AttackTime = Envir.Time + spinDuration + 1500 + AttackSpeed;
+
+                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 2, Level = spinLoops });
 
                 int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]) * spinLoops;
-                if (damage == 0) return;
 
-                FullmoonAttack(damage, 600, DefenceType.ACAgility, -1, 2);
-                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + (spinDuration) + 20000, Target, damage, DefenceType.AC, false);
+                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + spinDuration + 500, Target, damage, DefenceType.AC, true);
                 ActionList.Add(action);
 
-            }
-
-            if (_StartAdvanced && Envir.Random.Next(40) == 0)
-            {
-                byte HammerLoops = (byte)Envir.Random.Next(10, 12);
-                int HammerDuration = HammerLoops * 300;
-                _Immune = true;
-                ActionTime = Envir.Time + HammerDuration + 500;
-                AttackTime = Envir.Time + HammerDuration + 500 + AttackSpeed;
-
-                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 4, Level = (byte)(HammerLoops - 10) });
-
-                int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]) * HammerLoops;
-                if (damage == 0) return;
-
-                WideLineAttack(damage, 4, 500, DefenceType.ACAgility, false, 4);
-                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + (HammerDuration) + 20000, Target, damage, DefenceType.ACAgility, false);
+                action = new DelayedAction(DelayedType.Damage, Envir.Time + spinDuration + 1000, Target, damage, DefenceType.AC, true);
                 ActionList.Add(action);
+
+                return;
             }
 
-            if (_StartAdvanced && Envir.Random.Next(20) == 0)
+            //Hammer Smash
+            if (_StartAdvanced && Envir.Random.Next(10) == 0)
             {
                 Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
 
-                if (SlaveList.Count < 3)
-                {
-                    var mob = GetMonster(Envir.GetMonsterInfo(Settings.Mon409BMob1));
-                    if (mob != null)
-                    {
-                        Point back = Functions.PointMove(CurrentLocation, Functions.ReverseDirection(Direction), 1);
-                        if (!mob.Spawn(CurrentMap, back))
-                        {
-                            mob.Spawn(CurrentMap, CurrentLocation);
-                        }
-                        mob.Target = Target;
-                        mob.ActionTime = Envir.Time;
-                        SlaveList.Add(mob);
-                    }
-                }
+                int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+                if (damage == 0) return;
+
+                DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 300, Target, damage, DefenceType.AC, 3);
+                ActionList.Add(action);
+                return;
+            }
+            
+            //Teleport
+            if (_StartAdvanced && Envir.Random.Next(10) == 0)
+            {
+                Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
+
+                DelayedAction action = new DelayedAction(DelayedType.RangeDamage, Envir.Time + 300);
+                ActionList.Add(action);
+
+                return;
+            }
+
+            //Normal Attacks
+            if (Envir.Random.Next(2) == 0)
+            {
+                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
+
+                int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+                if (damage == 0) return;
+
+                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 500, Target, damage, DefenceType.ACAgility, false);
+                ActionList.Add(action);
+            }
+            else
+            {
+                Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
+
+                int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+                if (damage == 0) return;
+
+                DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 500, Target, damage, DefenceType.ACAgility, false);
+                ActionList.Add(action);
             }
         }
 
         protected override void CompleteAttack(IList<object> data)
         {
-            MapObject target = (MapObject)data[0];
-            int damage = (int)data[1];
-            DefenceType defence = (DefenceType)data[2];
-            bool aoe = data.Count >= 4 && (bool)data[3];
-
             _Immune = false;
 
-            if (target == null || !target.IsAttackTarget(this) || target.CurrentMap != CurrentMap || target.Node == null) return;
-
-            if (aoe)
+            if (data.Count > 0)
             {
-                var targets = FindAllTargets(2, CurrentLocation, false);
+                MapObject target = (MapObject)data[0];
+                int damage = (int)data[1];
+                DefenceType defence = (DefenceType)data[2];
+                bool aoe = (bool)data[3];
 
-                for (int i = 0; i < targets.Count; i++)
+                if (target == null || !target.IsAttackTarget(this) || target.CurrentMap != CurrentMap || target.Node == null) return;
+
+                if (aoe)
                 {
-                    targets[i].Attacked(this, damage, defence);
+                    var targets = FindAllTargets(3, CurrentLocation, false);
+
+                    for (int i = 0; i < targets.Count; i++)
+                    {
+                        targets[i].Attacked(this, damage, defence);
+                    }
+                }
+                else
+                {
+                    target.Attacked(this, damage, defence);
                 }
             }
-            else
-            {
-                target.Attacked(this, damage, defence);
-            }
         }
+
         protected override void CompleteRangeAttack(IList<object> data)
         {
             _Immune = false;
@@ -343,12 +334,9 @@ namespace Server.MirObjects.Monsters
                 Target = null;
             }
         }
+
         public override bool TeleportRandom(int attempts, int distance, Map temp = null)
         {
-            Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
-            DelayedAction action = new DelayedAction(DelayedType.MapMovement, Envir.Time + 500, this);
-            ActionList.Add(action);
-
             for (int i = 0; i < attempts; i++)
             {
                 Point location;
@@ -364,6 +352,65 @@ namespace Server.MirObjects.Monsters
 
             return false;
         }
+
+        private void MassSpawnRockFall(Point centerPoint, int duration)
+        {
+            int range = 15;
+
+            for (int x = -range; x < range; x+=10)
+            {
+                for (int y = -range; y < range; y += 10)
+                {
+                    var location = new Point(centerPoint.X + x, centerPoint.Y + y);
+
+                    SpawnRockFall(location, Envir.Random.Next(0, 200), duration);
+                }
+            }
+        }
+
+        private void SpawnRockFall(Point location, int offset, int duration)
+        {
+            if (Dead) return;
+
+            for (int y = location.Y - 10; y <= location.Y + 10; y++)
+            {
+                if (y < 0) continue;
+                if (y >= CurrentMap.Height) break;
+
+                for (int x = location.X - 10; x <= location.X + 10; x++)
+                {
+                    if (x < 0) continue;
+                    if (x >= CurrentMap.Width) break;
+
+                    if (x == CurrentLocation.X && y == CurrentLocation.Y) continue;
+
+                    var cell = CurrentMap.GetCell(x, y);
+
+                    if (!cell.Valid) continue;
+
+                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MinMC]);
+
+                    var start = 500 + offset;
+
+                    SpellObject ob = new SpellObject
+                    {
+                        Spell = Spell.HornedCommanderRockFall,
+                        Value = damage,
+                        ExpireTime = Envir.Time + duration + start,
+                        TickSpeed = 2000,
+                        CurrentLocation = new Point(x, y),
+                        CastLocation = location,
+                        Show = location.X == x && location.Y == y,
+                        CurrentMap = CurrentMap,
+                        Caster = this
+                    };
+
+                    DelayedAction action = new DelayedAction(DelayedType.Spawn, Envir.Time + start, ob);
+                    CurrentMap.ActionList.Add(action);
+                }
+            }
+        }
+
         private void SetupRockSpike()
         {
             var xLength = _RockSpikeArea.GetLength(0);
@@ -379,7 +426,7 @@ namespace Server.MirObjects.Monsters
             {
                 for (int y = 0; y < yLength; y++)
                 {
-                    var point = new Point(MapCentre.X + (actualX * 5), MapCentre.Y + (actualY * 5));
+                    var point = new Point(_MapCentre.X + (actualX * 5), _MapCentre.Y + (actualY * 5));
 
                     _RockSpikeArea[x, y] = point;
 
@@ -390,6 +437,7 @@ namespace Server.MirObjects.Monsters
                 actualX++;
             }
         }
+
         private bool SpawnRockSpikes()
         {
             var spawned = false;
@@ -423,6 +471,7 @@ namespace Server.MirObjects.Monsters
 
             return false;
         }
+
         private bool SpawnRockSpike(Point location)
         {
             var spawned = false;
@@ -446,13 +495,13 @@ namespace Server.MirObjects.Monsters
                         spawned = true;
                     }
 
-                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
+                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MinMC]);
 
                     var start = 500;
 
                     SpellObject ob = new SpellObject
                     {
-                        Spell = Spell.Mon409BRockSpike,
+                        Spell = Spell.HornedCommanderRockSpike,
                         Value = damage,
                         ExpireTime = Envir.Time + start + (Settings.Minute * 10),
                         TickSpeed = 1000,
@@ -472,18 +521,19 @@ namespace Server.MirObjects.Monsters
 
             return spawned;
         }
+
         private void SpawnBoulder()
         {
-            if (Functions.InRange(CurrentLocation, MapCentre, 20))
+            if (Functions.InRange(CurrentLocation, _MapCentre, 20))
             {
-                Teleport(CurrentMap, MapCentre, true, 10);
+                Teleport(CurrentMap, _MapCentre, true, 10);
             }
 
             _CalledBoulders = true;
 
             for (int i = 0; i < 8; i++)
             {
-                var mob = GetMonster(Envir.GetMonsterInfo(Settings.Mon409BBombMob));
+                var mob = GetMonster(Envir.GetMonsterInfo(Settings.HornedCommanderBombMob));
 
                 var odd = i % 2 != 0;
 
@@ -501,12 +551,13 @@ namespace Server.MirObjects.Monsters
                 }
             }
         }
+
         private void SpawnSlave()
         {
             ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
 
-            var mob = GetMonster(Envir.GetMonsterInfo(Settings.Mon409BMob2));
+            var mob = GetMonster(Envir.GetMonsterInfo(Settings.HornedCommanderMob));
 
             if (mob == null) return;
 
@@ -517,6 +568,7 @@ namespace Server.MirObjects.Monsters
             mob.ActionTime = Envir.Time;
             SlaveList.Add(mob);
         }
+
         private void KillRockSpikes()
         {
             _RockSpikeTime = long.MaxValue;
@@ -528,8 +580,10 @@ namespace Server.MirObjects.Monsters
 
             _RockSpikeEffects.Clear();
         }
+
         private void KillSlaves()
         {
+            //Kill Minions
             for (int i = SlaveList.Count - 1; i >= 0; i--)
             {
                 if (!SlaveList[i].Dead && SlaveList[i].Node != null)
@@ -538,6 +592,7 @@ namespace Server.MirObjects.Monsters
                 }
             }
         }
+
         public override void Die()
         {
             base.Die();
@@ -547,4 +602,3 @@ namespace Server.MirObjects.Monsters
         }
     }
 }
-

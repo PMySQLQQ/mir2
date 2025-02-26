@@ -1,89 +1,81 @@
-using System.Drawing;
 using Server.MirDatabase;
 using Server.MirEnvir;
-using S = ServerPackets;
 
 namespace Server.MirObjects.Monsters
 {
     public class GlacierWarrior : MonsterObject
     {
+        public virtual byte TeleportEffect { get { return 4; } }
 
         protected internal GlacierWarrior(MonsterInfo info)
             : base(info)
         {
         }
 
-        protected override void Attack()
+        public override int Attacked(HumanObject attacker, int damage, DefenceType type = DefenceType.ACAgility, bool damageWeapon = true)
         {
-            if (!Target.IsAttackTarget(this))
+            int attackerDamage = base.Attacked(attacker, damage, type, damageWeapon);
+
+            int ownDamage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+
+            if (attackerDamage > ownDamage && Envir.Random.Next(2) == 0)
             {
-                Target = null;
-                return;
+                FindWeakerTarget();
             }
 
-            ShockTime = 0;
-            Direction = Functions.DirectionFromPoint(CurrentLocation, Target.CurrentLocation);
+            return attackerDamage;
+        }
 
-            ActionTime = Envir.Time + 300;
-            AttackTime = Envir.Time + AttackSpeed;
+        public override int Attacked(MonsterObject attacker, int damage, DefenceType type = DefenceType.ACAgility)
+        {
+            int attackerDamage = base.Attacked(attacker, damage, type);
 
-            switch (Envir.Random.Next(2))
+            int ownDamage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
+
+            if (attackerDamage > ownDamage && Envir.Random.Next(2) == 0)
             {
-                case 0:
-                    {
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-                        if (damage == 0) return;
+                FindWeakerTarget();
+            }
 
-                        ThreeQuarterMoonAttack(damage);
+            return attackerDamage;
+        }
 
-                        DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 300, Target, damage, DefenceType.ACAgility);
-                        ActionList.Add(action);
-                    }
-                    break;
-                case 1:
-                    {
-                        Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 1 });
-                        int damage = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-                        if (damage == 0) return;
+        private void FindWeakerTarget()
+        {
+            List<MapObject> targets = FindAllTargets(Info.ViewRange, CurrentLocation);
 
-                        Thrust(Target);
+            if (targets.Count < 2) return;
 
-                        DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 300, Target, damage, DefenceType.ACAgility);
-                        ActionList.Add(action);
-                    }
-                    break;
+            var newTarget = Target;
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                if (targets[i].Stats[Stat.MinDC] >= Target.Stats[Stat.MinDC]) continue;
+
+                newTarget = targets[i];
+            }
+
+            if (newTarget != Target)
+            {
+                Target = newTarget;
+                TeleportToTarget(Target);
             }
         }
 
-        private void Thrust(MapObject target)
+        private bool TeleportToTarget(MapObject target)
         {
-            MirDirection jumpDir = Functions.DirectionFromPoint(CurrentLocation, target.CurrentLocation);
-            Point location;
+            Direction = Functions.DirectionFromPoint(CurrentLocation, target.CurrentLocation);
 
-            for (int i = 0; i < 2; i++)
+            var reverse = Functions.ReverseDirection(Direction);
+
+            var point = Functions.PointMove(target.CurrentLocation, reverse, 1);
+
+            if (point != CurrentLocation)
             {
-                location = Functions.PointMove(CurrentLocation, jumpDir, 1);
-                if (!CurrentMap.ValidPoint(location)) return;
-
-                CurrentMap.GetCell(CurrentLocation).Remove(this);
-                RemoveObjects(jumpDir, 1);
-                CurrentLocation = location;
-                CurrentMap.GetCell(CurrentLocation).Add(this);
-                AddObjects(jumpDir, 1);
-
-                int damage = Stats[Stat.MaxDC];
-
-                if (damage > 0)
-                    LineAttack(damage, 3, 300);
-                {
-                    DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 500, location, damage, DefenceType.AC);
-                    CurrentMap.ActionList.Add(action);
-                }
+                if (Teleport(CurrentMap, point, true, TeleportEffect)) return true;
             }
 
-            Broadcast(new S.ObjectDashAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Distance = 1 });
+            return false;
         }
     }
 }
-

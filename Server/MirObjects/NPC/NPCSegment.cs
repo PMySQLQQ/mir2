@@ -2,9 +2,12 @@ using System.Drawing;
 ﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using System.Globalization;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using S = ServerPackets;
 using Timer = Server.MirEnvir.Timer;
+using Server.MirNetwork;
+using Server.Library.MirDatabase;
 
 namespace Server.MirObjects
 {
@@ -299,23 +302,28 @@ namespace Server.MirObjects
 
                 case "HEROLEVEL":
                     if (parts.Length < 3) return;
+
                     CheckList.Add(new NPCChecks(CheckType.HeroLevel, parts[1], parts[2]));
                     break;
 
                 case "CHECKHEROCLASS":
                     if (parts.Length < 2) return;
+
                     CheckList.Add(new NPCChecks(CheckType.CheckHeroClass, parts[1]));
                     break;
 
                 case "CHECKHEROGENDER":
                     if (parts.Length < 2) return;
+
                     CheckList.Add(new NPCChecks(CheckType.CheckHeroGender, parts[1]));
                     break;
 
                 case "CHECKHEROITEM":
                     if (parts.Length < 2) return;
+
                     tempString = parts.Length < 3 ? "1" : parts[2];
                     tempString2 = parts.Length > 3 ? parts[3] : "";
+
                     CheckList.Add(new NPCChecks(CheckType.CheckHeroItem, parts[1], tempString, tempString2));
                     break;
 
@@ -403,18 +411,14 @@ namespace Server.MirObjects
 
                     CheckList.Add(new NPCChecks(CheckType.CheckTimer, parts[1], parts[2], parts[3]));
                     break;
-                case "CHECKBUFF":
-                    if (parts.Length < 2) return;
 
-                    CheckList.Add(new NPCChecks(CheckType.CheckBuff, parts[1]));
-                    break;
-                case "CHECKTRANSFORM":
-                    if (parts.Length < 2) return;
+                case "HASGT":
+                    if (parts.Length < 1)
+                    {
+                        return;
+                    }
 
-                    CheckList.Add(new NPCChecks(CheckType.CheckTransform, parts[1]));
-                    break;
-                case "ISGUILDLEADER":
-                    CheckList.Add(new NPCChecks(CheckType.IsGuildLeader));
+                    CheckList.Add(new NPCChecks(CheckType.HasGT));
                     break;
             }
 
@@ -891,7 +895,6 @@ namespace Server.MirObjects
                         acts.Add(new NPCActions(ActionType.Mov, parts[1], valueToStore));
 
                     break;
-
                 case "CALC":
                     if (parts.Length < 4) return;
 
@@ -908,24 +911,18 @@ namespace Server.MirObjects
                         acts.Add(new NPCActions(ActionType.Calc, "%" + parts[1], parts[2], valueToStore, parts[1].Insert(1, "-")));
 
                     break;
-
                 case "GIVEBUFF":
                     if (parts.Length < 4) return;
 
-                    string visible = parts.Length > 3 ? parts[3] : "";
-                    string infinite = parts.Length > 4 ? parts[4] : "";
-                    string stackable = parts.Length > 5 ? parts[5] : "";
+                    string visible = "";
+                    string infinite = "";
+                    string stackable = "";
 
-                    var additionalParams = new List<string>();
-                    for (int i = 6; i < parts.Length; i++)
-                    {
-                        additionalParams.Add(parts[i]);
-                    }
+                    if (parts.Length > 3) visible = parts[3];
+                    if (parts.Length > 4) infinite = parts[4];
+                    if (parts.Length > 5) stackable = parts[5];
 
-                    var allParams = new List<string> { parts[1], parts[2], visible, infinite, stackable };
-                    allParams.AddRange(additionalParams);
-
-                    acts.Add(new NPCActions(ActionType.GiveBuff, allParams.ToArray()));
+                    acts.Add(new NPCActions(ActionType.GiveBuff, parts[1], parts[2], visible, infinite, stackable));
                     break;
 
                 case "REMOVEBUFF":
@@ -1160,13 +1157,50 @@ namespace Server.MirObjects
 
                 case "CONQUESTREPAIRALL":
                     if (parts.Length < 2) return;
-
                     acts.Add(new NPCActions(ActionType.ConquestRepairAll, parts[1]));
                     break;
-                case "GIVEGUILDEXP":
-                    if (parts.Length < 2) return;
 
-                    acts.Add(new NPCActions(ActionType.GiveGuildExp, parts[1]));
+                case "BUYGT":
+                    if (parts.Length < 1)
+                    {
+                        return;
+                    }
+
+                    acts.Add(new NPCActions(ActionType.BuyGT));
+                    break;
+
+                case "TELEPORTGT":
+                    if (parts.Length < 1)
+                    {
+                        return;
+                    }
+
+                    acts.Add(new NPCActions(ActionType.TeleportGT));
+                    break;
+
+                case "EXTENDGT":
+                    if (parts.Length < 1)
+                    {
+                        return;
+                    }
+
+                    acts.Add(new NPCActions(ActionType.ExtendGT));
+                    break;
+
+                case "GTRECALL":
+                    acts.Add(new NPCActions(ActionType.GTRecall));
+                    break;
+
+                case "ALLGTRECALL":
+                    acts.Add(new NPCActions(ActionType.GTAllRecall, parts[1]));
+                    break;
+
+                case "GTSALE":
+                    acts.Add(new NPCActions(ActionType.GTSale, parts[1]));
+                    break;
+
+                case "CANCELGTSALE":
+                    acts.Add(new NPCActions(ActionType.GTCancelSale));
                     break;
             }
         }
@@ -1194,7 +1228,7 @@ namespace Server.MirObjects
             var oneValRegex = new Regex(@"(.*?)\(((.*?))\)");
             var twoValRegex = new Regex(@"(.*?)\(((.*?),(.*?))\)");
             ConquestObject Conquest;
-            ConquestGuildArcherInfo 弓箭;
+            ConquestGuildArcherInfo Archer;
             ConquestGuildGateInfo Gate;
             ConquestGuildWallInfo Wall;
             ConquestGuildSiegeInfo Siege;
@@ -1234,20 +1268,20 @@ namespace Server.MirObjects
                     {
 
                         Conquest = Envir.Conquests.FirstOrDefault(x => x.Info.Index == intVal1);
-                        if (Conquest == null) return "未设置";
+                        if (Conquest == null) return "Not Found";
 
-                        弓箭 = Conquest.ArcherList.FirstOrDefault(x => x.Index == intVal2);
-                        if (弓箭 == null) return "未设置";
+                        Archer = Conquest.ArcherList.FirstOrDefault(x => x.Index == intVal2);
+                        if (Archer == null) return "Not Found";
 
-                        if (弓箭.Info.Name == "" || 弓箭.Info.Name == null)
+                        if (Archer.Info.Name == "" || Archer.Info.Name == null)
                             newValue = "Conquest Guard";
                         else
-                            newValue = 弓箭.Info.Name;
+                            newValue = Archer.Info.Name;
 
-                        if (弓箭.GetRepairCost() == 0)
-                            newValue += " - [ 正常状态 ]";
+                        if (Archer.GetRepairCost() == 0)
+                            newValue += " - [ Still Alive ]";
                         else
-                            newValue += " - [ " + 弓箭.GetRepairCost().ToString("#,##0") + " 金币雇佣 ]";
+                            newValue += " - [ " + Archer.GetRepairCost().ToString("#,##0") + " gold ]";
                     }
                     break;
                 case "CONQUESTGATE()":
@@ -1257,10 +1291,10 @@ namespace Server.MirObjects
                     if (int.TryParse(val1.Replace("%", ""), out intVal1) && int.TryParse(val2.Replace("%", ""), out intVal2))
                     {
                         Conquest = Envir.Conquests.FirstOrDefault(x => x.Info.Index == intVal1);
-                        if (Conquest == null) return "未设置";
+                        if (Conquest == null) return "Not Found";
 
                         Gate = Conquest.GateList.FirstOrDefault(x => x.Index == intVal2);
-                        if (Gate == null) return "未设置";
+                        if (Gate == null) return "Not Found";
 
                         if (Gate.Info.Name == "" || Gate.Info.Name == null)
                             newValue = "Conquest Gate";
@@ -1268,9 +1302,9 @@ namespace Server.MirObjects
                             newValue = Gate.Info.Name;
 
                         if (Gate.GetRepairCost() == 0)
-                            newValue += " - [ 无需维修 ]";
+                            newValue += " - [ No Repair Required ]";
                         else
-                            newValue += " - [ " + Gate.GetRepairCost().ToString("#,##0") + " 金币维修 ]";
+                            newValue += " - [ " + Gate.GetRepairCost().ToString("#,##0") + " gold ]";
                     }
                     break;
                 case "CONQUESTWALL()":
@@ -1280,10 +1314,10 @@ namespace Server.MirObjects
                     if (int.TryParse(val1.Replace("%", ""), out intVal1) && int.TryParse(val2.Replace("%", ""), out intVal2))
                     {
                         Conquest = Envir.Conquests.FirstOrDefault(x => x.Info.Index == intVal1);
-                        if (Conquest == null) return "未设置";
+                        if (Conquest == null) return "Not Found";
 
                         Wall = Conquest.WallList.FirstOrDefault(x => x.Index == intVal2);
-                        if (Wall == null) return "未设置";
+                        if (Wall == null) return "Not Found";
 
                         if (Wall.Info.Name == "" || Wall.Info.Name == null)
                             newValue = "Conquest Wall";
@@ -1291,9 +1325,9 @@ namespace Server.MirObjects
                             newValue = Wall.Info.Name;
 
                         if (Wall.GetRepairCost() == 0)
-                            newValue += " - [ 无需维修 ]";
+                            newValue += " - [ No Repair Required ]";
                         else
-                            newValue += " - [ " + Wall.GetRepairCost().ToString("#,##0") + " 金币维修 ]";
+                            newValue += " - [ " + Wall.GetRepairCost().ToString("#,##0") + " gold ]";
                     }
                     break;
                 case "CONQUESTSIEGE()":
@@ -1303,10 +1337,10 @@ namespace Server.MirObjects
                     if (int.TryParse(val1.Replace("%", ""), out intVal1) && int.TryParse(val2.Replace("%", ""), out intVal2))
                     {
                         Conquest = Envir.Conquests.FirstOrDefault(x => x.Info.Index == intVal1);
-                        if (Conquest == null) return "未设置";
+                        if (Conquest == null) return "Not Found";
 
                         Siege = Conquest.SiegeList.FirstOrDefault(x => x.Index == intVal2);
-                        if (Siege == null) return "未设置";
+                        if (Siege == null) return "Not Found";
 
                         if (Siege.Info.Name == "" || Siege.Info.Name == null)
                             newValue = "Conquest Siege";
@@ -1314,9 +1348,9 @@ namespace Server.MirObjects
                             newValue = Siege.Info.Name;
 
                         if (Siege.GetRepairCost() == 0)
-                            newValue += " - [ 正常状态 ]";
+                            newValue += " - [ Still Alive ]";
                         else
-                            newValue += " - [ " + Siege.GetRepairCost().ToString("#,##0") + " 金币 ]";
+                            newValue += " - [ " + Siege.GetRepairCost().ToString("#,##0") + " gold ]";
                     }
                     break;
                 case "CONQUESTOWNER()":
@@ -1326,7 +1360,7 @@ namespace Server.MirObjects
                     {
                         Conquest = Envir.Conquests.FirstOrDefault(x => x.Info.Index == intVal1);
                         if (Conquest == null) return string.Empty;
-                        if (Conquest.Guild == null) return "虚位以待";
+                        if (Conquest.Guild == null) return "No Owner";
 
                         newValue = Conquest.Guild.Name;
                     }
@@ -1395,9 +1429,6 @@ namespace Server.MirObjects
                 case "MAP":
                     newValue = player.CurrentMap.Info.FileName;
                     break;
-                case "MAPNAME":
-                    newValue = player.CurrentMap.Info.Title;
-                    break;
                 case "X_COORD":
                     newValue = player.CurrentLocation.X.ToString();
                     break;
@@ -1423,56 +1454,56 @@ namespace Server.MirObjects
                     newValue = player.Account.Credit.ToString(CultureInfo.InvariantCulture);
                     break;
                 case "ARMOUR":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.盔甲] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.盔甲].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Armour] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Armour].FriendlyName : "No Armour";
                     break;
                 case "WEAPON":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.武器] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.武器].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Weapon] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Weapon].FriendlyName : "No Weapon";
                     break;
                 case "RING_L":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.左戒指] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.左戒指].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.RingL] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.RingL].FriendlyName : "No Ring";
                     break;
                 case "RING_R":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.右戒指] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.右戒指].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.RingR] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.RingR].FriendlyName : "No Ring";
                     break;
                 case "BRACELET_L":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.左手镯] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.左手镯].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.BraceletL] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.BraceletL].FriendlyName : "No Bracelet";
                     break;
                 case "BRACELET_R":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.右手镯] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.右手镯].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.BraceletR] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.BraceletR].FriendlyName : "No Bracelet";
                     break;
                 case "NECKLACE":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.项链] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.项链].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Necklace] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Necklace].FriendlyName : "No Necklace";
                     break;
                 case "BELT":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.腰带] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.腰带].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Belt] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Belt].FriendlyName : "No Belt";
                     break;
                 case "BOOTS":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.靴子] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.靴子].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Boots] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Boots].FriendlyName : "No Boots";
                     break;
                 case "HELMET":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.头盔] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.头盔].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Helmet] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Helmet].FriendlyName : "No Helmet";
                     break;
                 case "AMULET":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.护身符] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.护身符].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Amulet] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Amulet].FriendlyName : "No Amulet";
                     break;
                 case "STONE":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.守护石] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.守护石].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Stone] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Stone].FriendlyName : "No Stone";
                     break;
                 case "TORCH":
-                    newValue = player.Info.Equipment[(int)EquipmentSlot.照明物] != null ?
-                        player.Info.Equipment[(int)EquipmentSlot.照明物].FriendlyName : "空";
+                    newValue = player.Info.Equipment[(int)EquipmentSlot.Torch] != null ?
+                        player.Info.Equipment[(int)EquipmentSlot.Torch].FriendlyName : "No Torch";
                     break;
 
                 case "DATE":
@@ -1494,9 +1525,9 @@ namespace Server.MirObjects
                     newValue = player.GetMailAwaitingCollectionAmount().ToString();
                     break;
                 case "GUILDNAME":
-                    if (player.MyGuild == null) return "未入行会";
+                    if (player.MyGuild == null) return "No Guild";
                     else
-                        newValue = player.MyGuild.Name; //newValue = player.MyGuild.Name + " Guild";
+                        newValue = player.MyGuild.Name + " Guild";
                     break;
                 case "ROLLRESULT":
                     newValue = player.NPCData.TryGetValue("NPCRollResult", out object _rollResult) ? _rollResult.ToString() : "Not Rolled";
@@ -1508,13 +1539,13 @@ namespace Server.MirObjects
                     }
                     else
                     {
-                        newValue = $"{player.Info.Equipment[(int)EquipmentSlot.坐骑].CurrentDura} ({player.Info.Equipment[(int)EquipmentSlot.坐骑].MaxDura}";
+                        newValue = $"{player.Info.Equipment[(int)EquipmentSlot.Mount].CurrentDura} ({player.Info.Equipment[(int)EquipmentSlot.Mount].MaxDura})";
                     }
                     break;
                 case "MOUNT":
                     if (player.Mount.HasMount)
                     {
-                        newValue = player.Info.Equipment[(int)EquipmentSlot.坐骑].FriendlyName;
+                        newValue = player.Info.Equipment[(int)EquipmentSlot.Mount].FriendlyName;
                     }
                     else
                     {
@@ -1524,8 +1555,39 @@ namespace Server.MirObjects
                 default:
                     newValue = string.Empty;
                     break;
-            }
 
+                case "GUILDEXTENDFEE":
+                    if (player.MyGuild != null && player.MyGuild.HasGT)
+                    {
+                        newValue = $"Expire On: {player.MyGuild.GTRent.ToString()} ,Extend fee: {Settings.ExtendGT.ToString()}";
+                    }
+                    else
+                    {
+                        newValue = "None";
+                    }
+                    break;
+
+                case "GUILDRENTFEE":
+                    newValue = Settings.BuyGTGold.ToString();
+                    break;
+
+                case "GUILDGTRENTALDAYSLEFT":
+                    if (player.MyGuild == null)
+                    {
+                        newValue = "0";
+                        break;
+                    }
+                    newValue = (player.MyGuild.GTRent - Envir.Now).Days.ToString();
+                    break;
+                case "AGITGUILDNAME":
+                    if (player.MyGuild == null)
+                    {
+                        newValue = "NO GUILD";
+                        break;
+                    }
+                    newValue = (player.MyGuild.Name);
+                    break;
+            }
             if (string.IsNullOrEmpty(newValue)) return param;
 
             return param.Replace(match.Value, newValue);
@@ -1561,9 +1623,6 @@ namespace Server.MirObjects
                     break;
                 case "MAP":
                     newValue = Monster.CurrentMap.Info.FileName;
-                    break;
-                case "MAPNAME":
-                    newValue = Monster.CurrentMap.Info.Title;
                     break;
                 case "X_COORD":
                     newValue = Monster.CurrentLocation.X.ToString();
@@ -1736,7 +1795,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("NPC命令CHECKCALC中错误使用 {0} 操作符, 页码: {1} ", param[1], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[1], Key));
                             return true;
                         }
                         break;
@@ -1794,7 +1853,7 @@ namespace Server.MirObjects
                             }
                             catch (ArgumentException)
                             {
-                                MessageQueue.Enqueue(string.Format("以怪物为对象的NPC命令LEVEL中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                                 return true;
                             }
                         }
@@ -1939,7 +1998,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以怪物为对象的NPC命令CHECKCALC中错误使用 {0} 操作符,页码: {1} ", param[1], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[1], Key));
                             return true;
                         }
                         break;
@@ -1996,7 +2055,7 @@ namespace Server.MirObjects
                             }
                             catch (ArgumentException)
                             {
-                                MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令LEVEL中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                                 return true;
                             }
                         }
@@ -2015,7 +2074,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKGOLD中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2032,7 +2091,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKGUILDGOLD中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2049,7 +2108,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKCREDIT中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2183,7 +2242,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKPOINT中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2255,9 +2314,7 @@ namespace Server.MirObjects
                             break;
                         }
 
-                        int actualMonsterCount = map.MonsterCount - player.Pets.Count();
-
-                        failed = !Compare(param[0], actualMonsterCount, tempInt);
+                        failed = !Compare(param[0], map.MonsterCount, tempInt);
 
                         break;
 
@@ -2379,7 +2436,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKCALC中错误使用 {0} 操作符, 页码: {1} ", param[1], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[1], Key));
                             return true;
                         }
                         break;
@@ -2470,7 +2527,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKCONQUEST中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2490,20 +2547,20 @@ namespace Server.MirObjects
                                 break;
                             }
 
-                            ConquestGuildArcherInfo 弓箭 = Conquest.ArcherList.FirstOrDefault(g => g.Info.Index == tempInt2);
-                            if (弓箭 == null || 弓箭.GetRepairCost() == 0)
+                            ConquestGuildArcherInfo Archer = Conquest.ArcherList.FirstOrDefault(g => g.Info.Index == tempInt2);
+                            if (Archer == null || Archer.GetRepairCost() == 0)
                             {
                                 failed = true;
                                 break;
                             }
                             if (player.MyGuild != null)
-                                failed = (player.MyGuild.Gold < 弓箭.GetRepairCost());
+                                failed = (player.MyGuild.Gold < Archer.GetRepairCost());
                             else
                                 failed = true;
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令AFFORDGUARD中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2536,7 +2593,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令AFFORDGATE中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2569,7 +2626,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令AFFORDWALL中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2602,7 +2659,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令AFFORDSIEGE中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2646,7 +2703,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CONQUESTAVAILABLE中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2673,7 +2730,7 @@ namespace Server.MirObjects
                         }
                         catch (ArgumentException)
                         {
-                            MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CONQUESTOWNER错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                            MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                             return true;
                         }
                         break;
@@ -2712,11 +2769,12 @@ namespace Server.MirObjects
                             }
                             catch (ArgumentException)
                             {
-                                MessageQueue.Enqueue(string.Format("以玩家为对象的NPC命令CHECKTIMER中错误使用 {0} 操作符, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[0], Key));
                                 return true;
                             }
                         }
                         break;
+
                     case CheckType.HeroLevel:
                         if (!int.TryParse(param[1], out tempInt))
                         {
@@ -2732,6 +2790,7 @@ namespace Server.MirObjects
                             failed = !Compare(param[0], player.CurrentHero.Level, tempInt);
                         }
                         break;
+
                     case CheckType.CheckHeroClass:
                         MirClass heroClass;
                         if (!MirClass.TryParse(param[0], true, out heroClass))
@@ -2748,6 +2807,7 @@ namespace Server.MirObjects
                             failed = player.CurrentHero.Class != heroClass;
                         }
                         break;
+
                     case CheckType.CheckHeroGender:
                         MirGender heroGender;
                         if (!MirGender.TryParse(param[0], false, out heroGender))
@@ -2764,25 +2824,32 @@ namespace Server.MirObjects
                             failed = player.CurrentHero.Gender != heroGender;
                         }
                         break;
+
                     case CheckType.CheckHeroItem:
                         ushort heroItemCount;
                         ushort heroItemDura;
+
                         if (!ushort.TryParse(param[1], out heroItemCount))
                         {
                             failed = true;
                             break;
                         }
+
                         bool heroCheckDura = ushort.TryParse(param[2], out heroItemDura);
+
                         var heroItemInfo = Envir.GetItemInfo(param[0]);
+
                         if (player.CurrentHero == null || player.CurrentHero.Inventory == null)
                         {
                             failed = true;
                             break;
                         }
+
                         foreach (var item in player.CurrentHero.Inventory.Where(item => item != null && item.Info == heroItemInfo))
                         {
                             if (heroCheckDura)
                                 if (item.CurrentDura < (heroItemDura * 1000)) continue;
+
                             if (heroItemCount > item.Count)
                             {
                                 heroItemCount -= item.Count;
@@ -2794,32 +2861,6 @@ namespace Server.MirObjects
                         if (heroItemCount > 0)
                             failed = true;
                         break;
-                    case CheckType.CheckBuff:
-                        {
-                            if (!Enum.TryParse(param[0], true, out BuffType buffType))
-                            {
-                                failed = true;
-                                break;
-                            }
-
-                            failed = !player.HasBuff(buffType);
-                        }
-                        break;
-                    case CheckType.CheckTransform:
-                        {
-                            if (!short.TryParse(param[0], out short transformType))
-                            {
-                                failed = true;
-                                break;
-                            }
-                            failed = player.TransformType != transformType;
-                        }
-                        break;
-
-                    case CheckType.IsGuildLeader:
-                        failed = player.MyGuild == null || player.MyGuild.Ranks.Count == 0 || player.MyGuild.Ranks[0] != player.MyGuildRank;
-                        break;
-
                 }
 
                 if (!failed) continue;
@@ -2958,16 +2999,16 @@ namespace Server.MirObjects
                 {
                     case ActionType.Move:
                         {
-                            Map map = Envir.GetMapByNameAndInstance(param[0]);
-                            if (map == null) return;
+                            Map targetmap = Envir.GetMapByNameAndInstance(param[0]);
+                            if (targetmap == null) return;
 
                             if (!int.TryParse(param[1], out int x)) return;
                             if (!int.TryParse(param[2], out int y)) return;
 
                             var coords = new Point(x, y);
 
-                            if (coords.X > 0 && coords.Y > 0) player.Teleport(map, coords);
-                            else player.TeleportRandom(200, 0, map);
+                            if (coords.X > 0 && coords.Y > 0) player.Teleport(targetmap, coords);
+                            else player.TeleportRandom(200, 0, targetmap);
                         }
                         break;
 
@@ -2977,10 +3018,152 @@ namespace Server.MirObjects
                             if (!int.TryParse(param[2], out int x)) return;
                             if (!int.TryParse(param[3], out int y)) return;
 
-                            var map = Envir.GetMapByNameAndInstance(param[0], instanceId);
-                            if (map == null) return;
-                            player.Teleport(map, new Point(x, y));
+                            var targetmap = Envir.GetMapByNameAndInstance(param[0], instanceId);
+                            if (targetmap == null) return;
+                            player.Teleport(targetmap, new Point(x, y));
                         }
+                        break;
+
+                    case ActionType.BuyGT:
+                        if (player.MyGuild == null || player.MyGuildRank == null) return;
+                        if (player.MyGuildRank != player.MyGuild.Ranks[0])
+                        {
+                            player.ReceiveChat("You need to be Guild Leader!", ChatType.System);
+                            return;
+                        }
+
+                        if (player.MyGuild.Gold < Settings.BuyGTGold)
+                        {
+                            player.ReceiveChat("Insufficient Guild funds!", ChatType.System);
+                            return;
+                        }
+
+                        if (player.MyGuild.HasGT)
+                        {
+                            player.ReceiveChat("You already own a Guild Territory!", ChatType.System);
+                            return;
+                        }
+
+                        GTMap GTmap = null;
+                        foreach (var gt in Envir.GTMapList)
+                        {
+                            if (gt.Owner == "None")
+                            {
+                                GTmap = gt;
+                                break;
+                            }
+                        }
+
+                        if (GTmap == null)
+                        {
+                            player.ReceiveChat("No Guild Territory's available!", ChatType.System);
+                            return;
+                        }
+
+                        player.MyGuild.Gold -= (uint)Settings.BuyGTGold;
+                        player.MyGuild.SendServerPacket(new S.GuildStorageGoldChange() { Type = 2, Amount = (uint)Settings.BuyGTGold });
+                        player.ReceiveChat("You rented a Guild Territory!", ChatType.System);
+                        player.MyGuild.GTIndex = GTmap.Index;
+                        player.MyGuild.GTRent = DateTime.Now.AddDays(Settings.GTDays);
+                        player.MyGuild.GTKey = Envir.Random.Next(100, int.MaxValue - 100);
+                        player.MyGuild.GTPrice = 0;
+                        GTmap.Owner = player.MyGuild.Name;
+                        GTmap.Leader = player.MyGuild.Ranks[0].Members[0].Name;
+                        if (player.MyGuild.Ranks[0].Members.Count > 1)
+                            GTmap.Leader = player.MyGuild.Ranks[0].Members[1].Name;
+                        GTmap.Price = 0;
+                        GTmap.Key = player.MyGuild.GTKey;
+
+                        break;
+
+                    case ActionType.TeleportGT:
+                        if (player.MyGuild == null)
+                        {
+                            player.ReceiveChat("You need to be in a Guild!", ChatType.System);
+                            return;
+                        }
+
+                        if (!player.MyGuild.HasGT)
+                        {
+                            player.ReceiveChat("You dont own a Guild Territory!", ChatType.System);
+                            return;
+                        }
+
+                        GTmap = null;
+                        foreach (var gt in Envir.GTMapList)
+                        {
+                            if (gt.Index == player.MyGuild.GTIndex)
+                            {
+                                GTmap = gt;
+                                break;
+                            }
+                        }
+
+                        if (GTmap == null)
+                        {
+                            player.ReceiveChat("No GT's found, contact GM!", ChatType.System);
+                            return;
+                        }
+
+                        if (!(GTmap.Maps.Count > 0))
+                        {
+                            player.ReceiveChat("No GT Maps found, contact GM!", ChatType.System);
+                            return;
+                        }
+
+                        if (player.MyGuild.GTBegin > Envir.Now)
+                        {
+                            player.ReceiveChat("Recent sale still pending.", ChatType.System);
+                            return;
+                        }
+
+                        var map = GTmap.Maps[0];
+
+                        if (map == null || map.Info.SafeZones == null || map.Info.SafeZones.Count == 0)
+                        {
+                            player.ReceiveChat("No Safezone found, contact GM!", ChatType.System);
+                            return;
+                        }
+
+                        player.Teleport(map, map.Info.SafeZones[0].Location);
+
+                        break;
+
+                    case ActionType.ExtendGT:
+                        if (player.MyGuild == null || player.MyGuildRank == null) return;
+                        if (player.MyGuildRank != player.MyGuild.Ranks[0])
+                        {
+                            player.ReceiveChat("You need to be Guild Leader!", ChatType.System);
+                            return;
+                        }
+
+                        if (player.MyGuild.Gold < Settings.ExtendGT)
+                        {
+                            player.ReceiveChat("Insufficient funds!", ChatType.System);
+                            return;
+                        }
+
+                        GTmap = null;
+                        foreach (var gt in Envir.GTMapList)
+                        {
+                            if (gt.Owner == player.MyGuild.Name)
+                            {
+                                GTmap = gt;
+                                break;
+                            }
+                        }
+
+                        if (GTmap == null)
+                        {
+                            player.ReceiveChat("You dont own any GT!", ChatType.System);
+                            return;
+                        }
+
+                        player.MyGuild.Gold -= (uint)Settings.ExtendGT;
+                        player.MyGuild.SendServerPacket(new S.GuildStorageGoldChange() { Type = 2, Amount = (uint)Settings.ExtendGT });
+
+                        player.MyGuild.GTRent = player.MyGuild.GTRent.AddDays(Settings.GTDays);
+                        GTmap.Price = 10000000;
                         break;
 
                     case ActionType.GiveGold:
@@ -3076,7 +3259,7 @@ namespace Server.MirObjects
 
                             if (info == null)
                             {
-                                MessageQueue.Enqueue(string.Format("无法获取物品信息: {0}, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Failed to get ItemInfo: {0}, Page: {1}", param[0], Key));
                                 break;
                             }
 
@@ -3086,7 +3269,7 @@ namespace Server.MirObjects
 
                                 if (item == null)
                                 {
-                                    MessageQueue.Enqueue(string.Format("无法创建用户物品: {0}, 页码: {1}", param[0], Key));
+                                    MessageQueue.Enqueue(string.Format("Failed to create UserItem: {0}, Page: {1}", param[0], Key));
                                     return;
                                 }
 
@@ -3117,7 +3300,7 @@ namespace Server.MirObjects
 
                             if (info == null)
                             {
-                                MessageQueue.Enqueue(string.Format("TAKEITEM命令未能获取物品信息: {0}, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Failed to get ItemInfo: {0}, Page: {1}", param[0], Key));
                                 break;
                             }
 
@@ -3316,11 +3499,11 @@ namespace Server.MirObjects
                         {
                             switch (player.Info.Gender)
                             {
-                                case MirGender.男性:
-                                    player.Info.Gender = MirGender.女性;
+                                case MirGender.Male:
+                                    player.Info.Gender = MirGender.Female;
                                     break;
-                                case MirGender.女性:
-                                    player.Info.Gender = MirGender.男性;
+                                case MirGender.Female:
+                                    player.Info.Gender = MirGender.Male;
                                     break;
                             }
                         }
@@ -3350,20 +3533,20 @@ namespace Server.MirObjects
 
                             switch (mirClass)
                             {
-                                case MirClass.战士:
-                                    player.Info.Class = MirClass.战士;
+                                case MirClass.Warrior:
+                                    player.Info.Class = MirClass.Warrior;
                                     break;
-                                case MirClass.道士:
-                                    player.Info.Class = MirClass.道士;
+                                case MirClass.Taoist:
+                                    player.Info.Class = MirClass.Taoist;
                                     break;
-                                case MirClass.法师:
-                                    player.Info.Class = MirClass.法师;
+                                case MirClass.Wizard:
+                                    player.Info.Class = MirClass.Wizard;
                                     break;
-                                case MirClass.刺客:
-                                    player.Info.Class = MirClass.刺客;
+                                case MirClass.Assassin:
+                                    player.Info.Class = MirClass.Assassin;
                                     break;
-                                case MirClass.弓箭:
-                                    player.Info.Class = MirClass.弓箭;
+                                case MirClass.Archer:
+                                    player.Info.Class = MirClass.Archer;
                                     break;
                             }
                         }
@@ -3497,8 +3680,8 @@ namespace Server.MirObjects
                             if (Param1 == null || Param2 == 0 || Param3 == 0) return;
                             if (!byte.TryParse(param[1], out byte tempByte)) return;
 
-                            Map map = Envir.GetMapByNameAndInstance(Param1, Param1Instance);
-                            if (map == null) return;
+                            Map targetmap = Envir.GetMapByNameAndInstance(Param1, Param1Instance);
+                            if (targetmap == null) return;
 
                             var monInfo = Envir.GetMonsterInfo(param[0]);
                             if (monInfo == null) return;
@@ -3509,7 +3692,7 @@ namespace Server.MirObjects
                                 if (monster == null) return;
                                 monster.Direction = 0;
                                 monster.ActionTime = Envir.Time + 1000;
-                                monster.Spawn(map, new Point(Param2, Param3));
+                                monster.Spawn(targetmap, new Point(Param2, Param3));
                             }
                         }
                         break;
@@ -3568,10 +3751,10 @@ namespace Server.MirObjects
                         {
                             if (!int.TryParse(param[1], out int tempInt)) return;
 
-                            var map = Envir.GetMapByNameAndInstance(param[0], tempInt);
-                            if (map == null) return;
+                            var targetmap = Envir.GetMapByNameAndInstance(param[0], tempInt);
+                            if (targetmap == null) return;
 
-                            foreach (var cell in map.Cells)
+                            foreach (var cell in targetmap.Cells)
                             {
                                 if (cell == null || cell.Objects == null) continue;
 
@@ -3580,7 +3763,6 @@ namespace Server.MirObjects
                                     MapObject ob = cell.Objects[j];
 
                                     if (ob.Race != ObjectType.Monster) continue;
-                                    if (ob.Master != null && ob.Master.Race == ObjectType.Player) continue;
                                     if (ob.Dead) continue;
 
                                     if (!string.IsNullOrEmpty(param[2]) && string.Compare(param[2], ((MonsterObject)ob).Info.Name, true) != 0)
@@ -3591,7 +3773,6 @@ namespace Server.MirObjects
                             }
                         }
                         break;
-
                     case ActionType.GroupRecall:
                         {
                             if (player.GroupMembers == null) return;
@@ -3610,18 +3791,18 @@ namespace Server.MirObjects
                             if (!int.TryParse(param[2], out int x)) return;
                             if (!int.TryParse(param[3], out int y)) return;
 
-                            var map = Envir.GetMapByNameAndInstance(param[0], tempInt);
-                            if (map == null) return;
+                            var targetmap = Envir.GetMapByNameAndInstance(param[0], tempInt);
+                            if (targetmap == null) return;
 
                             for (int j = 0; j < player.GroupMembers.Count(); j++)
                             {
                                 if (x == 0 || y == 0)
                                 {
-                                    player.GroupMembers[j].TeleportRandom(200, 0, map);
+                                    player.GroupMembers[j].TeleportRandom(200, 0, targetmap);
                                 }
                                 else
                                 {
-                                    player.GroupMembers[j].Teleport(map, new Point(x, y));
+                                    player.GroupMembers[j].Teleport(targetmap, new Point(x, y));
                                 }
                             }
                         }
@@ -3651,7 +3832,7 @@ namespace Server.MirObjects
                                 }
                                 catch (ArgumentException)
                                 {
-                                    MessageQueue.Enqueue(string.Format("以列表的玩家为对象的NPC命令CALC中错误使用 {0} 操作符, 页码: {1}", param[1], Key));
+                                    MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[1], Key));
                                 }
                             }
                             else
@@ -3663,95 +3844,14 @@ namespace Server.MirObjects
 
                     case ActionType.GiveBuff:
                         {
-                            var path = Path.Combine(Settings.EnvirPath, "SetBuffs.txt");
-
-                            if (!File.Exists(path))
-                            {
-                                File.Create(path).Dispose();
-                            }
-
-                            var lines = File.ReadAllLines(path);
-
-                            if (!Enum.IsDefined(typeof(BuffType), param[0]))
-                            {
-                                return;
-                            }
+                            if (!Enum.IsDefined(typeof(BuffType), param[0])) return;
 
                             int.TryParse(param[1], out int duration);
                             bool.TryParse(param[2], out bool infinite);
                             bool.TryParse(param[3], out bool visible);
                             bool.TryParse(param[4], out bool stackable);
 
-                            var matchedLine = lines.FirstOrDefault(l => l.StartsWith(param[0] + ";"));
-                            var buffStats = new Stats();
-                            var initialStats = new Dictionary<Stat, int>();
-                            bool canAddBuff = true;
-
-                            if (matchedLine != null)
-                            {
-                                var statsPart = matchedLine.Substring(matchedLine.IndexOf(';') + 1).Trim(';');
-                                var potionStats = statsPart.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                                foreach (var stat in potionStats)
-                                {
-                                    var statParts = stat.Split('=');
-                                    if (statParts.Length != 2) continue;
-
-                                    var statName = statParts[0].Trim();
-                                    var statValueString = statParts[1].Trim();
-
-                                    if (string.IsNullOrWhiteSpace(statValueString)) continue;
-
-                                    if (int.TryParse(statValueString, out var statValue))
-                                    {
-                                        if (Enum.TryParse(statName, out Stat enumValue))
-                                        {
-                                            buffStats[enumValue] = statValue;
-                                            initialStats[enumValue] = statValue;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (param.Count > 5)
-                            {
-                                for (int j = 5; j < param.Count; j++)
-                                {
-                                    var extraStatParts = param[j].Split('=');
-                                    if (extraStatParts.Length != 2) continue;
-
-                                    var extraStatName = extraStatParts[0].Trim();
-                                    var extraStatValueString = extraStatParts[1].Trim();
-
-                                    if (string.IsNullOrWhiteSpace(extraStatValueString)) continue;
-
-                                    if (!int.TryParse(extraStatValueString, out var extraStatValue)) continue;
-
-                                    if (!Enum.TryParse(extraStatName, out Stat extraEnumValue) || !Enum.IsDefined(typeof(Stat), extraEnumValue))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (initialStats.TryGetValue(extraEnumValue, out var initialValue) && initialValue != 0)
-                                    {
-                                        canAddBuff = false;
-                                        break;
-                                    }
-
-                                    if (!initialStats.ContainsKey(extraEnumValue))
-                                    {
-                                        canAddBuff = false;
-                                        break;
-                                    }
-
-                                    buffStats[extraEnumValue] = extraStatValue;
-                                }
-                            }
-
-                            if (canAddBuff)
-                            {
-                                player.AddBuff((BuffType)(byte)Enum.Parse(typeof(BuffType), param[0], true), player, Settings.Second * duration, buffStats, visible);
-                            }
+                            player.AddBuff((BuffType)(byte)Enum.Parse(typeof(BuffType), param[0], true), player, Settings.Second * duration, new Stats(), visible);
                         }
                         break;
 
@@ -3784,8 +3884,8 @@ namespace Server.MirObjects
 
                             if (player.MyGuildRank == null) return;
 
-                            if (player.MyGuild.Name == Settings.NewbieGuild) player.RemoveBuff(BuffType.新人特效);
-                            if (player.HasBuff(BuffType.公会特效)) player.RemoveBuff(BuffType.公会特效);
+                            if (player.MyGuild.Name == Settings.NewbieGuild) player.RemoveBuff(BuffType.Newbie);
+                            if (player.HasBuff(BuffType.Guild)) player.RemoveBuff(BuffType.Guild);
 
                             player.MyGuild.DeleteMember(player, player.Name);
                         }
@@ -3837,7 +3937,7 @@ namespace Server.MirObjects
 
                             if (info == null)
                             {
-                                MessageQueue.Enqueue(string.Format("使用ADDMAILITEM命令无法获取物品信息: {0}, 页码: {1}", param[0], Key));
+                                MessageQueue.Enqueue(string.Format("Failed to get ItemInfo: {0}, Page: {1}", param[0], Key));
                                 break;
                             }
 
@@ -3847,7 +3947,7 @@ namespace Server.MirObjects
 
                                 if (item == null)
                                 {
-                                    MessageQueue.Enqueue(string.Format("使用ADDMAILITEM命令无法创建用户物品: {0}, 页码: {1}", param[0], Key));
+                                    MessageQueue.Enqueue(string.Format("Failed to create UserItem: {0}, Page: {1}", param[0], Key));
                                     return;
                                 }
 
@@ -4080,28 +4180,28 @@ namespace Server.MirObjects
 
                             if (!conquest.WarIsOn)
                             {
-                                conquest.StartType = ConquestType.强制启动;
+                                conquest.StartType = ConquestType.Forced;
                                 conquest.StartWar(conquest.GameType);
 
-                                MessageQueue.Enqueue(string.Format("{0} 开始攻城战", conquest.Info.Name));
+                                MessageQueue.Enqueue(string.Format("{0} War Started.", conquest.Info.Name));
 
                             }
                             else
                             {
                                 conquest.WarIsOn = false;
 
-                                MessageQueue.Enqueue(string.Format("{0} 攻城结束", conquest.Info.Name));
+                                MessageQueue.Enqueue(string.Format("{0} War Stopped.", conquest.Info.Name));
                             }
 
                             foreach (var pl in Envir.Players)
                             {
                                 if (conquest.WarIsOn)
                                 {
-                                    pl.ReceiveChat($"{conquest.Info.Name} 开始攻城战", ChatType.System);
+                                    pl.ReceiveChat($"{conquest.Info.Name} War Started.", ChatType.System);
                                 }
                                 else
                                 {
-                                    pl.ReceiveChat($"{conquest.Info.Name} 攻城战结束", ChatType.System);
+                                    pl.ReceiveChat($"{conquest.Info.Name} War Stopped.", ChatType.System);
                                 }
 
                                 pl.BroadcastInfo();
@@ -4157,7 +4257,7 @@ namespace Server.MirObjects
                             string randomTextPath = Path.Combine(Settings.NPCPath, param[0]);
                             if (!File.Exists(randomTextPath))
                             {
-                                MessageQueue.Enqueue(string.Format("随机文本文件:{0} 不存在", randomTextPath));
+                                MessageQueue.Enqueue(string.Format("the randomTextFile:{0} does not exist.", randomTextPath));
                             }
                             else
                             {
@@ -4252,6 +4352,133 @@ namespace Server.MirObjects
                             player.RefreshStats();
                         }
                         break;
+
+                    case ActionType.GTAllRecall:
+                        if (player.MyGuild == null)
+                        {
+                            player.ReceiveChat("To summon guild members, one first must be in a guild.", ChatType.System);
+                            return;
+                        }
+                        if (player.MyGuildRank.Index != 0)
+                        {
+                            player.ReceiveChat($"Only the leader of {player.MyGuild.Name} may summon all members.", ChatType.System);
+                            return;
+                        }
+                        //ok were confident the player has a guild and is rank 0 (which we assume is leader)
+                        foreach (PlayerObject ob in Envir.Players) //thers no accessable member list from the player.myguild....hmmm ok we will look at all players curently online
+                        {
+                            if (ob == null)
+                            {
+                                continue;//ignore people that dont exist, shouldnt happen but lets check for it
+                            }
+                            if (ob.Connection == null)
+                            {
+                                continue; //really shouldnt be needed but better safe than sorry
+                            }
+                            if (ob.Connection.Stage != GameStage.Game)
+                            {
+                                continue; //shouldnt be needed but lets make sure the player is in game
+                            }
+                            if (ob.MyGuild == null)
+                            {
+                                continue; //they aint in a guild? lets not check them further (oops)
+                            }
+                            if (ob.MyGuild.Name != player.MyGuild.Name)
+                            {
+                                continue; //not in my guild?who wants you!?
+                            }
+                            if (ob.Name == player.Name)
+                            {
+                                continue;//dont try to recall yourself
+                            }
+                            ob.Teleport(player.CurrentMap, new Point(player.CurrentLocation.X + Envir.Random.Next(4), player.CurrentLocation.Y + Envir.Random.Next(4)));
+                            ob.ReceiveChat($"You have been summoned by {player.Name}", ChatType.System);
+                        }
+                        break;
+
+                    case ActionType.GTRecall:
+                        if (player.MyGuild == null)
+                        {
+                            player.ReceiveChat("To summon a guild member, one first must be in a guild.", ChatType.System);
+                            return;
+                        }
+                        if (player.MyGuildRank.Index != 0)
+                        {
+                            player.ReceiveChat($"Only the leader of {player.MyGuild.Name} may summon members.", ChatType.System);
+                            return;
+                        }
+                        PlayerObject guildmember = Envir.GetPlayer(param[0]);
+                        if (guildmember == null)
+                        {
+                            player.ReceiveChat($"I can not summon {param[0]} as they do not appear to exist", ChatType.System);
+                            return;
+                        }
+                        if (guildmember.Connection == null)
+                        {
+                            player.ReceiveChat($"I can not summon {param[0]} at this time", ChatType.System);
+                            continue; //really shouldnt be needed but better safe than sorry
+                        }
+                        if (guildmember.Connection.Stage != GameStage.Game)
+                        {
+                            player.ReceiveChat($"{param[0]} is not currently in-game", ChatType.System);
+                            return;
+                        }
+                        if (guildmember.MyGuild == null)
+                        {
+                            player.ReceiveChat($"{param[0]} is not in a guild", ChatType.System);
+                            return;
+                        }
+                        if (guildmember.MyGuild.Name != player.MyGuild.Name)
+                        {
+                            player.ReceiveChat($"{param[0]} is not in {player.MyGuild.Name}. They are in {guildmember.MyGuild.Name}", ChatType.System);
+                            return;
+                        }
+                        guildmember.Teleport(player.CurrentMap, new Point(player.CurrentLocation.X + Envir.Random.Next(4), player.CurrentLocation.Y + Envir.Random.Next(4)));
+                        guildmember.ReceiveChat($"You have been summoned by {player.Name}", ChatType.System);
+                        break;
+
+                    case ActionType.GTSale:
+                        if (player.MyGuild == null)
+                            return;
+
+                        if (player.MyGuildRank.Index != 0 || player.CurrentMap.Info.GTIndex != player.MyGuild.GTIndex)
+                        {
+                            player.ReceiveChat($"Only the leader of {player.MyGuild.Name} may initiate sale.", ChatType.System);
+                            return;
+                        }
+
+                        if (!int.TryParse(param[0], out int saleprice))
+                            return;
+
+
+                        if (saleprice < 2000000)
+                        {
+                            player.ReceiveChat("Minimum sale price must be 2,000,000", ChatType.System);
+                            return;
+                        }
+
+                        if (!player.MyGuild.GTForSale(player, saleprice))
+                            return;
+
+                        player.ReceiveChat("This territory has been listed for sale.", ChatType.System);
+                        break;
+
+                    case ActionType.GTCancelSale:
+                        if (player.MyGuild == null)
+                            return;
+
+                        if (player.MyGuildRank.Index != 0 || player.CurrentMap.Info.GTIndex != player.MyGuild.GTIndex)
+                        {
+                            player.ReceiveChat($"Only the leader of {player.MyGuild.Name} may cancel sale.", ChatType.System);
+                            return;
+                        }
+
+                        if (!player.MyGuild.EndGTSale(player))
+                            return;
+
+                        player.ReceiveChat("This territory sale has been cancelled.", ChatType.System);
+                        break;
+
                     case ActionType.RollDie:
                         {
                             bool.TryParse(param[1], out bool autoRoll);
@@ -4284,7 +4511,7 @@ namespace Server.MirObjects
 
                             foreach (var drop in drops)
                             {
-                                var reward = drop.AttemptDrop(player?.Stats[Stat.物品掉落数率] ?? 0, player?.Stats[Stat.金币收益数率] ?? 0);
+                                var reward = drop.AttemptDrop(player?.Stats[Stat.ItemDropRatePercent] ?? 0, player?.Stats[Stat.GoldDropRatePercent] ?? 0);
 
                                 if (reward != null)
                                 {
@@ -4333,8 +4560,8 @@ namespace Server.MirObjects
                         {
                             if (!player.IsGM)
                             {
-                                player.ReceiveChat($"非游戏管理员，该命令无效", ChatType.System);
-                                MessageQueue.Enqueue($"非管理员玩家: {player.Name} 调用了 @CONQUESTREPAIRALL 命令");
+                                player.ReceiveChat($"You are not a GM and this command is not enabled for you.", ChatType.System);
+                                MessageQueue.Enqueue($"GM Command @CONQUESTREPAIRALL invoked by non-GM player: {player.Name}");
                                 return;
                             }
 
@@ -4342,16 +4569,16 @@ namespace Server.MirObjects
                             var conquest = Envir.Conquests.FirstOrDefault(z => z.Info.Index == tempInt);
                             if (conquest == null) return;
 
-                            MessageQueue.Enqueue($"游戏管理员:{player.Name} 在账户目录为:{player.Info.AccountInfo.Index}上调用了 @CONQUESTREPAIRALL 命令");
-                            MessageQueue.Enqueue($"攻城战: {conquest.Info.Name}");
+                            MessageQueue.Enqueue($"@CONQUESTREPAIRALL invoked by GM: {player.Name} on account index: {player.Info.AccountInfo.Index}");
+                            MessageQueue.Enqueue($"Conquest: {conquest.Info.Name}");
 
                             if (conquest.Guild != null)
                             {
-                                MessageQueue.Enqueue($"城堡拥有者: {conquest.Guild.Name}");
+                                MessageQueue.Enqueue($"Owner: {conquest.Guild.Name}");
                             }
                             else
                             {
-                                MessageQueue.Enqueue($"城堡当前没有拥有者");
+                                MessageQueue.Enqueue($"No current owner.");
                             }
 
                             int _fixed = 0;
@@ -4364,8 +4591,8 @@ namespace Server.MirObjects
                                     _fixed++;
                                 }
                             }
-                            player.ReceiveChat($"恢复弓箭手: {_fixed}/{conquest.ArcherList.Count}", ChatType.System);
-                            MessageQueue.Enqueue($"恢复弓箭手: {_fixed}/{conquest.ArcherList.Count}");
+                            player.ReceiveChat($"Archers repaired: {_fixed}/{conquest.ArcherList.Count}", ChatType.System);
+                            MessageQueue.Enqueue($"Archers repaired: {_fixed}/{conquest.ArcherList.Count}");
 
                             _fixed = 0;
                             foreach (ConquestGuildGateInfo conquestGate in conquest.GateList)
@@ -4376,8 +4603,8 @@ namespace Server.MirObjects
                                     _fixed++;
                                 }
                             }
-                            player.ReceiveChat($"恢复卫士: {_fixed}/{conquest.GateList.Count}", ChatType.System);
-                            MessageQueue.Enqueue($"恢复卫士: {_fixed}/{conquest.GateList.Count}");
+                            player.ReceiveChat($"Gates repaired: {_fixed}/{conquest.GateList.Count}", ChatType.System);
+                            MessageQueue.Enqueue($"Gates repaired: {_fixed}/{conquest.GateList.Count}");
 
                             _fixed = 0;
                             foreach (ConquestGuildWallInfo conquestWall in conquest.WallList)
@@ -4388,8 +4615,8 @@ namespace Server.MirObjects
                                     _fixed++;
                                 }
                             }
-                            player.ReceiveChat($"修复城墙: {_fixed}/{conquest.WallList.Count}", ChatType.System);
-                            MessageQueue.Enqueue($"修复城墙: {_fixed}/{conquest.WallList.Count}");
+                            player.ReceiveChat($"Walls repaired: {_fixed}/{conquest.WallList.Count}", ChatType.System);
+                            MessageQueue.Enqueue($"Walls repaired: {_fixed}/{conquest.WallList.Count}");
 
                             _fixed = 0;
                             foreach (ConquestGuildSiegeInfo conquestSiege in conquest.SiegeList)
@@ -4405,15 +4632,6 @@ namespace Server.MirObjects
 
                             break;
                         }
-
-                    case ActionType.GiveGuildExp:
-                        {
-                            uint tempUint;
-                            if (!uint.TryParse(param[0], out tempUint)) return;
-                            player.MyGuild.GainExp(tempUint);
-                        }
-                        break;
-
                 }
             }
         }
@@ -4558,7 +4776,7 @@ namespace Server.MirObjects
                                 }
                                 catch (ArgumentException)
                                 {
-                                    MessageQueue.Enqueue(string.Format("以列表的怪物为对象的NPC命令CALC中错误使用 {0} 操作符: {0}, 页码: {1}", param[1], Key));
+                                    MessageQueue.Enqueue(string.Format("Incorrect operator: {0}, Page: {1}", param[1], Key));
                                 }
                             }
                             else
@@ -4661,6 +4879,8 @@ namespace Server.MirObjects
             Act(ElseActList);
         }
 
+
+
         public static bool Compare<T>(string op, T left, T right) where T : IComparable<T>
         {
             switch (op)
@@ -4671,7 +4891,7 @@ namespace Server.MirObjects
                 case ">=": return left.CompareTo(right) >= 0;
                 case "==": return left.Equals(right);
                 case "!=": return !left.Equals(right);
-                default: throw new ArgumentException("无效的-比较运算符: {0}", op);
+                default: throw new ArgumentException("Invalid comparison operator: {0}", op);
             }
         }
 
@@ -4683,7 +4903,7 @@ namespace Server.MirObjects
                 case "-": return left - right;
                 case "*": return left * right;
                 case "/": return left / right;
-                default: throw new ArgumentException("无效的-和运算符: {0}", op);
+                default: throw new ArgumentException("Invalid sum operator: {0}", op);
             }
         }
     }

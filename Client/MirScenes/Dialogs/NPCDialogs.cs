@@ -137,7 +137,7 @@ namespace Client.MirScenes.Dialogs
                 Location = new Point(390, 3),
                 Sound = SoundList.ButtonA,
             };
-            HelpButton.Click += (o, e) => GameScene.Scene.HelpDialog.DisplayPage("购买物品");
+            HelpButton.Click += (o, e) => GameScene.Scene.HelpDialog.DisplayPage("Purchasing");
 
             BigButtonDialog = new BigButtonDialog()
             {
@@ -345,7 +345,7 @@ namespace Client.MirScenes.Dialogs
                     Visible = true,
                     Parent = this,
                     Size = new Size(420, 20),
-                    Location = new Point(20, 34 + (i - _index) * 20), //Location = new Point(8, 34 + (i - _index) * 18),
+                    Location = new Point(8, 34 + (i - _index) * 18),
                     NotControl = true
                 };
 
@@ -687,7 +687,7 @@ namespace Client.MirScenes.Dialogs
                         maxQuantity = Math.Min(ushort.MaxValue, (ushort)(GameScene.Gold / (SelectedItem.Price() / SelectedItem.Count)));
                         if (maxQuantity == 0)
                         {
-                            GameScene.Scene.ChatDialog.ReceiveChat("没有足够的珍珠", ChatType.System);
+                            GameScene.Scene.ChatDialog.ReceiveChat("You do not have enough Pearls.", ChatType.System);
                             return;
                         }
                     }
@@ -722,7 +722,7 @@ namespace Client.MirScenes.Dialogs
                     SelectedItem.Count = tempCount;
                 }
 
-                MirAmountBox amountBox = new MirAmountBox("购买金额:", SelectedItem.Image, maxQuantity, 0, SelectedItem.Count);
+                MirAmountBox amountBox = new("Purchase Amount:", SelectedItem.Image, maxQuantity, 0, SelectedItem.Count);
 
                 amountBox.OKButton.Click += (o, e) =>
                 {
@@ -974,7 +974,7 @@ namespace Client.MirScenes.Dialogs
                 case PanelType.Sell:
                     if (TargetItem.Info.Bind.HasFlag(BindMode.DontSell))
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat("不能卖出物品", ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat("Cannot sell this item.", ChatType.System);
                         return;
                     }
                     if (GameScene.Gold + TargetItem.Price() / 2 <= uint.MaxValue)
@@ -983,12 +983,12 @@ namespace Client.MirScenes.Dialogs
                         TargetItem = null;
                         return;
                     }
-                    GameScene.Scene.ChatDialog.ReceiveChat("金币已达携带上限", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("Cannot carry anymore gold.", ChatType.System);
                     break;
                 case PanelType.Repair:
                     if (TargetItem.Info.Bind.HasFlag(BindMode.DontRepair))
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat("无法修理此物品", ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat("Cannot repair this item.", ChatType.System);
                         return;
                     }
                     if (GameScene.Gold >= TargetItem.RepairPrice() * GameScene.NPCRate)
@@ -1002,7 +1002,7 @@ namespace Client.MirScenes.Dialogs
                 case PanelType.SpecialRepair:
                     if ((TargetItem.Info.Bind.HasFlag(BindMode.DontRepair)) || (TargetItem.Info.Bind.HasFlag(BindMode.NoSRepair)))
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat("不能特修此物品", ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat("Cannot repair this item.", ChatType.System);
                         return;
                     }
                     if (GameScene.Gold >= (TargetItem.RepairPrice() * 3) * GameScene.NPCRate)
@@ -1016,10 +1016,10 @@ namespace Client.MirScenes.Dialogs
                 case PanelType.Consign:
                     if (TargetItem.Info.Bind.HasFlag(BindMode.DontStore) || TargetItem.Info.Bind.HasFlag(BindMode.DontSell))
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat("不能邮寄此物品", ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat("Cannot consign this item.", ChatType.System);
                         return;
                     }
-                    MirAmountBox box = new MirAmountBox("寄售价格", TargetItem.Image, Globals.MaxConsignment, Globals.MinConsignment)
+                    MirAmountBox box = new MirAmountBox("Consignment Price:", TargetItem.Image, Globals.MaxConsignment, Globals.MinConsignment)
                     {
                         InputTextBox = { Text = string.Empty },
                         Amount = 0
@@ -1056,18 +1056,18 @@ namespace Client.MirScenes.Dialogs
                                 TargetItem = null;
                                 return;
                             }
-                            GameScene.Scene.ChatDialog.ReceiveChat(String.Format("没有足够金币来进行 {0} 的精炼", TargetItem.FriendlyName), ChatType.System);
+                            GameScene.Scene.ChatDialog.ReceiveChat(String.Format("You don't have enough gold to refine your {0}.", TargetItem.FriendlyName), ChatType.System);
                             return;
                         }
 
                     }
-                    GameScene.Scene.ChatDialog.ReceiveChat(String.Format("未添加材料前不能精炼 {0}", TargetItem.FriendlyName), ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat(String.Format("You haven't deposited any items to refine your {0} with.", TargetItem.FriendlyName), ChatType.System);
                     break;
                 case PanelType.CheckRefine:
 
                     if (TargetItem.RefineAdded == 0)
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat(String.Format("{0} 未精炼不需要检查", TargetItem.FriendlyName), ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat(String.Format("Your {0} hasn't been refined so it doesn't need checking.", TargetItem.FriendlyName), ChatType.System);
                         return;
                     }
                     Network.Enqueue(new C.CheckRefine { UniqueID = TargetItem.UniqueID });
@@ -1075,9 +1075,9 @@ namespace Client.MirScenes.Dialogs
 
                 case PanelType.ReplaceWedRing:
 
-                    if (TargetItem.Info.Type != ItemType.戒指)
+                    if (TargetItem.Info.Type != ItemType.Ring)
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat(String.Format("{0} 不是戒指", TargetItem.FriendlyName), ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat(String.Format("{0} isn't a ring.", TargetItem.FriendlyName), ChatType.System);
                         return;
                     }
 
@@ -1103,7 +1103,7 @@ namespace Client.MirScenes.Dialogs
             if (GameScene.SelectedCell != null && PType == PanelType.Disassemble)
             {
                 if (GameScene.SelectedCell.Item.Info.Grade != ItemGrade.None &&
-                    GameScene.SelectedCell.Item.Info.Type != ItemType.觉醒物品)
+                    GameScene.SelectedCell.Item.Info.Type != ItemType.Awakening)
                 {
                     TargetItem = GameScene.SelectedCell.Item;
                     OldCell = GameScene.SelectedCell;
@@ -1205,19 +1205,19 @@ namespace Client.MirScenes.Dialogs
             switch (PType)
             {
                 case PanelType.Sell:
-                    text = "出售物品 ";
+                    text = "Sale: ";
                     break;
                 case PanelType.Repair:
-                    text = "普通修理 ";
+                    text = "Repair: ";
                     break;
                 case PanelType.SpecialRepair:
-                    text = "特殊修理 ";
+                    text = "S. Repair: ";
                     break;
                 case PanelType.Consign:
-                    InfoLabel.Text = "寄售 ";
+                    InfoLabel.Text = "Consignment: ";
                     return;
                 case PanelType.Disassemble:
-                    text = "分解物品\n\n\n\n\n\n\n\n         ";
+                    text = "Item will be Destroyed\n\n\n\n\n\n\n\n         ";
                     HoldButton.Visible = false;
                     Index = 711;
                     Library = Libraries.Title;
@@ -1230,26 +1230,26 @@ namespace Client.MirScenes.Dialogs
                     ItemCell.Location = new Point(83, 94);
                     break;
                 case PanelType.Downgrade:
-                    text = "降阶费用: ";
+                    text = "Downgrade: ";
                     HoldButton.Visible = false;
                     break;
                 case PanelType.Reset:
-                    text = "恢复: ";
+                    text = "Reset: ";
                     HoldButton.Visible = false;
                     break;
                 case PanelType.Refine:
-                    text = "精炼: ";
+                    text = "Refine: ";
                     HoldButton.Visible = false;
                     ConfirmButton.Visible = true;
                     GameScene.Scene.RefineDialog.Show();
                     break;
                 case PanelType.CheckRefine:
-                    text = "检查精炼";
+                    text = "Check Refine";
                     HoldButton.Visible = false;
                     ConfirmButton.Visible = true;
                     break;
                 case PanelType.ReplaceWedRing:
-                    text = "替换婚戒: ";
+                    text = "Replace: ";
                     HoldButton.Visible = false;
                     ConfirmButton.Visible = true;
                     break;
@@ -1290,7 +1290,7 @@ namespace Client.MirScenes.Dialogs
                     default: return;
                 }
 
-                text += " 金币";
+                text += " Gold";
             }
 
             InfoLabel.Text = text;
@@ -1492,7 +1492,7 @@ namespace Client.MirScenes.Dialogs
 
             if (Items[0] == null)
             {
-                SelectAwakeType.Items.Add("选择觉醒物品");
+                SelectAwakeType.Items.Add("Select Upgrade Item.");
                 SelectAwakeType.SelectedIndex = SelectAwakeType.Items.Count - 1;
                 CurrentAwakeType = AwakeType.None;
             }
@@ -1500,21 +1500,21 @@ namespace Client.MirScenes.Dialogs
             {
                 if (Items[0].Awake.GetAwakeLevel() == 0)
                 {
-                    SelectAwakeType.Items.Add("选择觉醒类型");
-                    if (Items[0].Info.Type == ItemType.武器)
+                    SelectAwakeType.Items.Add("Select Upgrade Type.");
+                    if (Items[0].Info.Type == ItemType.Weapon)
                     {
-                        SelectAwakeType.Items.Add("勇猛雕文");
-                        SelectAwakeType.Items.Add("魔性雕文");
-                        SelectAwakeType.Items.Add("仙界雕文");
+                        SelectAwakeType.Items.Add("Bravery Glyph");
+                        SelectAwakeType.Items.Add("Magic Glyph");
+                        SelectAwakeType.Items.Add("Soul Glyph");
                     }
-                    else if (Items[0].Info.Type == ItemType.头盔)
+                    else if (Items[0].Info.Type == ItemType.Helmet)
                     {
-                        SelectAwakeType.Items.Add("守护雕文");
-                        SelectAwakeType.Items.Add("制魔雕文");
+                        SelectAwakeType.Items.Add("Protection Glyph");
+                        SelectAwakeType.Items.Add("EvilSlayer Glyph");
                     }
                     else
                     {
-                        SelectAwakeType.Items.Add("体质雕文");
+                        SelectAwakeType.Items.Add("Body Glyph");
                     }
                 }
                 else
@@ -1534,26 +1534,26 @@ namespace Client.MirScenes.Dialogs
             string typeName = "";
             switch (type)
             {
-                case AwakeType.物理攻击:
-                    typeName = "勇猛雕文";
+                case AwakeType.DC:
+                    typeName = "Bravery Glyph";
                     break;
-                case AwakeType.魔法攻击:
-                    typeName = "魔性雕文";
+                case AwakeType.MC:
+                    typeName = "Magic Glyph";
                     break;
-                case AwakeType.道术攻击:
-                    typeName = "仙界雕文";
+                case AwakeType.SC:
+                    typeName = "Soul Glyph";
                     break;
-                case AwakeType.物理防御:
-                    typeName = "守护雕文";
+                case AwakeType.AC:
+                    typeName = "Protection Glyph";
                     break;
-                case AwakeType.魔法防御:
-                    typeName = "制魔雕文";
+                case AwakeType.MAC:
+                    typeName = "EvilSlayer Glyph";
                     break;
-                case AwakeType.生命法力值:
-                    typeName = "体质雕文";
+                case AwakeType.HPMP:
+                    typeName = "Body Glyph";
                     break;
                 default:
-                    typeName = "选择觉醒物品";
+                    typeName = "Select Upgrade Item.";
                     break;
             }
             return typeName;
@@ -1564,23 +1564,23 @@ namespace Client.MirScenes.Dialogs
             AwakeType type = AwakeType.None;
             switch (typeName)
             {
-                case "勇猛雕文":
-                    type = AwakeType.物理攻击;
+                case "Bravery Glyph":
+                    type = AwakeType.DC;
                     break;
-                case "魔性雕文":
-                    type = AwakeType.魔法攻击;
+                case "Magic Glyph":
+                    type = AwakeType.MC;
                     break;
-                case "仙界雕文":
-                    type = AwakeType.道术攻击;
+                case "Soul Glyph":
+                    type = AwakeType.SC;
                     break;
-                case "守护雕文":
-                    type = AwakeType.物理防御;
+                case "Protection Glyph":
+                    type = AwakeType.AC;
                     break;
-                case "制魔雕文":
-                    type = AwakeType.魔法防御;
+                case "EvilSlayer Glyph":
+                    type = AwakeType.MAC;
                     break;
-                case "体质雕文":
-                    type = AwakeType.生命法力值;
+                case "Body Glyph":
+                    type = AwakeType.HPMP;
                     break;
                 default:
                     type = AwakeType.None;
@@ -1608,7 +1608,7 @@ namespace Client.MirScenes.Dialogs
             {
                 ItemCells[1].Item = new UserItem(Materials[0]);
                 ItemCells[1].Item.Count = MaterialsCount[0];
-                NeedItemLabel1.Text = Regex.Replace(ItemCells[1].Item.Info.Name, @"[\d-]", string.Empty) + "\n数量" + MaterialsCount[0].ToString();
+                NeedItemLabel1.Text = Regex.Replace(ItemCells[1].Item.Info.Name, @"[\d-]", string.Empty) + "\nQuantity: " + MaterialsCount[0].ToString();
             }
             else
             {
@@ -1620,7 +1620,7 @@ namespace Client.MirScenes.Dialogs
             {
                 ItemCells[2].Item = new UserItem(Materials[1]);
                 ItemCells[2].Item.Count = MaterialsCount[1];
-                NeedItemLabel2.Text = Regex.Replace(ItemCells[2].Item.Info.Name, @"[\d-]", string.Empty) + "\n数量" + MaterialsCount[1].ToString();
+                NeedItemLabel2.Text = Regex.Replace(ItemCells[2].Item.Info.Name, @"[\d-]", string.Empty) + "\nQuantity:" + MaterialsCount[1].ToString();
             }
             else
             {
@@ -1768,7 +1768,7 @@ namespace Client.MirScenes.Dialogs
                         Library = Libraries.Items,
                         Parent = this,
                         Size = new Size(35, 32),
-                        Location = new Point(((x - _toolCount) * 40) + 32, 86),
+                        Location = new Point(((x - _toolCount) * 40) + 52, 86),
                         Border = true,
                         BorderColour = Color.Lime
                     };
@@ -1992,7 +1992,7 @@ namespace Client.MirScenes.Dialogs
             {
                 if (Recipe.Gold > GameScene.Gold)
                 {
-                    GameScene.Scene.ChatDialog.ReceiveChat("金币不足", ChatType.System);
+                    GameScene.Scene.ChatDialog.ReceiveChat("You do not have enough gold.", ChatType.System);
                     return;
                 }
 
@@ -2000,7 +2000,7 @@ namespace Client.MirScenes.Dialogs
 
             if (max > 1)
             {
-                MirAmountBox amountBox = new MirAmountBox("工艺费用", RecipeItem.Info.Image, max, 0, max);
+                MirAmountBox amountBox = new MirAmountBox("Craft Amount:", RecipeItem.Info.Image, max, 0, max);
 
                 amountBox.OKButton.Click += (o, e) =>
                 {
@@ -2008,13 +2008,13 @@ namespace Client.MirScenes.Dialogs
                     {
                         if (!HasCraftItems((ushort)amountBox.Amount))
                         {
-                            GameScene.Scene.ChatDialog.ReceiveChat("材料不足", ChatType.System);
+                            GameScene.Scene.ChatDialog.ReceiveChat("You do not have the required tools or ingredients.", ChatType.System);
                             return;
                         }
                         
                         if ((Recipe.Gold * amountBox.Amount) > GameScene.Gold)
                         {
-                            GameScene.Scene.ChatDialog.ReceiveChat("你的金币不足", ChatType.System);
+                            GameScene.Scene.ChatDialog.ReceiveChat("You do not have enough gold.", ChatType.System);
                             return;
                         }
 
@@ -2132,7 +2132,7 @@ namespace Client.MirScenes.Dialogs
             Recipe = GameScene.RecipeInfoList.SingleOrDefault(x => x.Item.ItemIndex == selectedItem.ItemIndex);
 
             RecipeLabel.Text = Recipe.Item.FriendlyName;
-            PossibilityLabel.Text = (UserObject.User.Stats[Stat.大师概率数率] > 0 ? $"{Math.Min(100, Recipe.Chance + UserObject.User.Stats[Stat.大师概率数率])}% (+{UserObject.User.Stats[Stat.大师概率数率]}%)" : $"{Recipe.Chance}%") + " 成功几率";
+            PossibilityLabel.Text = (UserObject.User.Stats[Stat.CraftRatePercent] > 0 ? $"{Math.Min(100, Recipe.Chance + UserObject.User.Stats[Stat.CraftRatePercent])}% (+{UserObject.User.Stats[Stat.CraftRatePercent]}%)" : $"{Recipe.Chance}%") + " Chance of Success";
             GoldLabel.Text = Recipe.Gold.ToString("###,###,##0");
 
             for (int i = 0; i < Slots.Length; i++)

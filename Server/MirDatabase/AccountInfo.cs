@@ -120,21 +120,21 @@ namespace Server.MirDatabase
 
                 if (info.Deleted && info.DeleteDate.AddMonths(Settings.ArchiveDeletedCharacterAfterMonths) <= Envir.Now)
                 {
-                    MessageQueue.Enqueue($"玩家 {info.Name} 由于已删除角色 {Settings.ArchiveDeletedCharacterAfterMonths} 月已存档处理");
+                    MessageQueue.Enqueue($"Player {info.Name} has been archived due to {Settings.ArchiveDeletedCharacterAfterMonths} month deletion.");
                     Envir.SaveArchivedCharacter(info);
                     continue;
                 }
 
                 if (info.LastLoginDate == DateTime.MinValue && info.CreationDate.AddMonths(Settings.ArchiveInactiveCharacterAfterMonths) <= Envir.Now)
                 {
-                    MessageQueue.Enqueue($"玩家 {info.Name} 由于 {Settings.ArchiveInactiveCharacterAfterMonths} 月未登录已存档处理");
+                    MessageQueue.Enqueue($"Player {info.Name} has been archived due to no login after {Settings.ArchiveInactiveCharacterAfterMonths} months.");
                     Envir.SaveArchivedCharacter(info);
                     continue;
                 }
                 
                 if (info.LastLoginDate > DateTime.MinValue && info.LastLoginDate.AddMonths(Settings.ArchiveInactiveCharacterAfterMonths) <= Envir.Now)
                 {
-                    MessageQueue.Enqueue($"玩家 {info.Name} 由于 {Settings.ArchiveInactiveCharacterAfterMonths} 月未激活已存档处理");
+                    MessageQueue.Enqueue($"Player {info.Name} has been archived due to {Settings.ArchiveInactiveCharacterAfterMonths} months inactivity.");
                     Envir.SaveArchivedCharacter(info);
                     continue;
                 }

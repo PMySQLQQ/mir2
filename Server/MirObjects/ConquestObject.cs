@@ -317,7 +317,7 @@ namespace Server.MirObjects
         {
             if (WarIsOn)
             {
-                if (StartType == ConquestType.强制启动)
+                if (StartType == ConquestType.Forced)
                 {
                     WarStartTime = Envir.Now;
                     WarEndTime = WarStartTime.AddMinutes(Info.WarLength);
@@ -328,14 +328,14 @@ namespace Server.MirObjects
 
                 switch (GameType)
                 {
-                    case ConquestGame.占领皇宫:
+                    case ConquestGame.CapturePalace:
                         break;
-                    case ConquestGame.争夺国王:
+                    case ConquestGame.KingOfHill:
                         CreateZone(true);
                         break;
-                    case ConquestGame.随机模式:
+                    case ConquestGame.Random:
                         break;
-                    case ConquestGame.经典模式:
+                    case ConquestGame.Classic:
                         break;
                 }
 
@@ -352,21 +352,21 @@ namespace Server.MirObjects
 
                 switch (StartType)
                 {
-                    case ConquestType.申请启动:
+                    case ConquestType.Request:
                         GuildInfo.AttackerID = -1;
                         break;
                 }
 
                 switch (GameType)
                 {
-                    case ConquestGame.占领皇宫:
+                    case ConquestGame.CapturePalace:
                         break;
-                    case ConquestGame.争夺国王:
+                    case ConquestGame.KingOfHill:
                         CreateZone(false);
                         break;
-                    case ConquestGame.随机模式:
+                    case ConquestGame.Random:
                         break;
-                    case ConquestGame.经典模式:
+                    case ConquestGame.Classic:
                         break;
                 }
             }
@@ -468,12 +468,12 @@ namespace Server.MirObjects
             int finish = ((Info.StartHour * 60) + Info.WarLength);
             int now = ((Envir.Now.Hour * 60) + Envir.Now.Minute);
 
-            if (WarIsOn && StartType == ConquestType.强制启动 && WarEndTime <= Envir.Now)
+            if (WarIsOn && StartType == ConquestType.Forced && WarEndTime <= Envir.Now)
             {
                 EndWar(Info.Game);
             }
             
-            if (StartType != ConquestType.强制启动)
+            if (StartType != ConquestType.Forced)
             {
                 if (WarIsOn && (now > start && finish <= now))
                 {
@@ -483,7 +483,7 @@ namespace Server.MirObjects
                 {
                     if (!WarIsOn)
                     {
-                        if (Info.Type == ConquestType.申请启动)
+                        if (Info.Type == ConquestType.Request)
                         {
                             if (GuildInfo.AttackerID != -1)
                             {
@@ -508,7 +508,7 @@ namespace Server.MirObjects
         public void Process()
         {
             if (ScheduleTimer < Envir.Time) AutoSchedule();
-            if (WarIsOn && (GameType == ConquestGame.争夺国王 || GameType == ConquestGame.经典模式 || GameType == ConquestGame.征服模式)) ScorePoints();
+            if (WarIsOn && (GameType == ConquestGame.KingOfHill || GameType == ConquestGame.Classic || GameType == ConquestGame.ControlPoints)) ScorePoints();
         }
 
         public void Reset()
@@ -558,8 +558,8 @@ namespace Server.MirObjects
 
             switch (GameType)
             {
-                case ConquestGame.占领皇宫:
-                    if (StartType == ConquestType.申请启动)
+                case ConquestGame.CapturePalace:
+                    if (StartType == ConquestType.Request)
                         if (player.MyGuild.Guildindex != GuildInfo.AttackerID) break;
 
                     if (Guild != null)
@@ -574,9 +574,9 @@ namespace Server.MirObjects
                     player.MyGuild.Conquest = this;
                     EndWar(GameType);
                     break;
-                case ConquestGame.争夺国王:
-                case ConquestGame.经典模式:
-                    if (StartType == ConquestType.申请启动)
+                case ConquestGame.KingOfHill:
+                case ConquestGame.Classic:
+                    if (StartType == ConquestType.Request)
                         if (winningGuild.Guildindex != GuildInfo.AttackerID) break;
 
                     if (Guild != null)
@@ -590,7 +590,7 @@ namespace Server.MirObjects
                     Guild = winningGuild;
                     Guild.Conquest = this;
                     break;
-                case ConquestGame.征服模式:
+                case ConquestGame.ControlPoints:
 
                     if (Guild != null)
                     {
@@ -719,7 +719,7 @@ namespace Server.MirObjects
 
             switch (GameType)
             {
-                case ConquestGame.征服模式:
+                case ConquestGame.ControlPoints:
                     {
                         int points;
 
@@ -744,12 +744,12 @@ namespace Server.MirObjects
                                 if (points == 0)
                                 {
                                     controlFlagPoints[ConquestMap.Players[i].MyGuild] = 1;
-                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("获得的控制权 {1} {0:P0}", ((double)controlFlagPoints[ConquestMap.Players[i].MyGuild] / MAX_CONTROL_POINTS), controlFlag.Info.Name));
+                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("Gaining control of {1} {0:P0}", ((double)controlFlagPoints[ConquestMap.Players[i].MyGuild] / MAX_CONTROL_POINTS), controlFlag.Info.Name));
                                 }
                                 else if (points < MAX_CONTROL_POINTS)
                                 {
                                     controlFlagPoints[ConquestMap.Players[i].MyGuild] += 1;
-                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("获得的控制权 {1} {0:P0}", ((double)controlFlagPoints[ConquestMap.Players[i].MyGuild] / MAX_CONTROL_POINTS), controlFlag.Info.Name));
+                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("Gaining control of {1} {0:P0}", ((double)controlFlagPoints[ConquestMap.Players[i].MyGuild] / MAX_CONTROL_POINTS), controlFlag.Info.Name));
                                 }
 
                                 List<GuildObject> guilds = controlFlagPoints.Keys.ToList();
@@ -791,14 +791,14 @@ namespace Server.MirObjects
 
                                     for (int j = 0; j < ConquestMap.Players.Count; j++)
                                     {
-                                        ConquestMap.Players[j].ReceiveChat(string.Format("{0} 已在 {2} 占领了 {1}", tempWinning.Name, controlFlag.Info.Name, Info.Name), ChatType.System);
+                                        ConquestMap.Players[j].ReceiveChat(string.Format("{0} has captured {1} at {2}", tempWinning.Name, controlFlag.Info.Name, Info.Name), ChatType.System);
                                     }
                                 }
                             }
                         }
                     }
                     break;
-                case ConquestGame.争夺国王:
+                case ConquestGame.KingOfHill:
                     {
                         int points;
 
@@ -806,7 +806,7 @@ namespace Server.MirObjects
                         {
                             if (ConquestMap.Players[i].WarZone && ConquestMap.Players[i].MyGuild != null && !ConquestMap.Players[i].Dead && Functions.InRange(Info.KingLocation, ConquestMap.Players[i].CurrentLocation, Info.KingSize))
                             {
-                                if (StartType == ConquestType.申请启动 && ConquestMap.Players[i].MyGuild.Guildindex != GuildInfo.AttackerID) continue;
+                                if (StartType == ConquestType.Request && ConquestMap.Players[i].MyGuild.Guildindex != GuildInfo.AttackerID) continue;
 
                                 if (ConquestMap.Players[i].MyGuild.Conquest != null && ConquestMap.Players[i].MyGuild.Conquest != this) continue;
 
@@ -815,12 +815,12 @@ namespace Server.MirObjects
                                 if (points == 0)
                                 {
                                     KingPoints[ConquestMap.Players[i].MyGuild] = 1;
-                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("控制 {1} 的进度 {0:P0}", ((double)KingPoints[ConquestMap.Players[i].MyGuild] / MAX_KING_POINTS), Info.Name));
+                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("Gaining control of {1} {0:P0}", ((double)KingPoints[ConquestMap.Players[i].MyGuild] / MAX_KING_POINTS), Info.Name));
                                 }
                                 else if (points < MAX_KING_POINTS)
                                 {
                                     KingPoints[ConquestMap.Players[i].MyGuild] += 1;
-                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("控制 {1} 的进度 {0:P0}", ((double)KingPoints[ConquestMap.Players[i].MyGuild] / MAX_KING_POINTS), Info.Name));
+                                    ConquestMap.Players[i].MyGuild.SendOutputMessage(string.Format("Gaining control of {1} {0:P0}", ((double)KingPoints[ConquestMap.Players[i].MyGuild] / MAX_KING_POINTS), Info.Name));
                                 }
 
                                 List<GuildObject> guilds = KingPoints.Keys.ToList();
@@ -831,7 +831,7 @@ namespace Server.MirObjects
                                     if (KingPoints[guild] > 0)
                                     {
                                         KingPoints[guild] -= 1;
-                                        guild.SendOutputMessage(string.Format("失去对 {1} 的控制 {0:P0}", ((double)KingPoints[guild] / MAX_KING_POINTS), Info.Name));
+                                        guild.SendOutputMessage(string.Format("Losing control of {1} {0:P0}", ((double)KingPoints[guild] / MAX_KING_POINTS), Info.Name));
                                     }
                                 }
 
@@ -864,13 +864,13 @@ namespace Server.MirObjects
 
                                 for (int j = 0; j < ConquestMap.Players.Count; j++)
                                 {
-                                    ConquestMap.Players[j].ReceiveChat(string.Format("{0} 已被占领", tempWinning.Name), ChatType.System);
+                                    ConquestMap.Players[j].ReceiveChat(string.Format("{0} has captured the hill", tempWinning.Name), ChatType.System);
                                 }
                             }
                         }
                     }
                     break;
-                case ConquestGame.经典模式:
+                case ConquestGame.Classic:
                     int guildCounter = 0;
                     GuildObject takingGuild = null;
                     for (int i = 0; i < PalaceMap.Players.Count; i++)
@@ -892,7 +892,7 @@ namespace Server.MirObjects
 
                     if (guildCounter == 1 && takingGuild != Guild)
                     {
-                        if (StartType == ConquestType.申请启动 && takingGuild.Guildindex != GuildInfo.AttackerID) return;
+                        if (StartType == ConquestType.Request && takingGuild.Guildindex != GuildInfo.AttackerID) return;
 
                         TakeConquest(null, takingGuild);
                     }
@@ -918,7 +918,7 @@ namespace Server.MirObjects
 
             switch(type)
             {
-                case ConquestGame.征服模式:
+                case ConquestGame.ControlPoints:
                     Dictionary<GuildObject, int> controlledPoints = new Dictionary<GuildObject, int>();
                     int count = 0;
 

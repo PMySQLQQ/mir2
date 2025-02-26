@@ -27,7 +27,7 @@ namespace Server.MirObjects
 
         public long TickTime, StartTime;
         public MapObject Caster;
-        public int Value, TickSpeed, BonusDmg, Healingdmg;
+        public int Value, TickSpeed, BonusDmg;
         public Spell Spell;
         public Point CastLocation;
         public bool Show, Decoration;
@@ -53,7 +53,7 @@ namespace Server.MirObjects
 
             if (Caster != null && Caster.Node == null) Caster = null;
 
-            if (Envir.Time > ExpireTime || ((Spell == Spell.FireWall || Spell == Spell.Portal || Spell == Spell.ExplosiveTrap || Spell == Spell.Reincarnation || Spell == Spell.HealingCircle && Caster == null || Spell == Spell.HealingcircleRare) && Caster == null) || (Spell == Spell.TrapHexagon && Target != null) || (Spell == Spell.Trap && Target != null))
+            if (Envir.Time > ExpireTime || ((Spell == Spell.FireWall || Spell == Spell.Portal || Spell == Spell.ExplosiveTrap || Spell == Spell.Reincarnation || Spell == Spell.HealingCircle) && Caster == null) || (Spell == Spell.TrapHexagon && Target != null) || (Spell == Spell.Trap && Target != null))
             {
                 if (Spell == Spell.TrapHexagon && Target != null || Spell == Spell.Trap && Target != null)
                 {
@@ -68,7 +68,7 @@ namespace Server.MirObjects
                     ((HumanObject)Caster).ReincarnationExpireTime = Envir.Time + 6000;
                 }
 
-                if ((Spell == Spell.Blizzard || Spell == Spell.MeteorStrike) && Caster != null)
+                if ((Spell == Spell.Blizzard || Spell == Spell.MeteorStrike) &&  Caster != null)
                 {
                     ((HumanObject)Caster).ActiveBlizzard = false;
                 }
@@ -87,15 +87,7 @@ namespace Server.MirObjects
                     return;
                 }
             }
-            if (Spell == Spell.HealingcircleRare)
-            {
-                if (CurrentMap != null && (CurrentMap != Caster?.CurrentMap || CurrentMap.Info.Index != CurrentMapIndex))
-                {
-                    CurrentMap.RemoveObject(this);
-                    Despawn();
-                    return;
-                }
-            }
+
             if (Spell == Spell.Reincarnation && !((HumanObject)Caster).ActiveReincarnation)
             {
                 CurrentMap.RemoveObject(this);
@@ -141,15 +133,17 @@ namespace Server.MirObjects
                         ob.Attacked(((HumanObject)Caster), Value, DefenceType.MAC, false);
                     }
                     break;
-                case Spell.Healing: // SafeZone
+                case Spell.Healing: //SafeZone
                     {
-                        if (!(ob.Race == ObjectType.Player || ob.Race == ObjectType.Hero ||
-                              (ob.Race == ObjectType.Monster && ob.Master != null && ob.Master.Race == ObjectType.Player))) return;
-
+                        if (ob.Master == null) return;
                         if (ob.Dead || ob.HealAmount != 0 || ob.PercentHealth == 100) return;
 
-                        ob.HealAmount += 25;
-                        Broadcast(new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.Healing });
+                        if (ob.Race == ObjectType.Player || ob.Race == ObjectType.Hero || (ob.Race == ObjectType.Monster && ob.Master.Race == ObjectType.Player))
+                        {
+                            ob.HealAmount += 25;
+                            Broadcast(new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.Healing });
+                        }
+
                     }
                     break;
                 case Spell.PoisonCloud:
@@ -180,7 +174,7 @@ namespace Server.MirObjects
                         if (!ob.Dead && Envir.Random.Next(8) == 0)
                             ob.ApplyPoison(new Poison
                             {
-                                Duration = 5 + Envir.Random.Next(Caster.Stats[Stat.冰冻伤害]),
+                                Duration = 5 + Envir.Random.Next(Caster.Stats[Stat.Freezing]),
                                 Owner = Caster,
                                 PType = PoisonType.Slow,
                                 TickSpeed = 2000,
@@ -194,30 +188,6 @@ namespace Server.MirObjects
                         if (Caster != null && ((HumanObject)Caster).ActiveBlizzard == false) return;
                         if (!ob.IsAttackTarget(Caster)) return;
                         ob.Attacked(((HumanObject)Caster), Value, DefenceType.MAC, false);
-                    }
-                    break;
-                case Spell.HealingcircleRare:
-                    {
-                        if (ob == null) return;
-
-                        if (ob.Race == ObjectType.Player || ob.Race == ObjectType.Hero || (ob.Race == ObjectType.Monster && ob.Master != null && ob.Master.Race == ObjectType.Player))
-                        {
-                            if (ob.IsAttackTarget(Caster)) return;
-                            if (ob.Dead || ob.HealAmount != 0 || ob.PercentHealth >= 100) return;
-
-                            ob.HealAmount += 25;
-                            Broadcast(new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.Healing });
-                        }
-                        else if (ob.Race == ObjectType.Monster && ob.IsAttackTarget(Caster) && !ob.Dead)
-                        {
-                            ob.Attacked(Caster as HumanObject, Value, DefenceType.MAC, false);
-                            Broadcast(new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.HealingcircleRare });
-                            if (Envir.Random.Next(10) >= 2)
-                            {
-                                Broadcast(new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.HealingcircleRare1 });
-                                ob.ApplyPoison(new Poison { PType = PoisonType.Green, Duration = 2, TickSpeed = 1000 }, this);
-                            }
-                        }
                     }
                     break;
                 case Spell.ExplosiveTrap:
@@ -237,7 +207,7 @@ namespace Server.MirObjects
                         {
                             if (player.Account.AdminAccount && player.Observer) return;
                             player.Struck(Value, DefenceType.MAC);
-                        }
+                        }                 
                     }
                     break;
                 case Spell.MapQuake1:
@@ -393,8 +363,8 @@ namespace Server.MirObjects
                         ob.Struck(Value, DefenceType.AC);
                     }
                     break;
-                case Spell.Mon409BRockFall:
-                case Spell.Mon409BRockSpike:
+                case Spell.HornedCommanderRockFall:
+                case Spell.HornedCommanderRockSpike:
                     {
                         if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster) return;
                         if (ob.Dead) return;
@@ -406,7 +376,7 @@ namespace Server.MirObjects
                     }
                     break;
                 case Spell.HealingCircle:
-                    if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
+                    if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster) return;
 
                     if (Caster == ob || (Caster.GroupMembers != null && Caster.GroupMembers.Contains(ob)) || (ob.Master != null && Caster.GroupMembers != null && Caster.GroupMembers.Contains(ob.Master)))
                     {
@@ -432,137 +402,6 @@ namespace Server.MirObjects
                             TickSpeed = 1000,
                         }, Caster);
                         ob.OperateTime = 0;
-                    }
-                    break;
-                case Spell.YangDragonFlame:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.YangDragonIcyBurst:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.ShardGuardianIceBomb:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-
-                        if (Value == 0) return;
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.GroundFissure:
-                    {
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.SkeletonBomb:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.FlameExplosion:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.ButcherFlyAxe:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.RiklebitesRollCall:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.RiklebitesBlast:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.SwordFormation:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.AC);
-                    }
-                    break;
-                case Spell.Mon564NWhirlwind:
-                case Spell.Mon570BRupture:
-                case Spell.Mon570BLightningCloud:
-                case Spell.Mon571BFireBomb:
-                case Spell.Mon572BDarkVortex:
-                case Spell.Mon572BFlame:
-                case Spell.Mon573BBigCobweb:
-                case Spell.Mon580BPoisonousMist:
-                case Spell.Mon580BDenseFog:
-                case Spell.Mon580BRoot:
-                case Spell.Mon603BWhirlPool:
-                case Spell.Mon609NBomb:
-                    {
-                        if (ob.Race != ObjectType.Player && ob.Race != ObjectType.Monster && ob.Race != ObjectType.Hero) return;
-                        if (ob.Dead) return;
-                        if (ob == Caster) return;
-                        if (!ob.IsAttackTarget(Caster)) return;
-                        if (Value == 0) return;
-
-                        ob.Struck(Value, DefenceType.MAC);
                     }
                     break;
             }
@@ -676,30 +515,9 @@ namespace Server.MirObjects
                 case Spell.FlyingStatueIceTornado:
                 case Spell.DarkOmaKingNuke:
                 case Spell.HornedSorcererDustTornado:
-                case Spell.Mon409BRockFall:
-                case Spell.Mon409BRockSpike:
+                case Spell.HornedCommanderRockFall:
+                case Spell.HornedCommanderRockSpike:
                 case Spell.HealingCircle:
-                case Spell.HealingcircleRare:
-                case Spell.YangDragonFlame:
-                case Spell.YangDragonIcyBurst:
-                case Spell.ShardGuardianIceBomb:
-                case Spell.GroundFissure:
-                case Spell.SkeletonBomb:
-                case Spell.FlameExplosion:
-                case Spell.ButcherFlyAxe:
-                case Spell.RiklebitesBlast:
-                case Spell.SwordFormation:
-                case Spell.Mon564NWhirlwind:
-                case Spell.Mon570BRupture:
-                case Spell.Mon570BLightningCloud:
-                case Spell.Mon571BFireBomb:
-                case Spell.Mon572BFlame:
-                case Spell.Mon572BDarkVortex:
-                case Spell.Mon573BBigCobweb:
-                case Spell.Mon580BPoisonousMist:
-                case Spell.Mon580BDenseFog:
-                case Spell.Mon603BWhirlPool:
-                case Spell.Mon609NBomb:
                     if (!Show)
                         return null;
 
@@ -780,7 +598,7 @@ namespace Server.MirObjects
             if (Spell == Spell.Portal && Caster != null)
             {
                 var portal = Envir.Spells.SingleOrDefault(ob => ob.Node != null && ob != this
-                    && ob.Spell == Spell.Portal
+                    && ob.Spell == Spell.Portal    
                     && ob.Caster == Caster);
 
                 if (portal != null)

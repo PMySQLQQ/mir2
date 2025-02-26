@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -7,7 +7,6 @@ namespace Server.MirObjects.Monsters
 {
     public class Behemoth : MonsterObject
     {
-        public long FearTime;
         public byte AttackRange = 10;
 
         protected internal Behemoth(MonsterInfo info)
@@ -38,7 +37,7 @@ namespace Server.MirObjects.Monsters
                     case 0:
                     case 1:
                     case 2:
-                        base.Attack();
+                        base.Attack(); //swipe
                         break;
                     case 3:
                         {
@@ -75,7 +74,8 @@ namespace Server.MirObjects.Monsters
                     {
                         case 0:
                             Broadcast(new S.ObjectRangeAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
-                            SpawnSlaves();
+
+                            SpawnSlaves(); //spawn huggers
                             break;
                         case 1:
                             {
@@ -125,18 +125,43 @@ namespace Server.MirObjects.Monsters
             MapObject target = (MapObject)data[0];
             int damage = (int)data[1];
             DefenceType defence = (DefenceType)data[2];
+            bool fireCircle = data.Count >= 4 ? (bool)data[3] : false;
 
             if (target == null || !target.IsAttackTarget(this) || target.CurrentMap != CurrentMap || target.Node == null) return;
 
+            if (fireCircle) //Firecircle
             {
                 List<MapObject> targets = FindAllTargets(1, CurrentLocation);
+
                 if (targets.Count == 0) return;
 
                 for (int i = 0; i < targets.Count; i++)
+                {
+                    targets[i].Attacked(this, damage, defence);
+                }
+            }
+            else //Push back
+            {
+                Point point = Functions.PointMove(CurrentLocation, Direction, 1);
+
+                Cell cell = CurrentMap.GetCell(point);
+
+                if (cell.Objects != null)
+                {
+                    for (int o = 0; o < cell.Objects.Count; o++)
+                    {
+                        MapObject t = cell.Objects[o];
+                        if (t == null || t.Race != ObjectType.Player) continue;
+
+                        if (t.IsAttackTarget(this))
                         {
-                            targets[i].Pushed(this, Functions.DirectionFromPoint(CurrentLocation, targets[i].CurrentLocation), 4);
-                            PoisonTarget(targets[i], 3, 5, PoisonType.Dazed, 1000);
+                            t.Pushed(this, Direction, 4);
+
+                            PoisonTarget(t, 3, 15, PoisonType.Dazed, 1000);
                         }
+                        break;
+                    }
+                }
             }
         }
 
@@ -144,7 +169,7 @@ namespace Server.MirObjects.Monsters
         {
             List<MapObject> targets = FindAllTargets(10, CurrentLocation);
 
-            int count = Math.Min(3, (targets.Count * 3) - SlaveList.Count);
+            int count = Math.Min(8, (targets.Count * 5) - SlaveList.Count);
             
             ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
@@ -174,94 +199,6 @@ namespace Server.MirObjects.Monsters
                 mob.ActionTime = Envir.Time + 2000;
                 SlaveList.Add(mob);
             }
-            if (Envir.Random.Next(5) == 0)
-            {
-                TeleportRandom(10, AttackRange);
-            }
-            else
-            {
-                var hpPercent = (HP * 100) / Stats[Stat.HP];
-
-                if (Envir.Random.Next(3) == 0 && hpPercent < 50)
-                {
-                    Broadcast(new S.ObjectAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Type = 0 });
-
-                    ActionTime = Envir.Time + 300;
-                    AttackTime = Envir.Time + AttackSpeed;
-
-                    ChangeHP(Stats[Stat.HP] / 4);
-                }
-             }
-        }
-
-        protected override void ProcessTarget()
-        {
-            if (Target == null || !CanAttack) return;
-
-            if (InAttackRange() && Envir.Time < FearTime)
-            {
-                Attack();
-                return;
-            }
-
-            FearTime = Envir.Time + 5000;
-
-            if (Envir.Time < ShockTime)
-            {
-                Target = null;
-                return;
-            }
-
-            int dist = Functions.MaxDistance(CurrentLocation, Target.CurrentLocation);
-
-            if (dist >= AttackRange)
-                MoveTo(Target.CurrentLocation);
-            else
-            {
-                MirDirection dir = Functions.DirectionFromPoint(Target.CurrentLocation, CurrentLocation);
-
-                if (Walk(dir)) return;
-
-                switch (Envir.Random.Next(2))
-                {
-                    case 0:
-                        for (int i = 0; i < 7; i++)
-                        {
-                            dir = Functions.NextDir(dir);
-
-                            if (Walk(dir))
-                                return;
-                        }
-                        break;
-                    default:
-                        for (int i = 0; i < 7; i++)
-                        {
-                            dir = Functions.PreviousDir(dir);
-
-                            if (Walk(dir))
-                                return;
-                        }
-                        break;
-                }
-                
-            }
-        }
-
-        public override bool TeleportRandom(int attempts, int distance, Map temp = null)
-        {
-            if (Target == null) return false;
-
-            for (int i = 0; i < attempts; i++)
-            {
-                Point location;
-
-                location = new Point(Target.CurrentLocation.X + Envir.Random.Next(-distance, distance + 1),
-                                          Target.CurrentLocation.Y + Envir.Random.Next(-distance, distance + 1));
-
-                if (Teleport(CurrentMap, location, true, 12)) return true;
-            }
-
-            return false;
         }
 
         public override void Die()

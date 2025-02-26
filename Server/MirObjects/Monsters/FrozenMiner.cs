@@ -33,8 +33,6 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < targets.Count; i++)
                 {
-                    ThreeQuarterMoonAttack(damage);
-
                     DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + 1000, targets[i], (int)(damage * 0.8), DefenceType.ACAgility);
                     ActionList.Add(action);
                 }

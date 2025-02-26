@@ -15,12 +15,7 @@
   <PropertyGroup>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	<ApplicationIcon>HAL System ID Icon 14.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="HAL System ID Icon 14.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Controls\FixedListViewControl\CustomFormControl.csproj" />

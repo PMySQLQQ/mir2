@@ -248,19 +248,19 @@ namespace Client.MirControls
                     MirMessageBox.Show(GameLanguage.ShuttingDown, true);
                     break;
                 case 1:
-                    MirMessageBox.Show("断开连接: 账户重复登录", true);
+                    MirMessageBox.Show("Disconnected: Another user logged onto your account.", true);
                     break;
                 case 2:
-                    MirMessageBox.Show("断开连接: 数据错误", true);
+                    MirMessageBox.Show("Disconnected: Packet Error.", true);
                     break;
                 case 3:
-                    MirMessageBox.Show("断开连接: 服务器崩溃", true);
+                    MirMessageBox.Show("Disconnected: Server Crashed.", true);
                     break;
                 case 4:
-                    MirMessageBox.Show("断开连接: 联系管理员", true);
+                    MirMessageBox.Show("Disconnected: Kicked by Admin.", true);
                     break;
                 case 5:
-                    MirMessageBox.Show("断开连接: 服务器超员", true);
+                    MirMessageBox.Show("Disconnected: Maximum connections reached.", true);
                     break;
             }
 

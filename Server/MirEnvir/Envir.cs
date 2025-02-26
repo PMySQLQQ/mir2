@@ -1,4 +1,5 @@
 ﻿using ClientPackets;
+using Server.Library.MirDatabase;
 using Server.Library.Utils;
 using Server.MirDatabase;
 using Server.MirNetwork;
@@ -24,7 +25,6 @@ namespace Server.MirEnvir
         public LinkedListNode<MapObject> _current = null;
         public bool Stop = false;
     }
-
     public class RandomProvider
     {
         private static int seed = Environment.TickCount;
@@ -53,7 +53,7 @@ namespace Server.MirEnvir
         public static object LoadLock = new object();
 
         public const int MinVersion = 60;
-        public const int Version = 110;
+        public const int Version = 112;
         public const int CustomVersion = 0;
         public static readonly string DatabasePath = Path.Combine(".", "Server.MirDB");
         public static readonly string AccountPath = Path.Combine(".", "Server.MirADB");
@@ -119,6 +119,7 @@ namespace Server.MirEnvir
         public List<RecipeInfo> RecipeInfoList = new List<RecipeInfo>();
         public List<BuffInfo> BuffInfoList = new List<BuffInfo>();
         public List<ConquestInfo> ConquestInfoList = new List<ConquestInfo>();
+        public List<GTMap> GTMapList = new List<GTMap>();
 
         //User DB
         public int NextAccountID, NextCharacterID, NextGuildID, NextHeroID;
@@ -181,7 +182,7 @@ namespace Server.MirEnvir
             AccountIDReg = new Regex(@"^[A-Za-z0-9]{" + Globals.MinAccountIDLength + "," + Globals.MaxAccountIDLength + "}$");
             PasswordReg = new Regex(@"^[A-Za-z0-9]{" + Globals.MinPasswordLength + "," + Globals.MaxPasswordLength + "}$");
             EMailReg = new Regex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
-            CharacterReg = new Regex(@"^[A-Za-z0-9\u4E00-\u9FA5]{" + Globals.MinCharacterNameLength + "," + Globals.MaxCharacterNameLength + "}$");
+            CharacterReg = new Regex(@"^[\u4e00-\u9fa5_A-Za-z0-9]{" + Globals.MinCharacterNameLength + "," + Globals.MaxCharacterNameLength + "}$");
         }
 
         public static int LastCount = 0, LastRealCount = 0;
@@ -190,7 +191,6 @@ namespace Server.MirEnvir
 
         private long warTime, guildTime, conquestTime, rentalItemsTime, auctionTime, spawnTime, robotTime, timerTime;
         private int dailyTime = DateTime.UtcNow.Day;
-
         private bool MagicExists(Spell spell)
         {
             for (var i = 0; i < MagicInfoList.Count; i++)
@@ -236,14 +236,6 @@ namespace Server.MirEnvir
                         break;
                     case Spell.SlashingBurst:
                         MagicInfoList[i].MultiplierBase = 3.25f;
-                        MagicInfoList[i].MultiplierBonus = 0.25f;
-                        break;
-                    case Spell.DimensionalSword:
-                        MagicInfoList[i].MultiplierBase = 1f;
-                        MagicInfoList[i].MultiplierBonus = 0.25f;
-                        break;
-                    case Spell.DimensionalSwordRare:
-                        MagicInfoList[i].MultiplierBase = 1f;
                         MagicInfoList[i].MultiplierBonus = 0.25f;
                         break;
                     //wiz
@@ -293,212 +285,191 @@ namespace Server.MirEnvir
         private void FillMagicInfoList()
         {
             //Warrior
-            if (!MagicExists(Spell.Fencing)) MagicInfoList.Add(new MagicInfo {Name = "基本剑术", Spell = Spell.Fencing, Icon = 2, Level1 = 7, Level2 = 9, Level3 = 12, Need1 = 270, Need2 = 600, Need3 = 1300, Range = 0 });
-            if (!MagicExists(Spell.Slaying)) MagicInfoList.Add(new MagicInfo { Name = "攻杀剑术", Spell = Spell.Slaying, Icon = 6, Level1 = 15, Level2 = 17, Level3 = 20, Need1 = 500, Need2 = 1100, Need3 = 1800, Range = 0 });
-            if (!MagicExists(Spell.Thrusting)) MagicInfoList.Add(new MagicInfo { Name = "刺杀剑术", Spell = Spell.Thrusting, Icon = 11, Level1 = 22, Level2 = 24, Level3 = 27, Need1 = 2000, Need2 = 3500, Need3 = 6000, Range = 0, MultiplierBase = 0.25f, MultiplierBonus = 0.25f });
-            if (!MagicExists(Spell.HalfMoon)) MagicInfoList.Add(new MagicInfo { Name = "半月弯刀", Spell = Spell.HalfMoon, Icon = 24, Level1 = 26, Level2 = 28, Level3 = 31, Need1 = 5000, Need2 = 8000, Need3 = 14000, BaseCost = 3, Range = 0, MultiplierBase =0.3f, MultiplierBonus = 0.1f });
-            if (!MagicExists(Spell.ShoulderDash)) MagicInfoList.Add(new MagicInfo { Name = "野蛮冲撞", Spell = Spell.ShoulderDash, Icon = 26, Level1 = 30, Level2 = 32, Level3 = 34, Need1 = 3000, Need2 = 4000, Need3 = 6000, BaseCost = 4, LevelCost = 4, DelayBase = 2500, Range = 0 , MPowerBase = 4});
-            if (!MagicExists(Spell.TwinDrakeBlade)) MagicInfoList.Add(new MagicInfo { Name = "双龙斩", Spell = Spell.TwinDrakeBlade, Icon = 37, Level1 = 32, Level2 = 34, Level3 = 37, Need1 = 4000, Need2 = 6000, Need3 = 10000, BaseCost = 10, Range = 0 , MultiplierBase = 0.8f, MultiplierBonus = 0.1f});
-            if (!MagicExists(Spell.Entrapment)) MagicInfoList.Add(new MagicInfo { Name = "捕绳剑", Spell = Spell.Entrapment, Icon = 46, Level1 = 32, Level2 = 35, Level3 = 37, Need1 = 2000, Need2 = 3500, Need3 = 5500, BaseCost = 15, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.FlamingSword)) MagicInfoList.Add(new MagicInfo { Name = "烈火剑法", Spell = Spell.FlamingSword, Icon = 25, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 7, Range = 0, MultiplierBase = 1.4f, MultiplierBonus = 0.4f});
-            if (!MagicExists(Spell.LionRoar)) MagicInfoList.Add(new MagicInfo { Name = "狮子吼", Spell = Spell.LionRoar, Icon = 42, Level1 = 36, Level2 = 39, Level3 = 41, Need1 = 5000, Need2 = 8000, Need3 = 12000, BaseCost = 14, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.CrossHalfMoon)) MagicInfoList.Add(new MagicInfo { Name = "狂风斩", Spell = Spell.CrossHalfMoon, Icon = 33, Level1 = 38, Level2 = 40, Level3 = 42, Need1 = 7000, Need2 = 11000, Need3 = 16000, BaseCost = 6, Range = 0, MultiplierBase = 0.4f, MultiplierBonus = 0.1f });
-            if (!MagicExists(Spell.BladeAvalanche)) MagicInfoList.Add(new MagicInfo { Name = "空破闪", Spell = Spell.BladeAvalanche, Icon = 43, Level1 = 38, Level2 = 41, Level3 = 43, Need1 = 5000, Need2 = 8000, Need3 = 12000, BaseCost = 14, LevelCost = 4, Range = 0, MultiplierBonus = 0.3f});
-            if (!MagicExists(Spell.ProtectionField)) MagicInfoList.Add(new MagicInfo { Name = "护身气幕", Spell = Spell.ProtectionField, Icon = 50, Level1 = 39, Level2 = 42, Level3 = 45, Need1 = 6000, Need2 = 12000, Need3 = 18000, BaseCost = 23, LevelCost = 6, Range = 0 });
-            if (!MagicExists(Spell.Rage)) MagicInfoList.Add(new MagicInfo { Name = "剑气爆", Spell = Spell.Rage, Icon = 49, Level1 = 44, Level2 = 47, Level3 = 50, Need1 = 8000, Need2 = 14000, Need3 = 20000, BaseCost = 20, LevelCost = 5, Range = 0 });
-            if (!MagicExists(Spell.CounterAttack)) MagicInfoList.Add(new MagicInfo { Name = "天务", Spell = Spell.CounterAttack, Icon = 72, Level1 = 47, Level2 = 51, Level3 = 55, Need1 = 7000, Need2 = 11000, Need3 = 15000, BaseCost = 12, LevelCost = 4, DelayBase = 24000, Range = 0 , MultiplierBonus = 0.4f});
-            if (!MagicExists(Spell.SlashingBurst)) MagicInfoList.Add(new MagicInfo { Name = "日闪", Spell = Spell.SlashingBurst, Icon = 55, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 10000, Need2 = 16000, Need3 = 24000, BaseCost = 25, LevelCost = 4, MPowerBase = 1, PowerBase = 3, DelayBase = 14000, DelayReduction = 4000, Range = 0 , MultiplierBase = 3.25f, MultiplierBonus = 0.25f});
-            if (!MagicExists(Spell.Fury)) MagicInfoList.Add(new MagicInfo { Name = "血龙剑法", Spell = Spell.Fury, Icon = 76, Level1 = 45, Level2 = 48, Level3 = 51, Need1 = 8000, Need2 = 14000, Need3 = 20000, BaseCost = 10, LevelCost = 4, DelayBase = 600000, DelayReduction = 120000, Range = 0 });
-            if (!MagicExists(Spell.ImmortalSkin)) MagicInfoList.Add(new MagicInfo { Name = "金刚不坏", Spell = Spell.ImmortalSkin, Icon = 80, Level1 = 60, Level2 = 61, Level3 = 62, Need1 = 1560, Need2 = 2200, Need3 = 3000, BaseCost = 10, LevelCost = 4, DelayBase = 600000, DelayReduction = 120000, Range = 0 });
-            if (!MagicExists(Spell.EntrapmentRare)) MagicInfoList.Add(new MagicInfo { Name = "捕绳剑-秘籍", Spell = Spell.EntrapmentRare, Icon = 107, Level1 = 55, Level2 = 60, Level3 = 65, Need1 = 10000, Need2 = 13000, Need3 = 16000, BaseCost = 15, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.ImmortalSkinRare)) MagicInfoList.Add(new MagicInfo { Name = "金刚不坏-秘籍", Spell = Spell.ImmortalSkinRare, Icon = 84, Level1 = 62, Level2 = 64, Level3 = 66, Need1 = 1000, Need2 = 1560, Need3 = 2200, BaseCost = 10, LevelCost = 4, DelayBase = 600000, DelayReduction = 120000, Range = 0 });
-            if (!MagicExists(Spell.LionRoarRare)) MagicInfoList.Add(new MagicInfo { Name = "狮子吼-秘籍", Spell = Spell.LionRoarRare, Icon = 112, Level1 = 95, Level2 = 97, Level3 = 102, Need1 = 8900, Need2 = 15000, Need3 = 21600, BaseCost = 14, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.DimensionalSword)) MagicInfoList.Add(new MagicInfo { Name = "时空剑", Spell = Spell.DimensionalSword, Icon = 117, Level1 = 90, Level2 = 92, Level3 = 94, Need1 = 3800, Need2 = 6300, Need3 = 9300, BaseCost = 32, LevelCost = 4, MPowerBase = 1, PowerBase = 3, DelayBase = 14000, DelayReduction = 4000, Range = 2 , MultiplierBase = 1f, MultiplierBonus = 0.25f});
-            if (!MagicExists(Spell.DimensionalSwordRare)) MagicInfoList.Add(new MagicInfo { Name = "时空剑-秘籍", Spell = Spell.DimensionalSwordRare, Icon = 122, Level1 = 100, Level2 = 105, Level3 = 110, Need1 = 8800, Need2 = 13000, Need3 = 21600, BaseCost = 32, LevelCost = 4, MPowerBase = 1, PowerBase = 3, DelayBase = 14000, DelayReduction = 4000, Range = 2 , MultiplierBase = 1f, MultiplierBonus = 0.25f});
+            if (!MagicExists(Spell.Fencing)) MagicInfoList.Add(new MagicInfo { Name = "Fencing", Spell = Spell.Fencing, Icon = 2, Level1 = 7, Level2 = 9, Level3 = 12, Need1 = 270, Need2 = 600, Need3 = 1300, Range = 0 });
+            if (!MagicExists(Spell.Slaying)) MagicInfoList.Add(new MagicInfo { Name = "Slaying", Spell = Spell.Slaying, Icon = 6, Level1 = 15, Level2 = 17, Level3 = 20, Need1 = 500, Need2 = 1100, Need3 = 1800, Range = 0 });
+            if (!MagicExists(Spell.Thrusting)) MagicInfoList.Add(new MagicInfo { Name = "Thrusting", Spell = Spell.Thrusting, Icon = 11, Level1 = 22, Level2 = 24, Level3 = 27, Need1 = 2000, Need2 = 3500, Need3 = 6000, Range = 0, MultiplierBase = 0.25f, MultiplierBonus = 0.25f });
+            if (!MagicExists(Spell.HalfMoon)) MagicInfoList.Add(new MagicInfo { Name = "HalfMoon", Spell = Spell.HalfMoon, Icon = 24, Level1 = 26, Level2 = 28, Level3 = 31, Need1 = 5000, Need2 = 8000, Need3 = 14000, BaseCost = 3, Range = 0, MultiplierBase = 0.3f, MultiplierBonus = 0.1f });
+            if (!MagicExists(Spell.ShoulderDash)) MagicInfoList.Add(new MagicInfo { Name = "ShoulderDash", Spell = Spell.ShoulderDash, Icon = 26, Level1 = 30, Level2 = 32, Level3 = 34, Need1 = 3000, Need2 = 4000, Need3 = 6000, BaseCost = 4, LevelCost = 4, DelayBase = 2500, Range = 0, MPowerBase = 4 });
+            if (!MagicExists(Spell.TwinDrakeBlade)) MagicInfoList.Add(new MagicInfo { Name = "TwinDrakeBlade", Spell = Spell.TwinDrakeBlade, Icon = 37, Level1 = 32, Level2 = 34, Level3 = 37, Need1 = 4000, Need2 = 6000, Need3 = 10000, BaseCost = 10, Range = 0, MultiplierBase = 0.8f, MultiplierBonus = 0.1f });
+            if (!MagicExists(Spell.Entrapment)) MagicInfoList.Add(new MagicInfo { Name = "Entrapment", Spell = Spell.Entrapment, Icon = 46, Level1 = 32, Level2 = 35, Level3 = 37, Need1 = 2000, Need2 = 3500, Need3 = 5500, BaseCost = 15, LevelCost = 3, Range = 9 });
+            if (!MagicExists(Spell.FlamingSword)) MagicInfoList.Add(new MagicInfo { Name = "FlamingSword", Spell = Spell.FlamingSword, Icon = 25, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 7, Range = 0, MultiplierBase = 1.4f, MultiplierBonus = 0.4f });
+            if (!MagicExists(Spell.LionRoar)) MagicInfoList.Add(new MagicInfo { Name = "LionRoar", Spell = Spell.LionRoar, Icon = 42, Level1 = 36, Level2 = 39, Level3 = 41, Need1 = 5000, Need2 = 8000, Need3 = 12000, BaseCost = 14, LevelCost = 4, Range = 0 });
+            if (!MagicExists(Spell.CrossHalfMoon)) MagicInfoList.Add(new MagicInfo { Name = "CrossHalfMoon", Spell = Spell.CrossHalfMoon, Icon = 33, Level1 = 38, Level2 = 40, Level3 = 42, Need1 = 7000, Need2 = 11000, Need3 = 16000, BaseCost = 6, Range = 0, MultiplierBase = 0.4f, MultiplierBonus = 0.1f });
+            if (!MagicExists(Spell.BladeAvalanche)) MagicInfoList.Add(new MagicInfo { Name = "BladeAvalanche", Spell = Spell.BladeAvalanche, Icon = 43, Level1 = 38, Level2 = 41, Level3 = 43, Need1 = 5000, Need2 = 8000, Need3 = 12000, BaseCost = 14, LevelCost = 4, Range = 0, MultiplierBonus = 0.3f });
+            if (!MagicExists(Spell.ProtectionField)) MagicInfoList.Add(new MagicInfo { Name = "ProtectionField", Spell = Spell.ProtectionField, Icon = 50, Level1 = 39, Level2 = 42, Level3 = 45, Need1 = 6000, Need2 = 12000, Need3 = 18000, BaseCost = 23, LevelCost = 6, Range = 0 });
+            if (!MagicExists(Spell.Rage)) MagicInfoList.Add(new MagicInfo { Name = "Rage", Spell = Spell.Rage, Icon = 49, Level1 = 44, Level2 = 47, Level3 = 50, Need1 = 8000, Need2 = 14000, Need3 = 20000, BaseCost = 20, LevelCost = 5, Range = 0 });
+            if (!MagicExists(Spell.CounterAttack)) MagicInfoList.Add(new MagicInfo { Name = "CounterAttack", Spell = Spell.CounterAttack, Icon = 72, Level1 = 47, Level2 = 51, Level3 = 55, Need1 = 7000, Need2 = 11000, Need3 = 15000, BaseCost = 12, LevelCost = 4, DelayBase = 24000, Range = 0, MultiplierBonus = 0.4f });
+            if (!MagicExists(Spell.SlashingBurst)) MagicInfoList.Add(new MagicInfo { Name = "SlashingBurst", Spell = Spell.SlashingBurst, Icon = 55, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 10000, Need2 = 16000, Need3 = 24000, BaseCost = 25, LevelCost = 4, MPowerBase = 1, PowerBase = 3, DelayBase = 14000, DelayReduction = 4000, Range = 0, MultiplierBase = 3.25f, MultiplierBonus = 0.25f });
+            if (!MagicExists(Spell.Fury)) MagicInfoList.Add(new MagicInfo { Name = "Fury", Spell = Spell.Fury, Icon = 76, Level1 = 45, Level2 = 48, Level3 = 51, Need1 = 8000, Need2 = 14000, Need3 = 20000, BaseCost = 10, LevelCost = 4, DelayBase = 600000, DelayReduction = 120000, Range = 0 });
+            if (!MagicExists(Spell.ImmortalSkin)) MagicInfoList.Add(new MagicInfo { Name = "ImmortalSkin", Spell = Spell.ImmortalSkin, Icon = 80, Level1 = 60, Level2 = 61, Level3 = 62, Need1 = 1560, Need2 = 2200, Need3 = 3000, BaseCost = 10, LevelCost = 4, DelayBase = 600000, DelayReduction = 120000, Range = 0 });
 
             //Wizard
-            if (!MagicExists(Spell.FireBall)) MagicInfoList.Add(new MagicInfo { Name = "火球术", Spell = Spell.FireBall, Icon = 0, Level1 = 7, Level2 = 9, Level3 = 11, Need1 = 200, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, MPowerBase = 8, PowerBase = 2, Range = 9 });
-            if (!MagicExists(Spell.Repulsion)) MagicInfoList.Add(new MagicInfo { Name = "抗拒火环", Spell = Spell.Repulsion, Icon = 7, Level1 = 12, Level2 = 15, Level3 = 19, Need1 = 500, Need2 = 1300, Need3 = 2200, BaseCost = 2, LevelCost = 2, Range = 0, MPowerBase = 4});
-            if (!MagicExists(Spell.ElectricShock)) MagicInfoList.Add(new MagicInfo { Name = "诱惑之光", Spell = Spell.ElectricShock, Icon = 19, Level1 = 13, Level2 = 18, Level3 = 24, Need1 = 530, Need2 = 1100, Need3 = 2200, BaseCost = 3, LevelCost = 1, Range = 9 });
-            if (!MagicExists(Spell.GreatFireBall)) MagicInfoList.Add(new MagicInfo { Name = "大火球", Spell = Spell.GreatFireBall, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
-            if (!MagicExists(Spell.HellFire)) MagicInfoList.Add(new MagicInfo { Name = "地狱火", Spell = Spell.HellFire, Icon = 8, Level1 = 16, Level2 = 20, Level3 = 24, Need1 = 700, Need2 = 2700, Need3 = 3500, BaseCost = 10, LevelCost = 3, MPowerBase = 14, PowerBase = 6, Range = 0 });
-            if (!MagicExists(Spell.ThunderBolt)) MagicInfoList.Add(new MagicInfo { Name = "雷电术", Spell = Spell.ThunderBolt, Icon = 10, Level1 = 17, Level2 = 20, Level3 = 23, Need1 = 500, Need2 = 2000, Need3 = 3500, BaseCost = 9, LevelCost = 2, MPowerBase = 8, MPowerBonus = 20, PowerBase = 9, Range = 9 });
-            if (!MagicExists(Spell.Teleport)) MagicInfoList.Add(new MagicInfo { Name = "瞬息移动", Spell = Spell.Teleport, Icon = 20, Level1 = 19, Level2 = 22, Level3 = 25, Need1 = 350, Need2 = 1000, Need3 = 2000, BaseCost = 10, LevelCost = 3, Range = 0 });
-            if (!MagicExists(Spell.FireBang)) MagicInfoList.Add(new MagicInfo { Name = "爆裂火焰", Spell = Spell.FireBang, Icon = 22, Level1 = 22, Level2 = 25, Level3 = 28, Need1 = 3000, Need2 = 5000, Need3 = 10000, BaseCost = 14, LevelCost = 4, MPowerBase = 8, PowerBase = 8, Range = 9 });
-            if (!MagicExists(Spell.FireWall)) MagicInfoList.Add(new MagicInfo { Name = "火墙", Spell = Spell.FireWall, Icon = 21, Level1 = 24, Level2 = 28, Level3 = 33, Need1 = 4000, Need2 = 10000, Need3 = 20000, BaseCost = 30, LevelCost = 5, MPowerBase = 3, PowerBase = 3, Range = 9 });
-            if (!MagicExists(Spell.Lightning)) MagicInfoList.Add(new MagicInfo { Name = "疾光电影", Spell = Spell.Lightning, Icon = 9, Level1 = 26, Level2 = 29, Level3 = 32, Need1 = 3000, Need2 = 6000, Need3 = 12000, BaseCost = 38, LevelCost = 7, MPowerBase = 12, PowerBase = 12, Range = 0 });
-            if (!MagicExists(Spell.FrostCrunch)) MagicInfoList.Add(new MagicInfo { Name = "寒冰掌", Spell = Spell.FrostCrunch, Icon = 38, Level1 = 28, Level2 = 30, Level3 = 33, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 15, LevelCost = 3, MPowerBase = 12, PowerBase = 12, Range = 9 });
-            if (!MagicExists(Spell.ThunderStorm)) MagicInfoList.Add(new MagicInfo { Name = "地狱雷光", Spell = Spell.ThunderStorm, Icon = 23, Level1 = 30, Level2 = 32, Level3 = 34, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 29, LevelCost = 9, MPowerBase = 10, MPowerBonus = 20, PowerBase = 10, PowerBonus = 20, Range = 0 });
-            if (!MagicExists(Spell.MagicShield)) MagicInfoList.Add(new MagicInfo { Name = "魔法盾", Spell = Spell.MagicShield, Icon = 30, Level1 = 31, Level2 = 34, Level3 = 38, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 35, LevelCost = 5, Range = 0 });
-            if (!MagicExists(Spell.TurnUndead)) MagicInfoList.Add(new MagicInfo { Name = "圣言术", Spell = Spell.TurnUndead, Icon = 31, Level1 = 32, Level2 = 35, Level3 = 39, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 52, LevelCost = 13, Range = 9 });
-            if (!MagicExists(Spell.Vampirism)) MagicInfoList.Add(new MagicInfo { Name = "嗜血术", Spell = Spell.Vampirism, Icon = 47, Level1 = 33, Level2 = 36, Level3 = 40, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 26, LevelCost = 13, MPowerBase = 12, PowerBase = 12, Range = 9 });
-            if (!MagicExists(Spell.IceStorm)) MagicInfoList.Add(new MagicInfo { Name = "冰咆哮", Spell = Spell.IceStorm, Icon = 32, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 33, LevelCost = 3, MPowerBase = 12, PowerBase = 14, Range = 9 });
-            if (!MagicExists(Spell.FlameDisruptor)) MagicInfoList.Add(new MagicInfo { Name = "灭天火", Spell = Spell.FlameDisruptor, Icon = 34, Level1 = 38, Level2 = 40, Level3 = 42, Need1 = 5000, Need2 = 9000, Need3 = 14000, BaseCost = 28, LevelCost = 3, MPowerBase = 15, MPowerBonus = 20, PowerBase = 9, Range = 9 });
-            if (!MagicExists(Spell.Mirroring)) MagicInfoList.Add(new MagicInfo { Name = "分身术", Spell = Spell.Mirroring, Icon = 41, Level1 = 41, Level2 = 43, Level3 = 45, Need1 = 6000, Need2 = 11000, Need3 = 16000, BaseCost = 21, Range = 0 });
-            if (!MagicExists(Spell.FlameField)) MagicInfoList.Add(new MagicInfo { Name = "火龙气焰", Spell = Spell.FlameField, Icon = 44, Level1 = 42, Level2 = 43, Level3 = 45, Need1 = 6000, Need2 = 11000, Need3 = 16000, BaseCost = 45, LevelCost = 8, MPowerBase = 100, PowerBase = 25, Range = 9 });
-            if (!MagicExists(Spell.Blizzard)) MagicInfoList.Add(new MagicInfo { Name = "天霜冰环", Spell = Spell.Blizzard, Icon = 51, Level1 = 44, Level2 = 47, Level3 = 50, Need1 = 8000, Need2 = 16000, Need3 = 24000, BaseCost = 65, LevelCost = 10, MPowerBase = 30, MPowerBonus = 10, PowerBase = 20, PowerBonus = 5, Range = 9 });
-            if (!MagicExists(Spell.MagicBooster)) MagicInfoList.Add(new MagicInfo { Name = "深延术", Spell = Spell.MagicBooster, Icon = 73, Level1 = 47, Level2 = 49, Level3 = 52, Need1 = 12000, Need2 = 18000, Need3 = 24000, BaseCost = 150, LevelCost = 15, Range = 0 });
-            if (!MagicExists(Spell.MeteorStrike)) MagicInfoList.Add(new MagicInfo { Name = "天上落焰", Spell = Spell.MeteorStrike, Icon = 52, Level1 = 49, Level2 = 52, Level3 = 55, Need1 = 15000, Need2 = 20000, Need3 = 25000, BaseCost = 115, LevelCost = 17, MPowerBase = 40, MPowerBonus = 10, PowerBase = 20, PowerBonus = 15, Range = 9 });
-            if (!MagicExists(Spell.IceThrust)) MagicInfoList.Add(new MagicInfo { Name = "冰焰术", Spell = Spell.IceThrust, Icon = 56, Level1 = 53, Level2 = 56, Level3 = 59, Need1 = 17000, Need2 = 22000, Need3 = 27000, BaseCost = 100, LevelCost = 20, MPowerBase = 100, PowerBase = 50, Range = 0 });
-            //if (!MagicExists(Spell.FastMove)) MagicInfoList.Add(new MagicInfo { Name = "FastMove", Spell = Spell.FastMove, Icon = ?, Level1 = ?, Level2 = ?, Level3 = ?, Need1 = ?, Need2 = ?, Need3 = ?, BaseCost = ?, LevelCost = ?, DelayBase = ?, DelayReduction = ? });
-            if (!MagicExists(Spell.StormEscape)) MagicInfoList.Add(new MagicInfo { Name = "雷仙风", Spell = Spell.StormEscape, Icon = 81, Level1 = 60, Level2 = 61, Level3 = 62, Need1 = 2200, Need2 = 3300, Need3 = 4400, BaseCost = 65, LevelCost = 8, MPowerBase = 12, PowerBase = 4, DelayBase = 300000, DelayReduction = 40000, Range = 9 , MultiplierBase = 1f, MultiplierBonus = 0f});
-            if (!MagicExists(Spell.HeavenlySecrets)) MagicInfoList.Add(new MagicInfo { Name = "天上秘术", Spell = Spell.HeavenlySecrets, Icon = 77, Level1 = 50, Level2 = 63, Level3 = 56, Need1 = 1000, Need2 = 2000, Need3 = 3500, BaseCost = 28, LevelCost = 2, MPowerBase = 1, PowerBase = 1, DelayBase = 600000, DelayReduction = 100000, Range = 0 , MultiplierBase = 1f, MultiplierBonus = 0f});
-            if (!MagicExists(Spell.GreatFireBallRare)) MagicInfoList.Add(new MagicInfo { Name = "大火球-秘籍", Spell = Spell.GreatFireBallRare, Icon = 108, Level1 = 55, Level2 = 60, Level3 = 65, Need1 = 17000, Need2 = 22000, Need3 = 27000, BaseCost = 5, LevelCost = 1, MPowerBase = 15, PowerBase = 18, Range = 9 });
-            if (!MagicExists(Spell.StormEscapeRare)) MagicInfoList.Add(new MagicInfo { Name = "雷仙风-秘籍", Spell = Spell.StormEscapeRare, Icon = 85, Level1 = 62, Level2 = 64, Level3 = 66, Need1 = 2200, Need2 = 3300, Need3 = 4400, BaseCost = 65, LevelCost = 8, MPowerBase = 30, PowerBase = 10, DelayBase = 300000, DelayReduction = 40000, Range = 9 , MultiplierBase = 3.25f, MultiplierBonus = 0.25f});
-            
-            
+            if (!MagicExists(Spell.FireBall)) MagicInfoList.Add(new MagicInfo { Name = "FireBall", Spell = Spell.FireBall, Icon = 0, Level1 = 7, Level2 = 9, Level3 = 11, Need1 = 200, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, MPowerBase = 8, PowerBase = 2, Range = 9 });
+            if (!MagicExists(Spell.Repulsion)) MagicInfoList.Add(new MagicInfo { Name = "Repulsion", Spell = Spell.Repulsion, Icon = 7, Level1 = 12, Level2 = 15, Level3 = 19, Need1 = 500, Need2 = 1300, Need3 = 2200, BaseCost = 2, LevelCost = 2, Range = 0, MPowerBase = 4 });
+            if (!MagicExists(Spell.ElectricShock)) MagicInfoList.Add(new MagicInfo { Name = "ElectricShock", Spell = Spell.ElectricShock, Icon = 19, Level1 = 13, Level2 = 18, Level3 = 24, Need1 = 530, Need2 = 1100, Need3 = 2200, BaseCost = 3, LevelCost = 1, Range = 9 });
+            if (!MagicExists(Spell.GreatFireBall)) MagicInfoList.Add(new MagicInfo { Name = "GreatFireBall", Spell = Spell.GreatFireBall, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
+            if (!MagicExists(Spell.HellFire)) MagicInfoList.Add(new MagicInfo { Name = "HellFire", Spell = Spell.HellFire, Icon = 8, Level1 = 16, Level2 = 20, Level3 = 24, Need1 = 700, Need2 = 2700, Need3 = 3500, BaseCost = 10, LevelCost = 3, MPowerBase = 14, PowerBase = 6, Range = 0 });
+            if (!MagicExists(Spell.ThunderBolt)) MagicInfoList.Add(new MagicInfo { Name = "ThunderBolt", Spell = Spell.ThunderBolt, Icon = 10, Level1 = 17, Level2 = 20, Level3 = 23, Need1 = 500, Need2 = 2000, Need3 = 3500, BaseCost = 9, LevelCost = 2, MPowerBase = 8, MPowerBonus = 20, PowerBase = 9, Range = 9 });
+            if (!MagicExists(Spell.Teleport)) MagicInfoList.Add(new MagicInfo { Name = "Teleport", Spell = Spell.Teleport, Icon = 20, Level1 = 19, Level2 = 22, Level3 = 25, Need1 = 350, Need2 = 1000, Need3 = 2000, BaseCost = 10, LevelCost = 3, Range = 0 });
+            if (!MagicExists(Spell.FireBang)) MagicInfoList.Add(new MagicInfo { Name = "FireBang", Spell = Spell.FireBang, Icon = 22, Level1 = 22, Level2 = 25, Level3 = 28, Need1 = 3000, Need2 = 5000, Need3 = 10000, BaseCost = 14, LevelCost = 4, MPowerBase = 8, PowerBase = 8, Range = 9 });
+            if (!MagicExists(Spell.FireWall)) MagicInfoList.Add(new MagicInfo { Name = "FireWall", Spell = Spell.FireWall, Icon = 21, Level1 = 24, Level2 = 28, Level3 = 33, Need1 = 4000, Need2 = 10000, Need3 = 20000, BaseCost = 30, LevelCost = 5, MPowerBase = 3, PowerBase = 3, Range = 9 });
+            if (!MagicExists(Spell.Lightning)) MagicInfoList.Add(new MagicInfo { Name = "Lightning", Spell = Spell.Lightning, Icon = 9, Level1 = 26, Level2 = 29, Level3 = 32, Need1 = 3000, Need2 = 6000, Need3 = 12000, BaseCost = 38, LevelCost = 7, MPowerBase = 12, PowerBase = 12, Range = 0 });
+            if (!MagicExists(Spell.FrostCrunch)) MagicInfoList.Add(new MagicInfo { Name = "FrostCrunch", Spell = Spell.FrostCrunch, Icon = 38, Level1 = 28, Level2 = 30, Level3 = 33, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 15, LevelCost = 3, MPowerBase = 12, PowerBase = 12, Range = 9 });
+            if (!MagicExists(Spell.ThunderStorm)) MagicInfoList.Add(new MagicInfo { Name = "ThunderStorm", Spell = Spell.ThunderStorm, Icon = 23, Level1 = 30, Level2 = 32, Level3 = 34, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 29, LevelCost = 9, MPowerBase = 10, MPowerBonus = 20, PowerBase = 10, PowerBonus = 20, Range = 0 });
+            if (!MagicExists(Spell.MagicShield)) MagicInfoList.Add(new MagicInfo { Name = "MagicShield", Spell = Spell.MagicShield, Icon = 30, Level1 = 31, Level2 = 34, Level3 = 38, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 35, LevelCost = 5, Range = 0 });
+            if (!MagicExists(Spell.TurnUndead)) MagicInfoList.Add(new MagicInfo { Name = "TurnUndead", Spell = Spell.TurnUndead, Icon = 31, Level1 = 32, Level2 = 35, Level3 = 39, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 52, LevelCost = 13, Range = 9 });
+            if (!MagicExists(Spell.Vampirism)) MagicInfoList.Add(new MagicInfo { Name = "Vampirism", Spell = Spell.Vampirism, Icon = 47, Level1 = 33, Level2 = 36, Level3 = 40, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 26, LevelCost = 13, MPowerBase = 12, PowerBase = 12, Range = 9 });
+            if (!MagicExists(Spell.IceStorm)) MagicInfoList.Add(new MagicInfo { Name = "IceStorm", Spell = Spell.IceStorm, Icon = 32, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 33, LevelCost = 3, MPowerBase = 12, PowerBase = 14, Range = 9 });
+            if (!MagicExists(Spell.FlameDisruptor)) MagicInfoList.Add(new MagicInfo { Name = "FlameDisruptor", Spell = Spell.FlameDisruptor, Icon = 34, Level1 = 38, Level2 = 40, Level3 = 42, Need1 = 5000, Need2 = 9000, Need3 = 14000, BaseCost = 28, LevelCost = 3, MPowerBase = 15, MPowerBonus = 20, PowerBase = 9, Range = 9 });
+            if (!MagicExists(Spell.Mirroring)) MagicInfoList.Add(new MagicInfo { Name = "Mirroring", Spell = Spell.Mirroring, Icon = 41, Level1 = 41, Level2 = 43, Level3 = 45, Need1 = 6000, Need2 = 11000, Need3 = 16000, BaseCost = 21, Range = 0 });
+            if (!MagicExists(Spell.FlameField)) MagicInfoList.Add(new MagicInfo { Name = "FlameField", Spell = Spell.FlameField, Icon = 44, Level1 = 42, Level2 = 43, Level3 = 45, Need1 = 6000, Need2 = 11000, Need3 = 16000, BaseCost = 45, LevelCost = 8, MPowerBase = 100, PowerBase = 25, Range = 9 });
+            if (!MagicExists(Spell.Blizzard)) MagicInfoList.Add(new MagicInfo { Name = "Blizzard", Spell = Spell.Blizzard, Icon = 51, Level1 = 44, Level2 = 47, Level3 = 50, Need1 = 8000, Need2 = 16000, Need3 = 24000, BaseCost = 65, LevelCost = 10, MPowerBase = 30, MPowerBonus = 10, PowerBase = 20, PowerBonus = 5, Range = 9 });
+            if (!MagicExists(Spell.MagicBooster)) MagicInfoList.Add(new MagicInfo { Name = "MagicBooster", Spell = Spell.MagicBooster, Icon = 73, Level1 = 47, Level2 = 49, Level3 = 52, Need1 = 12000, Need2 = 18000, Need3 = 24000, BaseCost = 150, LevelCost = 15, Range = 0 });
+            if (!MagicExists(Spell.MeteorStrike)) MagicInfoList.Add(new MagicInfo { Name = "MeteorStrike", Spell = Spell.MeteorStrike, Icon = 52, Level1 = 49, Level2 = 52, Level3 = 55, Need1 = 15000, Need2 = 20000, Need3 = 25000, BaseCost = 115, LevelCost = 17, MPowerBase = 40, MPowerBonus = 10, PowerBase = 20, PowerBonus = 15, Range = 9 });
+            if (!MagicExists(Spell.IceThrust)) MagicInfoList.Add(new MagicInfo { Name = "IceThrust", Spell = Spell.IceThrust, Icon = 56, Level1 = 53, Level2 = 56, Level3 = 59, Need1 = 17000, Need2 = 22000, Need3 = 27000, BaseCost = 100, LevelCost = 20, MPowerBase = 100, PowerBase = 50, Range = 0 });
+            if (!MagicExists(Spell.Blink)) MagicInfoList.Add(new MagicInfo { Name = "Blink", Spell = Spell.Blink, Icon = 20, Level1 = 19, Level2 = 22, Level3 = 25, Need1 = 350, Need2 = 1000, Need3 = 2000, BaseCost = 10, LevelCost = 3, Range = 9 });
+            //if (!MagicExists(Spell.FastMove)) MagicInfoList.Add(new MagicInfo { Name = "FastMove", Spell = Spell.ImmortalSkin, Icon = ?, Level1 = ?, Level2 = ?, Level3 = ?, Need1 = ?, Need2 = ?, Need3 = ?, BaseCost = ?, LevelCost = ?, DelayBase = ?, DelayReduction = ? });
+            if (!MagicExists(Spell.StormEscape)) MagicInfoList.Add(new MagicInfo { Name = "StormEscape", Spell = Spell.StormEscape, Icon = 23, Level1 = 60, Level2 = 61, Level3 = 62, Need1 = 2200, Need2 = 3300, Need3 = 4400, BaseCost = 65, LevelCost = 8, MPowerBase = 12, PowerBase = 4, Range = 9 });
+
+
             //Taoist
-            if (!MagicExists(Spell.Healing)) MagicInfoList.Add(new MagicInfo { Name = "治愈术", Spell = Spell.Healing, Icon = 1, Level1 = 7, Level2 = 11, Level3 = 14, Need1 = 150, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, MPowerBase = 14, Range = 9 });
-            if (!MagicExists(Spell.SpiritSword)) MagicInfoList.Add(new MagicInfo { Name = "精神力战法", Spell = Spell.SpiritSword, Icon = 3, Level1 = 9, Level2 = 12, Level3 = 15, Need1 = 350, Need2 = 1300, Need3 = 2700, Range = 0 });
-            if (!MagicExists(Spell.Poisoning)) MagicInfoList.Add(new MagicInfo { Name = "施毒术", Spell = Spell.Poisoning, Icon = 5, Level1 = 14, Level2 = 17, Level3 = 20, Need1 = 700, Need2 = 1300, Need3 = 2700, BaseCost = 2, LevelCost = 1, Range = 9 });
-            if (!MagicExists(Spell.SoulFireBall)) MagicInfoList.Add(new MagicInfo { Name = "灵魂火符", Spell = Spell.SoulFireBall, Icon = 12, Level1 = 18, Level2 = 21, Level3 = 24, Need1 = 1300, Need2 = 2700, Need3 = 4000, BaseCost = 3, LevelCost = 1, MPowerBase = 8, PowerBase = 3, Range = 9 });
-            if (!MagicExists(Spell.SummonSkeleton)) MagicInfoList.Add(new MagicInfo { Name = "召唤骷髅", Spell = Spell.SummonSkeleton, Icon = 16, Level1 = 19, Level2 = 22, Level3 = 26, Need1 = 1000, Need2 = 2000, Need3 = 3500, BaseCost = 12, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.Hiding)) MagicInfoList.Add(new MagicInfo { Name = "隐身术", Spell = Spell.Hiding, Icon = 17, Level1 = 20, Level2 = 23, Level3 = 26, Need1 = 1300, Need2 = 2700, Need3 = 5300, BaseCost = 1, LevelCost = 1, Range = 0 });
-            if (!MagicExists(Spell.MassHiding)) MagicInfoList.Add(new MagicInfo { Name = "集体隐身术", Spell = Spell.MassHiding, Icon = 18, Level1 = 21, Level2 = 25, Level3 = 29, Need1 = 1300, Need2 = 2700, Need3 = 5300, BaseCost = 2, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.SoulShield)) MagicInfoList.Add(new MagicInfo { Name = "幽灵盾", Spell = Spell.SoulShield, Icon = 13, Level1 = 22, Level2 = 24, Level3 = 26, Need1 = 2000, Need2 = 3500, Need3 = 7000, BaseCost = 2, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.Revelation)) MagicInfoList.Add(new MagicInfo { Name = "心灵启示", Spell = Spell.Revelation, Icon = 27, Level1 = 23, Level2 = 25, Level3 = 28, Need1 = 1500, Need2 = 2500, Need3 = 4000, BaseCost = 4, LevelCost = 4, Range = 9 });
-            if (!MagicExists(Spell.BlessedArmour)) MagicInfoList.Add(new MagicInfo { Name = "神圣战甲术", Spell = Spell.BlessedArmour, Icon = 14, Level1 = 25, Level2 = 27, Level3 = 29, Need1 = 4000, Need2 = 6000, Need3 = 10000, BaseCost = 2, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.EnergyRepulsor)) MagicInfoList.Add(new MagicInfo { Name = "气功波", Spell = Spell.EnergyRepulsor, Icon = 36, Level1 = 27, Level2 = 29, Level3 = 31, Need1 = 1800, Need2 = 2400, Need3 = 3200, BaseCost = 2, LevelCost = 2, Range = 0, MPowerBase = 4 });
-            if (!MagicExists(Spell.TrapHexagon)) MagicInfoList.Add(new MagicInfo { Name = "困魔咒", Spell = Spell.TrapHexagon, Icon = 15, Level1 = 28, Level2 = 30, Level3 = 32, Need1 = 2500, Need2 = 5000, Need3 = 10000, BaseCost = 7, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.Purification)) MagicInfoList.Add(new MagicInfo { Name = "净化术", Spell = Spell.Purification, Icon = 39, Level1 = 30, Level2 = 32, Level3 = 35, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 14, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.MassHealing)) MagicInfoList.Add(new MagicInfo { Name = "群体治疗术", Spell = Spell.MassHealing, Icon = 28, Level1 = 31, Level2 = 33, Level3 = 36, Need1 = 2000, Need2 = 4000, Need3 = 8000, BaseCost = 28, LevelCost = 3, MPowerBase = 10, PowerBase = 4, Range = 9 });
-            if (!MagicExists(Spell.Hallucination)) MagicInfoList.Add(new MagicInfo { Name = "迷魂术", Spell = Spell.Hallucination, Icon = 48, Level1 = 31, Level2 = 34, Level3 = 36, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 22, LevelCost = 10, Range = 9 });
-            if (!MagicExists(Spell.UltimateEnhancer)) MagicInfoList.Add(new MagicInfo { Name = "无极真气", Spell = Spell.UltimateEnhancer, Icon = 35, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 5000, Need2 = 7000, Need3 = 10000, BaseCost = 28, LevelCost = 4, Range = 9 });
-            if (!MagicExists(Spell.SummonShinsu)) MagicInfoList.Add(new MagicInfo { Name = "召唤神兽", Spell = Spell.SummonShinsu, Icon = 29, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 28, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.Reincarnation)) MagicInfoList.Add(new MagicInfo { Name = "苏生术", Spell = Spell.Reincarnation, Icon = 53, Level1 = 37, Level2 = 39, Level3 = 41, Need1 = 2000, Need2 = 6000, Need3 = 10000, BaseCost = 125, LevelCost = 17, Range = 9 });
-            if (!MagicExists(Spell.SummonHolyDeva)) MagicInfoList.Add(new MagicInfo { Name = "精魂召唤术", Spell = Spell.SummonHolyDeva, Icon = 40, Level1 = 38, Level2 = 41, Level3 = 43, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 28, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.Curse)) MagicInfoList.Add(new MagicInfo { Name = "诅咒术", Spell = Spell.Curse, Icon = 45, Level1 = 40, Level2 = 42, Level3 = 44, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 17, LevelCost = 3, Range = 9, MPowerBase = 20 });
-            if (!MagicExists(Spell.Plague)) MagicInfoList.Add(new MagicInfo { Name = "烦脑", Spell = Spell.Plague, Icon = 74, Level1 = 42, Level2 = 44, Level3 = 47, Need1 = 5000, Need2 = 9000, Need3 = 13000, BaseCost = 20, LevelCost = 5, Range = 9 });
-            if (!MagicExists(Spell.PoisonCloud)) MagicInfoList.Add(new MagicInfo { Name = "毒雾", Spell = Spell.PoisonCloud, Icon = 54, Level1 = 43, Level2 = 45, Level3 = 48, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 30, LevelCost = 5, MPowerBase = 40, PowerBase = 20, DelayBase = 18000, DelayReduction = 2000, Range = 9 });
-            if (!MagicExists(Spell.EnergyShield)) MagicInfoList.Add(new MagicInfo { Name = "先天气功", Spell = Spell.EnergyShield, Icon = 57, Level1 = 48, Level2 = 51, Level3 = 54, Need1 = 5000, Need2 = 9000, Need3 = 13000, BaseCost = 50, LevelCost = 20, Range = 9 });
-            if (!MagicExists(Spell.PetEnhancer)) MagicInfoList.Add(new MagicInfo { Name = "血龙兽", Spell = Spell.PetEnhancer, Icon = 78, Level1 = 45, Level2 = 48, Level3 = 51, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 30, LevelCost = 40, Range = 0 });
-            if (!MagicExists(Spell.HealingCircle)) MagicInfoList.Add(new MagicInfo { Name = "阴阳五行阵", Spell = Spell.HealingCircle, Icon = 82, Level1 = 39, Level2 = 41, Level3 = 43, Need1 = 7000, Need2 = 12000, Need3 = 15000, BaseCost = 10, LevelCost = 100 });
-			if (!MagicExists(Spell.HealingRare)) MagicInfoList.Add(new MagicInfo { Name = "治愈术-秘籍", Spell = Spell.HealingRare, Icon = 109, Level1 = 55, Level2 = 60, Level3 = 65, Need1 = 17000, Need2 = 22000, Need3 = 27000, BaseCost = 3, LevelCost = 2, MPowerBase = 14, Range = 9 });
-            if (!MagicExists(Spell.HealingcircleRare)) MagicInfoList.Add(new MagicInfo { Name = "阴阳五行阵-秘籍", Spell = Spell.HealingcircleRare, Icon = 86, Level1 = 60, Level2 = 61, Level3 = 61, Need1 = 4400, Need2 = 7400, Need3 = 11700, BaseCost = 28, LevelCost = 3, DelayBase = 1800, DelayReduction = 0 });
-            if (!MagicExists(Spell.PetEnhancerRare)) MagicInfoList.Add(new MagicInfo { Name = "血龙兽-秘籍", Spell = Spell.PetEnhancerRare, Icon = 115, Level1 = 95, Level2 = 97, Level3 = 102, Need1 = 23600, Need2 = 38900, Need3 = 57900, BaseCost = 12, LevelCost = 4, Range = 0 });
-            if (!MagicExists(Spell.MultipleEffects)) MagicInfoList.Add(new MagicInfo { Name = "万效符", Spell = Spell.MultipleEffects, Icon = 120, Level1 = 90, Level2 = 92, Level3 = 94, Need1 = 18500, Need2 = 29900, Need3 = 43200, BaseCost = 2, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.MultipleEffectsRare)) MagicInfoList.Add(new MagicInfo { Name = "万效符-秘籍", Spell = Spell.MultipleEffectsRare, Icon = 125, Level1 = 100, Level2 = 105, Level3 = 110, Need1 = 23600, Need2 = 38900, Need3 = 57600, BaseCost = 2, LevelCost = 2, Range = 9 });
-            
+            if (!MagicExists(Spell.Healing)) MagicInfoList.Add(new MagicInfo { Name = "Healing", Spell = Spell.Healing, Icon = 1, Level1 = 7, Level2 = 11, Level3 = 14, Need1 = 150, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, MPowerBase = 14, Range = 9 });
+            if (!MagicExists(Spell.SpiritSword)) MagicInfoList.Add(new MagicInfo { Name = "SpiritSword", Spell = Spell.SpiritSword, Icon = 3, Level1 = 9, Level2 = 12, Level3 = 15, Need1 = 350, Need2 = 1300, Need3 = 2700, Range = 0 });
+            if (!MagicExists(Spell.Poisoning)) MagicInfoList.Add(new MagicInfo { Name = "Poisoning", Spell = Spell.Poisoning, Icon = 5, Level1 = 14, Level2 = 17, Level3 = 20, Need1 = 700, Need2 = 1300, Need3 = 2700, BaseCost = 2, LevelCost = 1, Range = 9 });
+            if (!MagicExists(Spell.SoulFireBall)) MagicInfoList.Add(new MagicInfo { Name = "SoulFireBall", Spell = Spell.SoulFireBall, Icon = 12, Level1 = 18, Level2 = 21, Level3 = 24, Need1 = 1300, Need2 = 2700, Need3 = 4000, BaseCost = 3, LevelCost = 1, MPowerBase = 8, PowerBase = 3, Range = 9 });
+            if (!MagicExists(Spell.SummonSkeleton)) MagicInfoList.Add(new MagicInfo { Name = "SummonSkeleton", Spell = Spell.SummonSkeleton, Icon = 16, Level1 = 19, Level2 = 22, Level3 = 26, Need1 = 1000, Need2 = 2000, Need3 = 3500, BaseCost = 12, LevelCost = 4, Range = 0 });
+            if (!MagicExists(Spell.Hiding)) MagicInfoList.Add(new MagicInfo { Name = "Hiding", Spell = Spell.Hiding, Icon = 17, Level1 = 20, Level2 = 23, Level3 = 26, Need1 = 1300, Need2 = 2700, Need3 = 5300, BaseCost = 1, LevelCost = 1, Range = 0 });
+            if (!MagicExists(Spell.MassHiding)) MagicInfoList.Add(new MagicInfo { Name = "MassHiding", Spell = Spell.MassHiding, Icon = 18, Level1 = 21, Level2 = 25, Level3 = 29, Need1 = 1300, Need2 = 2700, Need3 = 5300, BaseCost = 2, LevelCost = 2, Range = 9 });
+            if (!MagicExists(Spell.SoulShield)) MagicInfoList.Add(new MagicInfo { Name = "SoulShield", Spell = Spell.SoulShield, Icon = 13, Level1 = 22, Level2 = 24, Level3 = 26, Need1 = 2000, Need2 = 3500, Need3 = 7000, BaseCost = 2, LevelCost = 2, Range = 9 });
+            if (!MagicExists(Spell.Revelation)) MagicInfoList.Add(new MagicInfo { Name = "Revelation", Spell = Spell.Revelation, Icon = 27, Level1 = 23, Level2 = 25, Level3 = 28, Need1 = 1500, Need2 = 2500, Need3 = 4000, BaseCost = 4, LevelCost = 4, Range = 9 });
+            if (!MagicExists(Spell.BlessedArmour)) MagicInfoList.Add(new MagicInfo { Name = "BlessedArmour", Spell = Spell.BlessedArmour, Icon = 14, Level1 = 25, Level2 = 27, Level3 = 29, Need1 = 4000, Need2 = 6000, Need3 = 10000, BaseCost = 2, LevelCost = 2, Range = 9 });
+            if (!MagicExists(Spell.EnergyRepulsor)) MagicInfoList.Add(new MagicInfo { Name = "EnergyRepulsor", Spell = Spell.EnergyRepulsor, Icon = 36, Level1 = 27, Level2 = 29, Level3 = 31, Need1 = 1800, Need2 = 2400, Need3 = 3200, BaseCost = 2, LevelCost = 2, Range = 0, MPowerBase = 4 });
+            if (!MagicExists(Spell.TrapHexagon)) MagicInfoList.Add(new MagicInfo { Name = "TrapHexagon", Spell = Spell.TrapHexagon, Icon = 15, Level1 = 28, Level2 = 30, Level3 = 32, Need1 = 2500, Need2 = 5000, Need3 = 10000, BaseCost = 7, LevelCost = 3, Range = 9 });
+            if (!MagicExists(Spell.Purification)) MagicInfoList.Add(new MagicInfo { Name = "Purification", Spell = Spell.Purification, Icon = 39, Level1 = 30, Level2 = 32, Level3 = 35, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 14, LevelCost = 2, Range = 9 });
+            if (!MagicExists(Spell.MassHealing)) MagicInfoList.Add(new MagicInfo { Name = "MassHealing", Spell = Spell.MassHealing, Icon = 28, Level1 = 31, Level2 = 33, Level3 = 36, Need1 = 2000, Need2 = 4000, Need3 = 8000, BaseCost = 28, LevelCost = 3, MPowerBase = 10, PowerBase = 4, Range = 9 });
+            if (!MagicExists(Spell.Hallucination)) MagicInfoList.Add(new MagicInfo { Name = "Hallucination", Spell = Spell.Hallucination, Icon = 48, Level1 = 31, Level2 = 34, Level3 = 36, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 22, LevelCost = 10, Range = 9 });
+            if (!MagicExists(Spell.UltimateEnhancer)) MagicInfoList.Add(new MagicInfo { Name = "UltimateEnchancer", Spell = Spell.UltimateEnhancer, Icon = 35, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 5000, Need2 = 7000, Need3 = 10000, BaseCost = 28, LevelCost = 4, Range = 9 });
+            if (!MagicExists(Spell.SummonShinsu)) MagicInfoList.Add(new MagicInfo { Name = "SummonShinsu", Spell = Spell.SummonShinsu, Icon = 29, Level1 = 35, Level2 = 37, Level3 = 40, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 28, LevelCost = 4, Range = 0 });
+            if (!MagicExists(Spell.Reincarnation)) MagicInfoList.Add(new MagicInfo { Name = "Reincarnation", Spell = Spell.Reincarnation, Icon = 53, Level1 = 37, Level2 = 39, Level3 = 41, Need1 = 2000, Need2 = 6000, Need3 = 10000, BaseCost = 125, LevelCost = 17, Range = 9 });
+            if (!MagicExists(Spell.SummonHolyDeva)) MagicInfoList.Add(new MagicInfo { Name = "SummonHolyDeva", Spell = Spell.SummonHolyDeva, Icon = 40, Level1 = 38, Level2 = 41, Level3 = 43, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 28, LevelCost = 4, Range = 0 });
+            if (!MagicExists(Spell.Curse)) MagicInfoList.Add(new MagicInfo { Name = "Curse", Spell = Spell.Curse, Icon = 45, Level1 = 40, Level2 = 42, Level3 = 44, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 17, LevelCost = 3, Range = 9, MPowerBase = 20 });
+            if (!MagicExists(Spell.Plague)) MagicInfoList.Add(new MagicInfo { Name = "Plague", Spell = Spell.Plague, Icon = 74, Level1 = 42, Level2 = 44, Level3 = 47, Need1 = 5000, Need2 = 9000, Need3 = 13000, BaseCost = 20, LevelCost = 5, Range = 9 });
+            if (!MagicExists(Spell.PoisonCloud)) MagicInfoList.Add(new MagicInfo { Name = "PoisonCloud", Spell = Spell.PoisonCloud, Icon = 54, Level1 = 43, Level2 = 45, Level3 = 48, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 30, LevelCost = 5, MPowerBase = 40, PowerBase = 20, DelayBase = 18000, DelayReduction = 2000, Range = 9 });
+            if (!MagicExists(Spell.EnergyShield)) MagicInfoList.Add(new MagicInfo { Name = "EnergyShield", Spell = Spell.EnergyShield, Icon = 57, Level1 = 48, Level2 = 51, Level3 = 54, Need1 = 5000, Need2 = 9000, Need3 = 13000, BaseCost = 50, LevelCost = 20, Range = 9 });
+            if (!MagicExists(Spell.PetEnhancer)) MagicInfoList.Add(new MagicInfo { Name = "PetEnhancer", Spell = Spell.PetEnhancer, Icon = 78, Level1 = 45, Level2 = 48, Level3 = 51, Need1 = 4000, Need2 = 8000, Need3 = 12000, BaseCost = 30, LevelCost = 40, Range = 0 });
+            if (!MagicExists(Spell.HealingCircle)) MagicInfoList.Add(new MagicInfo { Name = "HealingCircle", Spell = Spell.HealingCircle, Icon = 82, Level1 = 39, Level2 = 41, Level3 = 43, Need1 = 7000, Need2 = 12000, Need3 = 15000, BaseCost = 10, LevelCost = 100 });
             //Assassin
-            if (!MagicExists(Spell.FatalSword)) MagicInfoList.Add(new MagicInfo { Name = "绝命剑法", Spell = Spell.FatalSword, Icon = 58, Level1 = 7, Level2 = 9, Level3 = 12, Need1 = 500, Need2 = 1000, Need3 = 2300, Range = 0 });
-            if (!MagicExists(Spell.DoubleSlash)) MagicInfoList.Add(new MagicInfo { Name = "风剑术", Spell = Spell.DoubleSlash, Icon = 59, Level1 = 15, Level2 = 17, Level3 = 19, Need1 = 700, Need2 = 1500, Need3 = 2200, BaseCost = 2, LevelCost = 1 });
-            if (!MagicExists(Spell.Haste)) MagicInfoList.Add(new MagicInfo { Name = "体迅风", Spell = Spell.Haste, Icon = 60, Level1 = 20, Level2 = 22, Level3 = 25, Need1 = 2000, Need2 = 3000, Need3 = 6000, BaseCost = 3, LevelCost = 2, Range = 0 });
-            if (!MagicExists(Spell.FlashDash)) MagicInfoList.Add(new MagicInfo { Name = "拔刀术", Spell = Spell.FlashDash, Icon = 61, Level1 = 25, Level2 = 27, Level3 = 30, Need1 = 4000, Need2 = 7000, Need3 = 9000, BaseCost = 12, LevelCost = 2, DelayBase = 200, Range = 0 });
-            if (!MagicExists(Spell.LightBody)) MagicInfoList.Add(new MagicInfo { Name = "风身术", Spell = Spell.LightBody, Icon = 68, Level1 = 27, Level2 = 29, Level3 = 32, Need1 = 5000, Need2 = 7000, Need3 = 10000, BaseCost = 11, LevelCost = 2, Range = 0 });
-            if (!MagicExists(Spell.HeavenlySword)) MagicInfoList.Add(new MagicInfo { Name = "迁移剑", Spell = Spell.HeavenlySword, Icon = 62, Level1 = 30, Level2 = 32, Level3 = 35, Need1 = 4000, Need2 = 8000, Need3 = 10000, BaseCost = 13, LevelCost = 2, MPowerBase = 8, Range = 0 });
-            if (!MagicExists(Spell.FireBurst)) MagicInfoList.Add(new MagicInfo { Name = "烈风击", Spell = Spell.FireBurst, Icon = 63, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 4000, Need2 = 6000, Need3 = 8000, BaseCost = 10, LevelCost = 1, Range = 0 });
-            if (!MagicExists(Spell.Trap)) MagicInfoList.Add(new MagicInfo { Name = "捕缚术", Spell = Spell.Trap, Icon = 64, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 14, LevelCost = 2, DelayBase = 60000, DelayReduction = 15000, Range = 9 });
-            if (!MagicExists(Spell.PoisonSword)) MagicInfoList.Add(new MagicInfo { Name = "猛毒剑气", Spell = Spell.PoisonSword, Icon = 69, Level1 = 34, Level2 = 36, Level3 = 39, Need1 = 5000, Need2 = 8000, Need3 = 11000, BaseCost = 14, LevelCost = 3, Range = 0 });
-            if (!MagicExists(Spell.MoonLight)) MagicInfoList.Add(new MagicInfo { Name = "月影术", Spell = Spell.MoonLight, Icon = 65, Level1 = 36, Level2 = 39, Level3 = 42, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 36, LevelCost = 3, Range = 0 });
-            if (!MagicExists(Spell.MPEater)) MagicInfoList.Add(new MagicInfo { Name = "吸气", Spell = Spell.MPEater, Icon = 66, Level1 = 38, Level2 = 41, Level3 = 44, Need1 = 5000, Need2 = 8000, Need3 = 11000, Range = 0 });
-            if (!MagicExists(Spell.SwiftFeet)) MagicInfoList.Add(new MagicInfo { Name = "轻身步", Spell = Spell.SwiftFeet, Icon = 67, Level1 = 40, Level2 = 43, Level3 = 46, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 17, LevelCost = 5, DelayBase = 210000, DelayReduction = 40000, Range = 0 });
-            if (!MagicExists(Spell.DarkBody)) MagicInfoList.Add(new MagicInfo { Name = "烈火身", Spell = Spell.DarkBody, Icon = 70, Level1 = 46, Level2 = 49, Level3 = 52, Need1 = 6000, Need2 = 10000, Need3 = 14000, BaseCost = 40, LevelCost = 7, Range = 0 });
-            if (!MagicExists(Spell.Hemorrhage)) MagicInfoList.Add(new MagicInfo { Name = "血风击", Spell = Spell.Hemorrhage, Icon = 75, Level1 = 47, Level2 = 51, Level3 = 55, Need1 = 9000, Need2 = 15000, Need3 = 21000, Range = 0 });
-            if (!MagicExists(Spell.CrescentSlash)) MagicInfoList.Add(new MagicInfo { Name = "月华乱舞", Spell = Spell.CrescentSlash, Icon = 71, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 12000, Need2 = 16000, Need3 = 24000, BaseCost = 19, LevelCost = 3, Range = 0 });
-            if (!MagicExists(Spell.MoonMist)) MagicInfoList.Add(new MagicInfo { Name = "月影雾", Spell = Spell.MoonMist, Icon = 83, Level1 = 60, Level2 = 61, Level3 = 62, Need1 = 3650, Need2 = 5950, Need3 = 8800, BaseCost = 30, LevelCost = 5, DelayBase = 180000, DelayReduction = 30000 });
-            if (!MagicExists(Spell.CatTongue)) MagicInfoList.Add(new MagicInfo { Name = "猫舌兰", Spell = Spell.CatTongue, Icon = 79, Level1 = 48, Level2 = 51, Level3 = 53, Need1 = 2000, Need2 = 4000, Need3 = 7000, BaseCost = 30, LevelCost = 5, DelayBase = 360000, DelayReduction = 60000 });
+            if (!MagicExists(Spell.FatalSword)) MagicInfoList.Add(new MagicInfo { Name = "FatalSword", Spell = Spell.FatalSword, Icon = 58, Level1 = 7, Level2 = 9, Level3 = 12, Need1 = 500, Need2 = 1000, Need3 = 2300, Range = 0 });
+            if (!MagicExists(Spell.DoubleSlash)) MagicInfoList.Add(new MagicInfo { Name = "DoubleSlash", Spell = Spell.DoubleSlash, Icon = 59, Level1 = 15, Level2 = 17, Level3 = 19, Need1 = 700, Need2 = 1500, Need3 = 2200, BaseCost = 2, LevelCost = 1 });
+            if (!MagicExists(Spell.Haste)) MagicInfoList.Add(new MagicInfo { Name = "Haste", Spell = Spell.Haste, Icon = 60, Level1 = 20, Level2 = 22, Level3 = 25, Need1 = 2000, Need2 = 3000, Need3 = 6000, BaseCost = 3, LevelCost = 2, Range = 0 });
+            if (!MagicExists(Spell.FlashDash)) MagicInfoList.Add(new MagicInfo { Name = "FlashDash", Spell = Spell.FlashDash, Icon = 61, Level1 = 25, Level2 = 27, Level3 = 30, Need1 = 4000, Need2 = 7000, Need3 = 9000, BaseCost = 12, LevelCost = 2, DelayBase = 200, Range = 0 });
+            if (!MagicExists(Spell.LightBody)) MagicInfoList.Add(new MagicInfo { Name = "LightBody", Spell = Spell.LightBody, Icon = 68, Level1 = 27, Level2 = 29, Level3 = 32, Need1 = 5000, Need2 = 7000, Need3 = 10000, BaseCost = 11, LevelCost = 2, Range = 0 });
+            if (!MagicExists(Spell.HeavenlySword)) MagicInfoList.Add(new MagicInfo { Name = "HeavenlySword", Spell = Spell.HeavenlySword, Icon = 62, Level1 = 30, Level2 = 32, Level3 = 35, Need1 = 4000, Need2 = 8000, Need3 = 10000, BaseCost = 13, LevelCost = 2, MPowerBase = 8, Range = 0 });
+            if (!MagicExists(Spell.FireBurst)) MagicInfoList.Add(new MagicInfo { Name = "FireBurst", Spell = Spell.FireBurst, Icon = 63, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 4000, Need2 = 6000, Need3 = 8000, BaseCost = 10, LevelCost = 1, Range = 0 });
+            if (!MagicExists(Spell.Trap)) MagicInfoList.Add(new MagicInfo { Name = "Trap", Spell = Spell.Trap, Icon = 64, Level1 = 33, Level2 = 35, Level3 = 38, Need1 = 2000, Need2 = 4000, Need3 = 6000, BaseCost = 14, LevelCost = 2, DelayBase = 60000, DelayReduction = 15000, Range = 9 });
+            if (!MagicExists(Spell.PoisonSword)) MagicInfoList.Add(new MagicInfo { Name = "PoisonSword", Spell = Spell.PoisonSword, Icon = 69, Level1 = 34, Level2 = 36, Level3 = 39, Need1 = 5000, Need2 = 8000, Need3 = 11000, BaseCost = 14, LevelCost = 3, Range = 0 });
+            if (!MagicExists(Spell.MoonLight)) MagicInfoList.Add(new MagicInfo { Name = "MoonLight", Spell = Spell.MoonLight, Icon = 65, Level1 = 36, Level2 = 39, Level3 = 42, Need1 = 3000, Need2 = 5000, Need3 = 8000, BaseCost = 36, LevelCost = 3, Range = 0 });
+            if (!MagicExists(Spell.MPEater)) MagicInfoList.Add(new MagicInfo { Name = "MPEater", Spell = Spell.MPEater, Icon = 66, Level1 = 38, Level2 = 41, Level3 = 44, Need1 = 5000, Need2 = 8000, Need3 = 11000, Range = 0 });
+            if (!MagicExists(Spell.SwiftFeet)) MagicInfoList.Add(new MagicInfo { Name = "SwiftFeet", Spell = Spell.SwiftFeet, Icon = 67, Level1 = 40, Level2 = 43, Level3 = 46, Need1 = 4000, Need2 = 6000, Need3 = 9000, BaseCost = 17, LevelCost = 5, DelayBase = 210000, DelayReduction = 40000, Range = 0 });
+            if (!MagicExists(Spell.DarkBody)) MagicInfoList.Add(new MagicInfo { Name = "DarkBody", Spell = Spell.DarkBody, Icon = 70, Level1 = 46, Level2 = 49, Level3 = 52, Need1 = 6000, Need2 = 10000, Need3 = 14000, BaseCost = 40, LevelCost = 7, Range = 0 });
+            if (!MagicExists(Spell.Hemorrhage)) MagicInfoList.Add(new MagicInfo { Name = "Hemorrhage", Spell = Spell.Hemorrhage, Icon = 75, Level1 = 47, Level2 = 51, Level3 = 55, Need1 = 9000, Need2 = 15000, Need3 = 21000, Range = 0 });
+            if (!MagicExists(Spell.CrescentSlash)) MagicInfoList.Add(new MagicInfo { Name = "CresentSlash", Spell = Spell.CrescentSlash, Icon = 71, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 12000, Need2 = 16000, Need3 = 24000, BaseCost = 19, LevelCost = 5, Range = 0 });
+            if (!MagicExists(Spell.MoonMist)) MagicInfoList.Add(new MagicInfo { Name = "MoonMist", Spell = Spell.MoonMist, Icon = 83, Level1 = 48, Level2 = 51, Level3 = 56, Need1 = 10, Need2 = 20, Need3 = 30, BaseCost = 30, LevelCost = 5, DelayBase = 20000, DelayReduction = 2000 });
+            if (!MagicExists(Spell.CatTongue)) MagicInfoList.Add(new MagicInfo { Name = "CatTongue", Spell = Spell.CatTongue, Icon = 79, Level1 = 48, Level2 = 51, Level3 = 56, Need1 = 10, Need2 = 20, Need3 = 30, BaseCost = 30, LevelCost = 5, DelayBase = 20000, DelayReduction = 2000 });
 
             //Archer
-            if (!MagicExists(Spell.Focus)) MagicInfoList.Add(new MagicInfo { Name = "必中闪", Spell = Spell.Focus, Icon = 88, Level1 = 7, Level2 = 13, Level3 = 17, Need1 = 270, Need2 = 600, Need3 = 1300, Range = 0 });
-            if (!MagicExists(Spell.StraightShot)) MagicInfoList.Add(new MagicInfo { Name = "天日闪", Spell = Spell.StraightShot, Icon = 89, Level1 = 9, Level2 = 12, Level3 = 16, Need1 = 350, Need2 = 750, Need3 = 1400, BaseCost = 3, LevelCost = 2, MPowerBase = 8, PowerBase = 3, Range = 9 });
-            if (!MagicExists(Spell.DoubleShot)) MagicInfoList.Add(new MagicInfo { Name = "无我闪", Spell = Spell.DoubleShot, Icon = 90, Level1 = 14, Level2 = 18, Level3 = 21, Need1 = 700, Need2 = 1500, Need3 = 2100, BaseCost = 3, LevelCost = 2, MPowerBase = 6, PowerBase = 2, Range = 9 });
-            if (!MagicExists(Spell.ExplosiveTrap)) MagicInfoList.Add(new MagicInfo { Name = "爆阱", Spell = Spell.ExplosiveTrap, Icon = 91, Level1 = 22, Level2 = 25, Level3 = 30, Need1 = 2000, Need2 = 3500, Need3 = 5000, BaseCost = 10, LevelCost = 3, MPowerBase = 15, PowerBase = 15, Range = 0 });
-            if (!MagicExists(Spell.DelayedExplosion)) MagicInfoList.Add(new MagicInfo { Name = "爆闪", Spell = Spell.DelayedExplosion, Icon = 92, Level1 = 31, Level2 = 34, Level3 = 39, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 8, LevelCost = 2, MPowerBase = 30, PowerBase = 15, Range = 9 });
-            if (!MagicExists(Spell.Meditation)) MagicInfoList.Add(new MagicInfo { Name = "气功术", Spell = Spell.Meditation, Icon = 93, Level1 = 19, Level2 = 24, Level3 = 29, Need1 = 1800, Need2 = 2600, Need3 = 5600, BaseCost = 8, LevelCost = 2, Range = 0 });
-            if (!MagicExists(Spell.ElementalShot)) MagicInfoList.Add(new MagicInfo { Name = "万金闪", Spell = Spell.ElementalShot, Icon = 94, Level1 = 20, Level2 = 25, Level3 = 31, Need1 = 1800, Need2 = 2700, Need3 = 6000, BaseCost = 8, LevelCost = 2, MPowerBase = 6, PowerBase = 3, Range = 9 });
-            if (!MagicExists(Spell.Concentration)) MagicInfoList.Add(new MagicInfo { Name = "气流术", Spell = Spell.Concentration, Icon = 96, Level1 = 23, Level2 = 27, Level3 = 32, Need1 = 2100, Need2 = 3800, Need3 = 6500, BaseCost = 8, LevelCost = 2, Range = 0 });
-            if (!MagicExists(Spell.ElementalBarrier)) MagicInfoList.Add(new MagicInfo { Name = "金刚术", Spell = Spell.ElementalBarrier, Icon = 98, Level1 = 33, Level2 = 38, Level3 = 44, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 10, LevelCost = 2, MPowerBase = 15, PowerBase = 5, Range = 0 });
-            if (!MagicExists(Spell.BackStep)) MagicInfoList.Add(new MagicInfo { Name = "风弹步", Spell = Spell.BackStep, Icon = 95, Level1 = 30, Level2 = 34, Level3 = 38, Need1 = 2400, Need2 = 3000, Need3 = 6000, BaseCost = 12, LevelCost = 2, DelayBase = 2500, Range = 0 });
-            if (!MagicExists(Spell.BindingShot)) MagicInfoList.Add(new MagicInfo { Name = "困兽笼", Spell = Spell.BindingShot, Icon = 46, Level1 = 35, Level2 = 39, Level3 = 42, Need1 = 400, Need2 = 7000, Need3 = 9500, BaseCost = 7, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.Stonetrap)) MagicInfoList.Add(new MagicInfo { Name = "地柱钉", Spell = Spell.Stonetrap, Icon = 97, Level1 = 40, Level2 = 43, Level3 = 46, Need1 = 4900, Need2 = 9800, Need3 = 14100, BaseCost = 7, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.SummonVampire)) MagicInfoList.Add(new MagicInfo { Name = "吸血地精", Spell = Spell.SummonVampire, Icon = 99, Level1 = 28, Level2 = 33, Level3 = 41, Need1 = 2000, Need2 = 2700, Need3 = 7500, BaseCost = 10, LevelCost = 5, Range = 9 });
-            if (!MagicExists(Spell.VampireShot)) MagicInfoList.Add(new MagicInfo { Name = "吸血地闪", Spell = Spell.VampireShot, Icon = 100, Level1 = 26, Level2 = 32, Level3 = 36, Need1 = 3000, Need2 = 6000, Need3 = 12000, BaseCost = 12, LevelCost = 3, MPowerBase = 10, PowerBase = 7, Range = 9 });
-            if (!MagicExists(Spell.SummonToad)) MagicInfoList.Add(new MagicInfo { Name = "痹魔阱", Spell = Spell.SummonToad, Icon = 101, Level1 = 37, Level2 = 43, Level3 = 47, Need1 = 5800, Need2 = 10000, Need3 = 13000, BaseCost = 10, LevelCost = 5, Range = 9 });
-            if (!MagicExists(Spell.PoisonShot)) MagicInfoList.Add(new MagicInfo { Name = "毒魔闪", Spell = Spell.PoisonShot, Icon = 102, Level1 = 40, Level2 = 45, Level3 = 49, Need1 = 6000, Need2 = 14000, Need3 = 16000, BaseCost = 10, LevelCost = 4, MPowerBase = 10, PowerBase = 10, Range = 9 });
-            if (!MagicExists(Spell.CrippleShot)) MagicInfoList.Add(new MagicInfo { Name = "邪爆闪", Spell = Spell.CrippleShot, Icon = 103, Level1 = 43, Level2 = 47, Level3 = 50, Need1 = 12000, Need2 = 15000, Need3 = 18000, BaseCost = 15, LevelCost = 3, MPowerBase = 10, MPowerBonus = 20, PowerBase = 10, Range = 9 });
-            if (!MagicExists(Spell.SummonSnakes)) MagicInfoList.Add(new MagicInfo { Name = "蛇柱阱", Spell = Spell.SummonSnakes, Icon = 104, Level1 = 46, Level2 = 51, Level3 = 54, Need1 = 14000, Need2 = 17000, Need3 = 20000, BaseCost = 10, LevelCost = 5, Range = 9 });
-            if (!MagicExists(Spell.NapalmShot)) MagicInfoList.Add(new MagicInfo { Name = "血龙闪", Spell = Spell.NapalmShot, Icon = 105, Level1 = 48, Level2 = 52, Level3 = 55, Need1 = 15000, Need2 = 18000, Need3 = 21000, BaseCost = 40, LevelCost = 10, MPowerBase = 25, MPowerBonus = 25, PowerBase = 25, Range = 9 });
-            if (!MagicExists(Spell.OneWithNature)) MagicInfoList.Add(new MagicInfo { Name = "血龙闪-秘籍", Spell = Spell.OneWithNature, Icon = 106, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 17000, Need2 = 19000, Need3 = 24000, BaseCost = 80, LevelCost = 15, MPowerBase = 75, MPowerBonus = 35, PowerBase = 30, PowerBonus = 20, Range = 9 });
-            if (!MagicExists(Spell.MentalState)) MagicInfoList.Add(new MagicInfo { Name = "精神状态", Spell = Spell.MentalState, Icon = 81, Level1 = 11, Level2 = 15, Level3 = 22, Need1 = 500, Need2 = 900, Need3 = 1800, BaseCost = 1, LevelCost = 1, Range = 0 });
+            if (!MagicExists(Spell.Focus)) MagicInfoList.Add(new MagicInfo { Name = "Focus", Spell = Spell.Focus, Icon = 88, Level1 = 7, Level2 = 13, Level3 = 17, Need1 = 270, Need2 = 600, Need3 = 1300, Range = 0 });
+            if (!MagicExists(Spell.StraightShot)) MagicInfoList.Add(new MagicInfo { Name = "StraightShot", Spell = Spell.StraightShot, Icon = 89, Level1 = 9, Level2 = 12, Level3 = 16, Need1 = 350, Need2 = 750, Need3 = 1400, BaseCost = 3, LevelCost = 2, MPowerBase = 8, PowerBase = 3, Range = 9 });
+            if (!MagicExists(Spell.DoubleShot)) MagicInfoList.Add(new MagicInfo { Name = "DoubleShot", Spell = Spell.DoubleShot, Icon = 90, Level1 = 14, Level2 = 18, Level3 = 21, Need1 = 700, Need2 = 1500, Need3 = 2100, BaseCost = 3, LevelCost = 2, MPowerBase = 6, PowerBase = 2, Range = 9 });
+            if (!MagicExists(Spell.ExplosiveTrap)) MagicInfoList.Add(new MagicInfo { Name = "ExplosiveTrap", Spell = Spell.ExplosiveTrap, Icon = 91, Level1 = 22, Level2 = 25, Level3 = 30, Need1 = 2000, Need2 = 3500, Need3 = 5000, BaseCost = 10, LevelCost = 3, MPowerBase = 15, PowerBase = 15, Range = 0 });
+            if (!MagicExists(Spell.DelayedExplosion)) MagicInfoList.Add(new MagicInfo { Name = "DelayedExplosion", Spell = Spell.DelayedExplosion, Icon = 92, Level1 = 31, Level2 = 34, Level3 = 39, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 8, LevelCost = 2, MPowerBase = 30, PowerBase = 15, Range = 9 });
+            if (!MagicExists(Spell.Meditation)) MagicInfoList.Add(new MagicInfo { Name = "Meditation", Spell = Spell.Meditation, Icon = 93, Level1 = 19, Level2 = 24, Level3 = 29, Need1 = 1800, Need2 = 2600, Need3 = 5600, BaseCost = 8, LevelCost = 2, Range = 0 });
+            if (!MagicExists(Spell.ElementalShot)) MagicInfoList.Add(new MagicInfo { Name = "ElementalShot", Spell = Spell.ElementalShot, Icon = 94, Level1 = 20, Level2 = 25, Level3 = 31, Need1 = 1800, Need2 = 2700, Need3 = 6000, BaseCost = 8, LevelCost = 2, MPowerBase = 6, PowerBase = 3, Range = 9 });
+            if (!MagicExists(Spell.Concentration)) MagicInfoList.Add(new MagicInfo { Name = "Concentration", Spell = Spell.Concentration, Icon = 96, Level1 = 23, Level2 = 27, Level3 = 32, Need1 = 2100, Need2 = 3800, Need3 = 6500, BaseCost = 8, LevelCost = 2, Range = 0 });
+            if (!MagicExists(Spell.ElementalBarrier)) MagicInfoList.Add(new MagicInfo { Name = "ElementalBarrier", Spell = Spell.ElementalBarrier, Icon = 98, Level1 = 33, Level2 = 38, Level3 = 44, Need1 = 3000, Need2 = 7000, Need3 = 10000, BaseCost = 10, LevelCost = 2, MPowerBase = 15, PowerBase = 5, Range = 0 });
+            if (!MagicExists(Spell.BackStep)) MagicInfoList.Add(new MagicInfo { Name = "BackStep", Spell = Spell.BackStep, Icon = 95, Level1 = 30, Level2 = 34, Level3 = 38, Need1 = 2400, Need2 = 3000, Need3 = 6000, BaseCost = 12, LevelCost = 2, DelayBase = 2500, Range = 0 });
+            if (!MagicExists(Spell.BindingShot)) MagicInfoList.Add(new MagicInfo { Name = "BindingShot", Spell = Spell.BindingShot, Icon = 97, Level1 = 35, Level2 = 39, Level3 = 42, Need1 = 400, Need2 = 7000, Need3 = 9500, BaseCost = 7, LevelCost = 3, Range = 9 });
+            if (!MagicExists(Spell.Stonetrap)) MagicInfoList.Add(new MagicInfo { Name = "Stonetrap", Spell = Spell.Stonetrap, Icon = 97, Level1 = 40, Level2 = 43, Level3 = 46, Need1 = 4900, Need2 = 9800, Need3 = 141, BaseCost = 7, LevelCost = 3, Range = 9 });
+            if (!MagicExists(Spell.SummonVampire)) MagicInfoList.Add(new MagicInfo { Name = "SummonVampire", Spell = Spell.SummonVampire, Icon = 99, Level1 = 28, Level2 = 33, Level3 = 41, Need1 = 2000, Need2 = 2700, Need3 = 7500, BaseCost = 10, LevelCost = 5, Range = 9 });
+            if (!MagicExists(Spell.VampireShot)) MagicInfoList.Add(new MagicInfo { Name = "VampireShot", Spell = Spell.VampireShot, Icon = 100, Level1 = 26, Level2 = 32, Level3 = 36, Need1 = 3000, Need2 = 6000, Need3 = 12000, BaseCost = 12, LevelCost = 3, MPowerBase = 10, PowerBase = 7, Range = 9 });
+            if (!MagicExists(Spell.SummonToad)) MagicInfoList.Add(new MagicInfo { Name = "SummonToad", Spell = Spell.SummonToad, Icon = 101, Level1 = 37, Level2 = 43, Level3 = 47, Need1 = 5800, Need2 = 10000, Need3 = 13000, BaseCost = 10, LevelCost = 5, Range = 9 });
+            if (!MagicExists(Spell.PoisonShot)) MagicInfoList.Add(new MagicInfo { Name = "PoisonShot", Spell = Spell.PoisonShot, Icon = 102, Level1 = 40, Level2 = 45, Level3 = 49, Need1 = 6000, Need2 = 14000, Need3 = 16000, BaseCost = 10, LevelCost = 4, MPowerBase = 10, PowerBase = 10, Range = 9 });
+            if (!MagicExists(Spell.CrippleShot)) MagicInfoList.Add(new MagicInfo { Name = "CrippleShot", Spell = Spell.CrippleShot, Icon = 103, Level1 = 43, Level2 = 47, Level3 = 50, Need1 = 12000, Need2 = 15000, Need3 = 18000, BaseCost = 15, LevelCost = 3, MPowerBase = 10, MPowerBonus = 20, PowerBase = 10, Range = 9 });
+            if (!MagicExists(Spell.SummonSnakes)) MagicInfoList.Add(new MagicInfo { Name = "SummonSnakes", Spell = Spell.SummonSnakes, Icon = 104, Level1 = 46, Level2 = 51, Level3 = 54, Need1 = 14000, Need2 = 17000, Need3 = 20000, BaseCost = 10, LevelCost = 5, Range = 9 });
+            if (!MagicExists(Spell.NapalmShot)) MagicInfoList.Add(new MagicInfo { Name = "NapalmShot", Spell = Spell.NapalmShot, Icon = 105, Level1 = 48, Level2 = 52, Level3 = 55, Need1 = 15000, Need2 = 18000, Need3 = 21000, BaseCost = 40, LevelCost = 10, MPowerBase = 25, MPowerBonus = 25, PowerBase = 25, Range = 9 });
+            if (!MagicExists(Spell.OneWithNature)) MagicInfoList.Add(new MagicInfo { Name = "OneWithNature", Spell = Spell.OneWithNature, Icon = 106, Level1 = 50, Level2 = 53, Level3 = 56, Need1 = 17000, Need2 = 19000, Need3 = 24000, BaseCost = 80, LevelCost = 15, MPowerBase = 75, MPowerBonus = 35, PowerBase = 30, PowerBonus = 20, Range = 9 });
+            if (!MagicExists(Spell.MentalState)) MagicInfoList.Add(new MagicInfo { Name = "MentalState", Spell = Spell.MentalState, Icon = 81, Level1 = 11, Level2 = 15, Level3 = 22, Need1 = 500, Need2 = 900, Need3 = 1800, BaseCost = 1, LevelCost = 1, Range = 0 });
 
             //Custom
-            if (!MagicExists(Spell.Blink)) MagicInfoList.Add(new MagicInfo { Name = "时光涌动", Spell = Spell.Blink, Icon = 20, Level1 = 19, Level2 = 22, Level3 = 25, Need1 = 350, Need2 = 1000, Need3 = 2000, BaseCost = 10, LevelCost = 3, Range = 9 });
-            if (!MagicExists(Spell.Portal)) MagicInfoList.Add(new MagicInfo { Name = "传送门", Spell = Spell.Portal, Icon = 1, Level1 = 7, Level2 = 11, Level3 = 14, Need1 = 150, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, Range = 9 });
-            if (!MagicExists(Spell.BattleCry)) MagicInfoList.Add(new MagicInfo {  Name = "呐喊", Spell = Spell.BattleCry, Icon = 42, Level1 = 48, Level2 = 51, Level3 = 55, Need1 = 8000, Need2 = 11000, Need3 = 15000, BaseCost = 22, LevelCost = 10, Range = 0 });
-            if (!MagicExists(Spell.FireBounce)) MagicInfoList.Add(new MagicInfo { Name = "火焰跳动", Spell = Spell.FireBounce, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
-            if (!MagicExists(Spell.MeteorShower)) MagicInfoList.Add(new MagicInfo { Name = "火流星", Spell = Spell.MeteorShower, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
+            if (!MagicExists(Spell.Portal)) MagicInfoList.Add(new MagicInfo { Name = "Portal", Spell = Spell.Portal, Icon = 1, Level1 = 7, Level2 = 11, Level3 = 14, Need1 = 150, Need2 = 350, Need3 = 700, BaseCost = 3, LevelCost = 2, Range = 9 });
+            if (!MagicExists(Spell.BattleCry)) MagicInfoList.Add(new MagicInfo { Name = "BattleCry", Spell = Spell.BattleCry, Icon = 42, Level1 = 48, Level2 = 51, Level3 = 55, Need1 = 8000, Need2 = 11000, Need3 = 15000, BaseCost = 22, LevelCost = 10, Range = 0 });
+            if (!MagicExists(Spell.FireBounce)) MagicInfoList.Add(new MagicInfo { Name = "FireBounce", Spell = Spell.FireBounce, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
+            if (!MagicExists(Spell.MeteorShower)) MagicInfoList.Add(new MagicInfo { Name = "MeteorShower", Spell = Spell.MeteorShower, Icon = 4, Level1 = 15, Level2 = 18, Level3 = 21, Need1 = 2000, Need2 = 2700, Need3 = 3500, BaseCost = 5, LevelCost = 1, MPowerBase = 6, PowerBase = 10, Range = 9 });
         }
 
         private string CanStartEnvir()
         {
-            if (StartPoints.Count == 0) return "尚未设置角色出生点，无法启动服务器";
+            if (StartPoints.Count == 0) return "Cannot start server without atleast 1 Map and StartPoint.";
 
             if (Settings.EnforceDBChecks)
             {
-                if (GetMonsterInfo(Settings.SkeletonName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.SkeletonName;
-                if (GetMonsterInfo(Settings.ShinsuName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ShinsuName;
-                if (GetMonsterInfo(Settings.BugBatName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BugBatName;
-                if (GetMonsterInfo(Settings.Zuma1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma1;
-                if (GetMonsterInfo(Settings.Zuma2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma2;
-                if (GetMonsterInfo(Settings.Zuma3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma3;
-                if (GetMonsterInfo(Settings.Zuma4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma4;
-                if (GetMonsterInfo(Settings.Zuma5, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma5;
-                if (GetMonsterInfo(Settings.Zuma6, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma6;
-                if (GetMonsterInfo(Settings.Zuma7, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Zuma7;
-                if (GetMonsterInfo(Settings.Turtle1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Turtle1;
-                if (GetMonsterInfo(Settings.Turtle2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Turtle2;
-                if (GetMonsterInfo(Settings.Turtle3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Turtle3;
-                if (GetMonsterInfo(Settings.Turtle4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Turtle4;
-                if (GetMonsterInfo(Settings.Turtle5, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Turtle5;
-                if (GetMonsterInfo(Settings.BoneMonster1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BoneMonster1;
-                if (GetMonsterInfo(Settings.BoneMonster2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BoneMonster2;
-                if (GetMonsterInfo(Settings.BoneMonster3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BoneMonster3;
-                if (GetMonsterInfo(Settings.BoneMonster4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BoneMonster4;
-                if (GetMonsterInfo(Settings.BehemothMonster1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BehemothMonster1;
-                if (GetMonsterInfo(Settings.BehemothMonster2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BehemothMonster2;
-                if (GetMonsterInfo(Settings.BehemothMonster3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BehemothMonster3;
-                if (GetMonsterInfo(Settings.HellKnight1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellKnight1;
-                if (GetMonsterInfo(Settings.HellKnight2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellKnight2;
-                if (GetMonsterInfo(Settings.HellKnight3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellKnight3;
-                if (GetMonsterInfo(Settings.HellKnight4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellKnight4;
-                if (GetMonsterInfo(Settings.HellBomb1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellBomb1;
-                if (GetMonsterInfo(Settings.HellBomb2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellBomb2;
-                if (GetMonsterInfo(Settings.HellBomb3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.HellBomb3;
-                if (GetMonsterInfo(Settings.WhiteSnake, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.WhiteSnake;
-                if (GetMonsterInfo(Settings.AngelName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.AngelName;
-                if (GetMonsterInfo(Settings.BombSpiderName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.BombSpiderName;
-                if (GetMonsterInfo(Settings.CloneName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.CloneName;
-                if (GetMonsterInfo(Settings.AssassinCloneName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.AssassinCloneName;
-                if (GetMonsterInfo(Settings.VampireName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.VampireName;
-                if (GetMonsterInfo(Settings.ToadName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ToadName;
-                if (GetMonsterInfo(Settings.SnakeTotemName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.SnakeTotemName;
-                if (GetMonsterInfo(Settings.StoneName, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.StoneName;
-                if (GetMonsterInfo(Settings.FishingMonster, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.FishingMonster;
-                if (GetMonsterInfo(Settings.GeneralMeowMeowMob1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.GeneralMeowMeowMob1;
-                if (GetMonsterInfo(Settings.GeneralMeowMeowMob2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.GeneralMeowMeowMob2;
-                if (GetMonsterInfo(Settings.GeneralMeowMeowMob3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.GeneralMeowMeowMob3;
-                if (GetMonsterInfo(Settings.GeneralMeowMeowMob4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.GeneralMeowMeowMob4;
-                if (GetMonsterInfo(Settings.KingHydraxMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.KingHydraxMob;
-                if (GetMonsterInfo(Settings.Mon409BMob1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon409BMob1;
-                if (GetMonsterInfo(Settings.Mon409BMob2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon409BMob2;
-                if (GetMonsterInfo(Settings.Mon409BBombMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon409BBombMob;
-                if (GetMonsterInfo(Settings.SnowWolfKingMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.SnowWolfKingMob;
-                if (GetMonsterInfo(Settings.CallScrollMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.CallScrollMob;
-                if (GetMonsterInfo(Settings.ShardMaidenMob1, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ShardMaidenMob1;
-                if (GetMonsterInfo(Settings.ShardMaidenMob2, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ShardMaidenMob2;
-                if (GetMonsterInfo(Settings.ShardMaidenMob3, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ShardMaidenMob3;
-                if (GetMonsterInfo(Settings.ShardMaidenMob4, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.ShardMaidenMob4;
-                if (GetMonsterInfo(Settings.Mon570BMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon570BMob;
-                if (GetMonsterInfo(Settings.Mon573BMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon573BMob;
-                if (GetMonsterInfo(Settings.Mon580BMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon580BMob;
-                if (GetMonsterInfo(Settings.Mon603BMob, true) == null) return "缺少必要怪物无法启动服务器 " + Settings.Mon603BMob;
+                if (GetMonsterInfo(Settings.SkeletonName, true) == null) return "Cannot start server without mob: " + Settings.SkeletonName;
+                if (GetMonsterInfo(Settings.ShinsuName, true) == null) return "Cannot start server without mob: " + Settings.ShinsuName;
+                if (GetMonsterInfo(Settings.BugBatName, true) == null) return "Cannot start server without mob: " + Settings.BugBatName;
+                if (GetMonsterInfo(Settings.Zuma1, true) == null) return "Cannot start server without mob: " + Settings.Zuma1;
+                if (GetMonsterInfo(Settings.Zuma2, true) == null) return "Cannot start server without mob: " + Settings.Zuma2;
+                if (GetMonsterInfo(Settings.Zuma3, true) == null) return "Cannot start server without mob: " + Settings.Zuma3;
+                if (GetMonsterInfo(Settings.Zuma4, true) == null) return "Cannot start server without mob: " + Settings.Zuma4;
+                if (GetMonsterInfo(Settings.Zuma5, true) == null) return "Cannot start server without mob: " + Settings.Zuma5;
+                if (GetMonsterInfo(Settings.Zuma6, true) == null) return "Cannot start server without mob: " + Settings.Zuma6;
+                if (GetMonsterInfo(Settings.Zuma7, true) == null) return "Cannot start server without mob: " + Settings.Zuma7;
+                if (GetMonsterInfo(Settings.Turtle1, true) == null) return "Cannot start server without mob: " + Settings.Turtle1;
+                if (GetMonsterInfo(Settings.Turtle2, true) == null) return "Cannot start server without mob: " + Settings.Turtle2;
+                if (GetMonsterInfo(Settings.Turtle3, true) == null) return "Cannot start server without mob: " + Settings.Turtle3;
+                if (GetMonsterInfo(Settings.Turtle4, true) == null) return "Cannot start server without mob: " + Settings.Turtle4;
+                if (GetMonsterInfo(Settings.Turtle5, true) == null) return "Cannot start server without mob: " + Settings.Turtle5;
+                if (GetMonsterInfo(Settings.BoneMonster1, true) == null) return "Cannot start server without mob: " + Settings.BoneMonster1;
+                if (GetMonsterInfo(Settings.BoneMonster2, true) == null) return "Cannot start server without mob: " + Settings.BoneMonster2;
+                if (GetMonsterInfo(Settings.BoneMonster3, true) == null) return "Cannot start server without mob: " + Settings.BoneMonster3;
+                if (GetMonsterInfo(Settings.BoneMonster4, true) == null) return "Cannot start server without mob: " + Settings.BoneMonster4;
+                if (GetMonsterInfo(Settings.BehemothMonster1, true) == null) return "Cannot start server without mob: " + Settings.BehemothMonster1;
+                if (GetMonsterInfo(Settings.BehemothMonster2, true) == null) return "Cannot start server without mob: " + Settings.BehemothMonster2;
+                if (GetMonsterInfo(Settings.BehemothMonster3, true) == null) return "Cannot start server without mob: " + Settings.BehemothMonster3;
+                if (GetMonsterInfo(Settings.HellKnight1, true) == null) return "Cannot start server without mob: " + Settings.HellKnight1;
+                if (GetMonsterInfo(Settings.HellKnight2, true) == null) return "Cannot start server without mob: " + Settings.HellKnight2;
+                if (GetMonsterInfo(Settings.HellKnight3, true) == null) return "Cannot start server without mob: " + Settings.HellKnight3;
+                if (GetMonsterInfo(Settings.HellKnight4, true) == null) return "Cannot start server without mob: " + Settings.HellKnight4;
+                if (GetMonsterInfo(Settings.HellBomb1, true) == null) return "Cannot start server without mob: " + Settings.HellBomb1;
+                if (GetMonsterInfo(Settings.HellBomb2, true) == null) return "Cannot start server without mob: " + Settings.HellBomb2;
+                if (GetMonsterInfo(Settings.HellBomb3, true) == null) return "Cannot start server without mob: " + Settings.HellBomb3;
+                if (GetMonsterInfo(Settings.WhiteSnake, true) == null) return "Cannot start server without mob: " + Settings.WhiteSnake;
+                if (GetMonsterInfo(Settings.AngelName, true) == null) return "Cannot start server without mob: " + Settings.AngelName;
+                if (GetMonsterInfo(Settings.BombSpiderName, true) == null) return "Cannot start server without mob: " + Settings.BombSpiderName;
+                if (GetMonsterInfo(Settings.CloneName, true) == null) return "Cannot start server without mob: " + Settings.CloneName;
+                if (GetMonsterInfo(Settings.AssassinCloneName, true) == null) return "Cannot start server without mob: " + Settings.AssassinCloneName;
+                if (GetMonsterInfo(Settings.VampireName, true) == null) return "Cannot start server without mob: " + Settings.VampireName;
+                if (GetMonsterInfo(Settings.ToadName, true) == null) return "Cannot start server without mob: " + Settings.ToadName;
+                if (GetMonsterInfo(Settings.SnakeTotemName, true) == null) return "Cannot start server without mob: " + Settings.SnakeTotemName;
+                if (GetMonsterInfo(Settings.FishingMonster, true) == null) return "Cannot start server without mob: " + Settings.FishingMonster;
+                if (GetMonsterInfo(Settings.GeneralMeowMeowMob1, true) == null) return "Cannot start server without mob: " + Settings.GeneralMeowMeowMob1;
+                if (GetMonsterInfo(Settings.GeneralMeowMeowMob2, true) == null) return "Cannot start server without mob: " + Settings.GeneralMeowMeowMob2;
+                if (GetMonsterInfo(Settings.GeneralMeowMeowMob3, true) == null) return "Cannot start server without mob: " + Settings.GeneralMeowMeowMob3;
+                if (GetMonsterInfo(Settings.GeneralMeowMeowMob4, true) == null) return "Cannot start server without mob: " + Settings.GeneralMeowMeowMob4;
+                if (GetMonsterInfo(Settings.KingHydraxMob, true) == null) return "Cannot start server without mob: " + Settings.KingHydraxMob;
+                if (GetMonsterInfo(Settings.HornedCommanderMob, true) == null) return "Cannot start server without mob: " + Settings.HornedCommanderMob;
+                if (GetMonsterInfo(Settings.HornedCommanderBombMob, true) == null) return "Cannot start server without mob: " + Settings.HornedCommanderBombMob;
+                if (GetMonsterInfo(Settings.SnowWolfKingMob, true) == null) return "Cannot start server without mob: " + Settings.SnowWolfKingMob;
+                if (GetMonsterInfo(Settings.ScrollMob1, true) == null) return "Cannot start server without mob: " + Settings.ScrollMob1;
+                if (GetMonsterInfo(Settings.ScrollMob2, true) == null) return "Cannot start server without mob: " + Settings.ScrollMob2;
+                if (GetMonsterInfo(Settings.ScrollMob3, true) == null) return "Cannot start server without mob: " + Settings.ScrollMob3;
+                if (GetMonsterInfo(Settings.ScrollMob4, true) == null) return "Cannot start server without mob: " + Settings.ScrollMob4;
 
-                if (GetItemInfo(Settings.RefineOreName) == null) return "缺少精炼所需矿石无法启动服务器" + Settings.RefineOreName;
+                if (GetItemInfo(Settings.RefineOreName) == null) return "Cannot start server without item: " + Settings.RefineOreName;
             }
 
             WorldMapIcon wmi = ValidateWorldMap();
             if (wmi != null)
-                return $"无效的世界地图目录: {wmi.MapIndex} ({wmi.Title})";
+                return $"Invalid worldmap index: {wmi.MapIndex} ({wmi.Title})";
 
 
             //add intelligent creature checks?
@@ -705,7 +676,7 @@ namespace Server.MirEnvir
                     // Get the line number from the stack frame
                     var line = frame.GetFileLineNumber();
 
-                    MessageQueue.Enqueue($"[内循环错误 线程 {line}]" + ex);
+                    MessageQueue.Enqueue($"[inner workloop error. Line {line}]" + ex);
                 }
 
                 StopNetwork();
@@ -723,7 +694,7 @@ namespace Server.MirEnvir
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
 
-                MessageQueue.Enqueue($"[外循环错误 线程 {line}]" + ex);
+                MessageQueue.Enqueue($"[outer workloop error. Line {line}]" + ex);
             }
 
             _thread = null;
@@ -796,7 +767,7 @@ namespace Server.MirEnvir
             {
                 if (ex is ThreadInterruptedException) return;
 
-                MessageQueue.Enqueue($"[数据循环处理出现错误]" + ex);
+                MessageQueue.Enqueue($"[threadloop error]" + ex);
             }
         }
 
@@ -910,13 +881,13 @@ namespace Server.MirEnvir
                 {
                     if (info.ItemType == MarketItemType.Auction && info.CurrentBid > info.Price)
                     {
-                        string message = string.Format("你以 {1:#,##0} 金币赢得了 {0}", info.Item.FriendlyName, info.CurrentBid);
+                        string message = string.Format("You won {0} for {1:#,##0} Gold.", info.Item.FriendlyName, info.CurrentBid);
 
                         info.Sold = true;
                         MailCharacter(info.CurrentBuyerInfo, item: info.Item, customMessage: message);
 
-                        MessageAccount(info.CurrentBuyerInfo.AccountInfo, string.Format("你以 {1:#,##0} 金币购买了 {0}", info.Item.FriendlyName, info.CurrentBid), ChatType.Hint);
-                        MessageAccount(info.SellerInfo.AccountInfo, string.Format("你以 {1:#,##0} 金币卖出了 {0}", info.Item.FriendlyName, info.CurrentBid), ChatType.Hint);
+                        MessageAccount(info.CurrentBuyerInfo.AccountInfo, string.Format("You bought {0} for {1:#,##0} Gold", info.Item.FriendlyName, info.CurrentBid), ChatType.Hint);
+                        MessageAccount(info.SellerInfo.AccountInfo, string.Format("You sold {0} for {1:#,##0} Gold", info.Item.FriendlyName, info.CurrentBid), ChatType.Hint);
                     }
                     else
                     {
@@ -988,6 +959,10 @@ namespace Server.MirEnvir
                     ConquestInfoList[i].Save(writer);
 
                 RespawnTick.Save(writer);
+
+                writer.Write(GTMapList.Count);
+                for (var i = 0; i < GTMapList.Count; i++)
+                    GTMapList[i].Save(writer);
             }
         }
 
@@ -1314,12 +1289,12 @@ namespace Server.MirEnvir
 
                     if (LoadVersion < MinVersion)
                     {
-                        MessageQueue.Enqueue($"无法运行 {LoadVersion} 版本的数据库. 支持的最老版本为：{MinVersion}.");
+                        MessageQueue.Enqueue($"Cannot load a database version {LoadVersion}. Mininum supported is {MinVersion}.");
                         return false;
                     }
                     else if (LoadVersion > Version)
                     {
-                        MessageQueue.Enqueue($"无法运行 {LoadVersion} 版本的数据库. 支持的最新版本为： {Version} ");
+                        MessageQueue.Enqueue($"Cannot load a database version {LoadVersion}. Maximum supported is {Version}.");
                         return false;
 
                     }
@@ -1414,9 +1389,7 @@ namespace Server.MirEnvir
 
                     if (LoadVersion > 67)
                         RespawnTick = new RespawnTimer(reader);
-
-                }
-
+                    }
                 Settings.LinkGuildCreationItems(ItemInfoList);
             }
 
@@ -1481,7 +1454,7 @@ namespace Server.MirEnvir
                     for (var i = 0; i < count; i++)
                     {
                         AccountInfo NextAccount = new AccountInfo(reader);
-                        if (i > 0 &&  NextAccount.Characters.Count == 0)
+                        if (i > 0 && NextAccount.Characters.Count == 0)
                             continue;
                         AccountList.Add(NextAccount);
                         CharacterList.AddRange(AccountList[TrueAccount].Characters);
@@ -1651,6 +1624,22 @@ namespace Server.MirEnvir
             }
         }
 
+        private void LoadGTInfo()
+        {
+            foreach (var gt in GTMapList)
+            {
+                var Guild = GuildList.FirstOrDefault(x => x.GTIndex == gt.Index);
+                if (Guild != null)
+                {
+                    gt.Owner = Guild.Name;
+                    if (Guild.Ranks.Count > 0 && Guild.Ranks[0] != null && Guild.Ranks[0].Members.Count > 0 && Guild.Ranks[0].Members[0] != null)
+                        gt.Leader = Guild.Ranks[0].Members[0].Name;
+                    gt.Price = 0;
+                    gt.Days = (Now - Guild.GTRent).Days;
+                }
+            }
+        }
+
         public void LoadDisabledChars()
         {
             DisabledCharNames.Clear();
@@ -1761,7 +1750,7 @@ namespace Server.MirEnvir
         {
             new Thread(() =>
             {
-                MessageQueue.Enqueue("服务器正在重启...");
+                MessageQueue.Enqueue("Server rebooting...");
                 Stop();
                 Start();
             }).Start();
@@ -1778,6 +1767,7 @@ namespace Server.MirEnvir
             StartPoints.Clear();
             StartItems.Clear();
             MapList.Clear();
+            GTMapList.Clear();
             GameshopLog.Clear();
             CustomCommands.Clear();
             Heroes.Clear();
@@ -1791,7 +1781,7 @@ namespace Server.MirEnvir
                 BuffInfoList.Add(buff);
             }
 
-            MessageQueue.Enqueue($"游戏特效 {BuffInfoList.Count}种 加载完成");
+            MessageQueue.Enqueue($"{BuffInfoList.Count} Buffs Loaded.");
 
             RecipeInfoList.Clear();
             foreach (var recipe in Directory.GetFiles(Settings.RecipePath, "*.txt")
@@ -1801,13 +1791,46 @@ namespace Server.MirEnvir
                 RecipeInfoList.Add(new RecipeInfo(recipe));
             }
 
-            MessageQueue.Enqueue($"合成配方 {RecipeInfoList.Count}个 加载完成");
+            MessageQueue.Enqueue($"{RecipeInfoList.Count} Recipes Loaded.");
 
             for (var i = 0; i < MapInfoList.Count; i++)
             {
+                // Call CreateMap(), which adds the map to Envir.MapList
                 MapInfoList[i].CreateMap();
+
+                // Fetch the created map from Envir.MapList
+                Map map = MapList.FirstOrDefault(m => m.Info == MapInfoList[i]);
+
+                if (map != null)
+                {
+                    if (MapInfoList[i].GT)
+                    {
+                        GTMap gt = GTMapList.FirstOrDefault(x => x.Index == MapInfoList[i].GTIndex);
+                        if (gt != null)
+                        {
+                            gt.Maps.Add(map);
+                        }
+                        else
+                        {
+                            var GT = new GTMap()
+                            {
+                                Index = MapInfoList[i].GTIndex,
+                                Name = MapInfoList[i].Title,
+                                Price = Settings.BuyGTGold,
+                                Days = 0,
+                                Begin = 0,
+                                Leader = "None",
+                                Owner = "None",
+                            };
+                            GT.Maps.Add(map);
+
+                            GTMapList.Add(GT);
+                        }
+                    }
+                }
             }
-            MessageQueue.Enqueue($"地图文件 {MapInfoList.Count}张 加载完成");
+
+            MessageQueue.Enqueue($"{MapInfoList.Count} Maps Loaded.");
 
             for (var i = 0; i < ItemInfoList.Count; i++)
             {
@@ -1830,15 +1853,16 @@ namespace Server.MirEnvir
                     if (DragonSystem.Load()) DragonSystem.Info.LoadDrops();
                 }
 
-                MessageQueue.Enqueue("破天魔龙加载完成");
+                MessageQueue.Enqueue("Dragon Loaded.");
             }
 
             DefaultNPC = NPCScript.GetOrAdd((uint)Random.Next(1000000, 1999999), Settings.DefaultNPCFilename, NPCScriptType.AutoPlayer);
             MonsterNPC = NPCScript.GetOrAdd((uint)Random.Next(2000000, 2999999), Settings.MonsterNPCFilename, NPCScriptType.AutoMonster);
             RobotNPC = NPCScript.GetOrAdd((uint)Random.Next(3000000, 3999999), Settings.RobotNPCFilename, NPCScriptType.Robot);
 
-            MessageQueue.Enqueue("正在部署游戏环境......");
+            MessageQueue.Enqueue("Envir Started.");
         }
+
         private void StartNetwork()
         {
             Connections.Clear();
@@ -1848,6 +1872,7 @@ namespace Server.MirEnvir
             LoadGuilds();
 
             LoadConquests();
+            LoadGTInfo();
 
             _listener = new TcpListener(IPAddress.Parse(Settings.IPAddress), Settings.Port);
             _listener.Start();
@@ -1860,7 +1885,7 @@ namespace Server.MirEnvir
                 _StatusPort.BeginAcceptTcpClient(StatusConnection, null);
             }
 
-            MessageQueue.Enqueue("网络设置加载完成");
+            MessageQueue.Enqueue("Network Started.");
         }
 
         private void StopEnvir()
@@ -1873,12 +1898,13 @@ namespace Server.MirEnvir
             Objects.Clear();
             Players.Clear();
             Heroes.Clear();
+            GTMapList.Clear();
 
             CleanUp();
 
             GC.Collect();
 
-            MessageQueue.Enqueue("游戏服务已停止");
+            MessageQueue.Enqueue("Envir Stopped.");
         }
         private void StopNetwork()
         {
@@ -1924,7 +1950,7 @@ namespace Server.MirEnvir
 
 
             StatusConnections.Clear();
-            MessageQueue.Enqueue("网络已停止");
+            MessageQueue.Enqueue("Network Stopped.");
         }
 
         private void CleanUp()
@@ -1963,8 +1989,8 @@ namespace Server.MirEnvir
 
                         Lover.Married = 0;
                         Lover.MarriedDate = Now;
-                        if (Lover.Equipment[(int)EquipmentSlot.左戒指] != null)
-                            Lover.Equipment[(int)EquipmentSlot.左戒指].WeddingRing = -1;
+                        if (Lover.Equipment[(int)EquipmentSlot.RingL] != null)
+                            Lover.Equipment[(int)EquipmentSlot.RingL].WeddingRing = -1;
                     }
                     #endregion
                 }
@@ -2018,7 +2044,7 @@ namespace Server.MirEnvir
                     {
                         UpdateIPBlock(ipAddress, TimeSpan.FromSeconds(Settings.IPBlockSeconds));
 
-                        MessageQueue.Enqueue(ipAddress + " 已断开连接，连接次数过于频繁");
+                        MessageQueue.Enqueue(ipAddress + " Disconnected, Too many connections.");
                     }
                     else
                     {
@@ -2313,7 +2339,7 @@ namespace Server.MirEnvir
                 if (account.WrongPasswordCount++ >= 5)
                 {
                     account.Banned = true;
-                    account.BanReason = "错误登录次数太多";
+                    account.BanReason = "Too many Wrong Login Attempts.";
                     account.ExpiryDate = Now.AddMinutes(2);
 
                     c.Enqueue(new ServerPackets.LoginBanned
@@ -2348,7 +2374,7 @@ namespace Server.MirEnvir
             account.LastDate = Now;
             account.LastIP = c.IPAddress;
 
-            MessageQueue.Enqueue(account.Connection.SessionID + ", " + account.Connection.IPAddress + "已登录服务器");
+            MessageQueue.Enqueue(account.Connection.SessionID + ", " + account.Connection.IPAddress + ", User logged in.");
             c.Enqueue(new ServerPackets.LoginSuccess { Characters = account.GetSelectInfo() });
         }
 
@@ -2391,7 +2417,7 @@ namespace Server.MirEnvir
                 if (account.WrongPasswordCount++ >= 5)
                 {
                     account.Banned = true;
-                    account.BanReason = "登录错误次数太多";
+                    account.BanReason = "Too many Wrong Login Attempts.";
                     account.ExpiryDate = Now.AddMinutes(2);
                     return 5;
                 }
@@ -2445,21 +2471,21 @@ namespace Server.MirEnvir
                 return;
             }
 
-            if (p.Gender != MirGender.男性 && p.Gender != MirGender.女性)
+            if (p.Gender != MirGender.Male && p.Gender != MirGender.Female)
             {
                 c.Enqueue(new ServerPackets.NewCharacter { Result = 2 });
                 return;
             }
 
-            if (p.Class != MirClass.战士 && p.Class != MirClass.法师 && p.Class != MirClass.道士 &&
-                p.Class != MirClass.刺客 && p.Class != MirClass.弓箭)
+            if (p.Class != MirClass.Warrior && p.Class != MirClass.Wizard && p.Class != MirClass.Taoist &&
+                p.Class != MirClass.Assassin && p.Class != MirClass.Archer)
             {
                 c.Enqueue(new ServerPackets.NewCharacter { Result = 3 });
                 return;
             }
 
-            if(p.Class == MirClass.刺客 && !Settings.AllowCreateAssassin ||
-                p.Class == MirClass.弓箭 && !Settings.AllowCreateArcher)
+            if (p.Class == MirClass.Assassin && !Settings.AllowCreateAssassin ||
+                p.Class == MirClass.Archer && !Settings.AllowCreateArcher)
             {
                 c.Enqueue(new ServerPackets.NewCharacter { Result = 3 });
                 return;
@@ -2515,19 +2541,19 @@ namespace Server.MirEnvir
                 return false;
             }
 
-            if (p.Gender != MirGender.男性 && p.Gender != MirGender.女性)
+            if (p.Gender != MirGender.Male && p.Gender != MirGender.Female)
             {
                 c.Enqueue(new S.NewHero { Result = 2 });
                 return false;
             }
 
-            if (p.Class != MirClass.战士 && p.Class != MirClass.法师 && p.Class != MirClass.道士 && p.Class != MirClass.刺客 && p.Class != MirClass.弓箭)
+            if (p.Class != MirClass.Warrior && p.Class != MirClass.Wizard && p.Class != MirClass.Taoist && p.Class != MirClass.Assassin && p.Class != MirClass.Archer)
             {
                 c.Enqueue(new S.NewHero { Result = 3 });
                 return false;
             }
 
-            if (p.Class == MirClass.战士 && !Settings.Hero_CanCreateClass[0] || p.Class == MirClass.法师 && !Settings.Hero_CanCreateClass[1] || p.Class == MirClass.道士 && !Settings.Hero_CanCreateClass[2] || p.Class == MirClass.刺客 && !Settings.Hero_CanCreateClass[3] || p.Class == MirClass.弓箭 && !Settings.Hero_CanCreateClass[4])
+            if (p.Class == MirClass.Warrior && !Settings.Hero_CanCreateClass[0] || p.Class == MirClass.Wizard && !Settings.Hero_CanCreateClass[1] || p.Class == MirClass.Taoist && !Settings.Hero_CanCreateClass[2] || p.Class == MirClass.Assassin && !Settings.Hero_CanCreateClass[3] || p.Class == MirClass.Archer && !Settings.Hero_CanCreateClass[4])
             {
                 c.Enqueue(new S.NewHero { Result = 3 });
                 return false;
@@ -2745,7 +2771,7 @@ namespace Server.MirEnvir
         {
             MapInfoList.Add(new MapInfo {Index = ++MapIndex});
         }
-        public void CreateItemInfo(ItemType type = ItemType.杂物)
+        public void CreateItemInfo(ItemType type = ItemType.Nothing)
         {
             ItemInfoList.Add(new ItemInfo { Index = ++ItemIndex, Type = type, RandomStatsId = 255});
         }
@@ -2916,22 +2942,22 @@ namespace Server.MirEnvir
             if (stat.MaxDcChance > 0 && Random.Next(stat.MaxDcChance) == 0) item.AddedStats[Stat.MaxDC] = (byte)(RandomomRange(stat.MaxDcMaxStat-1, stat.MaxDcStatChance)+1);
             if (stat.MaxMcChance > 0 && Random.Next(stat.MaxMcChance) == 0) item.AddedStats[Stat.MaxMC] = (byte)(RandomomRange(stat.MaxMcMaxStat-1, stat.MaxMcStatChance)+1);
             if (stat.MaxScChance > 0 && Random.Next(stat.MaxScChance) == 0) item.AddedStats[Stat.MaxSC] = (byte)(RandomomRange(stat.MaxScMaxStat-1, stat.MaxScStatChance)+1);
-            if (stat.AccuracyChance > 0 && Random.Next(stat.AccuracyChance) == 0) item.AddedStats[Stat.准确] = (byte)(RandomomRange(stat.AccuracyMaxStat-1, stat.AccuracyStatChance)+1);
-            if (stat.AgilityChance > 0 && Random.Next(stat.AgilityChance) == 0) item.AddedStats[Stat.敏捷] = (byte)(RandomomRange(stat.AgilityMaxStat-1, stat.AgilityStatChance)+1);
+            if (stat.AccuracyChance > 0 && Random.Next(stat.AccuracyChance) == 0) item.AddedStats[Stat.Accuracy] = (byte)(RandomomRange(stat.AccuracyMaxStat-1, stat.AccuracyStatChance)+1);
+            if (stat.AgilityChance > 0 && Random.Next(stat.AgilityChance) == 0) item.AddedStats[Stat.Agility] = (byte)(RandomomRange(stat.AgilityMaxStat-1, stat.AgilityStatChance)+1);
             if (stat.HpChance > 0 && Random.Next(stat.HpChance) == 0) item.AddedStats[Stat.HP] = (byte)(RandomomRange(stat.HpMaxStat-1, stat.HpStatChance)+1);
             if (stat.MpChance > 0 && Random.Next(stat.MpChance) == 0) item.AddedStats[Stat.MP] = (byte)(RandomomRange(stat.MpMaxStat-1, stat.MpStatChance)+1);
-            if (stat.StrongChance > 0 && Random.Next(stat.StrongChance) == 0) item.AddedStats[Stat.强度] = (byte)(RandomomRange(stat.StrongMaxStat-1, stat.StrongStatChance)+1);
-            if (stat.MagicResistChance > 0 && Random.Next(stat.MagicResistChance) == 0) item.AddedStats[Stat.魔法躲避] = (byte)(RandomomRange(stat.MagicResistMaxStat-1, stat.MagicResistStatChance)+1);
-            if (stat.PoisonResistChance > 0 && Random.Next(stat.PoisonResistChance) == 0) item.AddedStats[Stat.毒物躲避] = (byte)(RandomomRange(stat.PoisonResistMaxStat-1, stat.PoisonResistStatChance)+1);
-            if (stat.HpRecovChance > 0 && Random.Next(stat.HpRecovChance) == 0) item.AddedStats[Stat.生命恢复] = (byte)(RandomomRange(stat.HpRecovMaxStat-1, stat.HpRecovStatChance)+1);
-            if (stat.MpRecovChance > 0 && Random.Next(stat.MpRecovChance) == 0) item.AddedStats[Stat.法力恢复] = (byte)(RandomomRange(stat.MpRecovMaxStat-1, stat.MpRecovStatChance)+1);
-            if (stat.PoisonRecovChance > 0 && Random.Next(stat.PoisonRecovChance) == 0) item.AddedStats[Stat.中毒恢复] = (byte)(RandomomRange(stat.PoisonRecovMaxStat-1, stat.PoisonRecovStatChance)+1);
-            if (stat.CriticalRateChance > 0 && Random.Next(stat.CriticalRateChance) == 0) item.AddedStats[Stat.暴击倍率] = (byte)(RandomomRange(stat.CriticalRateMaxStat-1, stat.CriticalRateStatChance)+1);
-            if (stat.CriticalDamageChance > 0 && Random.Next(stat.CriticalDamageChance) == 0) item.AddedStats[Stat.暴击伤害] = (byte)(RandomomRange(stat.CriticalDamageMaxStat-1, stat.CriticalDamageStatChance)+1);
-            if (stat.FreezeChance > 0 && Random.Next(stat.FreezeChance) == 0) item.AddedStats[Stat.冰冻伤害] = (byte)(RandomomRange(stat.FreezeMaxStat-1, stat.FreezeStatChance)+1);
-            if (stat.PoisonAttackChance > 0 && Random.Next(stat.PoisonAttackChance) == 0) item.AddedStats[Stat.毒素伤害] = (byte)(RandomomRange(stat.PoisonAttackMaxStat-1, stat.PoisonAttackStatChance)+1);
-            if (stat.AttackSpeedChance > 0 && Random.Next(stat.AttackSpeedChance) == 0) item.AddedStats[Stat.攻击速度] = (sbyte)(RandomomRange(stat.AttackSpeedMaxStat-1, stat.AttackSpeedStatChance)+1);
-            if (stat.LuckChance > 0 && Random.Next(stat.LuckChance) == 0) item.AddedStats[Stat.幸运] = (sbyte)(RandomomRange(stat.LuckMaxStat-1, stat.LuckStatChance)+1);
+            if (stat.StrongChance > 0 && Random.Next(stat.StrongChance) == 0) item.AddedStats[Stat.Strong] = (byte)(RandomomRange(stat.StrongMaxStat-1, stat.StrongStatChance)+1);
+            if (stat.MagicResistChance > 0 && Random.Next(stat.MagicResistChance) == 0) item.AddedStats[Stat.MagicResist] = (byte)(RandomomRange(stat.MagicResistMaxStat-1, stat.MagicResistStatChance)+1);
+            if (stat.PoisonResistChance > 0 && Random.Next(stat.PoisonResistChance) == 0) item.AddedStats[Stat.PoisonResist] = (byte)(RandomomRange(stat.PoisonResistMaxStat-1, stat.PoisonResistStatChance)+1);
+            if (stat.HpRecovChance > 0 && Random.Next(stat.HpRecovChance) == 0) item.AddedStats[Stat.HealthRecovery] = (byte)(RandomomRange(stat.HpRecovMaxStat-1, stat.HpRecovStatChance)+1);
+            if (stat.MpRecovChance > 0 && Random.Next(stat.MpRecovChance) == 0) item.AddedStats[Stat.SpellRecovery] = (byte)(RandomomRange(stat.MpRecovMaxStat-1, stat.MpRecovStatChance)+1);
+            if (stat.PoisonRecovChance > 0 && Random.Next(stat.PoisonRecovChance) == 0) item.AddedStats[Stat.PoisonRecovery] = (byte)(RandomomRange(stat.PoisonRecovMaxStat-1, stat.PoisonRecovStatChance)+1);
+            if (stat.CriticalRateChance > 0 && Random.Next(stat.CriticalRateChance) == 0) item.AddedStats[Stat.CriticalRate] = (byte)(RandomomRange(stat.CriticalRateMaxStat-1, stat.CriticalRateStatChance)+1);
+            if (stat.CriticalDamageChance > 0 && Random.Next(stat.CriticalDamageChance) == 0) item.AddedStats[Stat.CriticalDamage] = (byte)(RandomomRange(stat.CriticalDamageMaxStat-1, stat.CriticalDamageStatChance)+1);
+            if (stat.FreezeChance > 0 && Random.Next(stat.FreezeChance) == 0) item.AddedStats[Stat.Freezing] = (byte)(RandomomRange(stat.FreezeMaxStat-1, stat.FreezeStatChance)+1);
+            if (stat.PoisonAttackChance > 0 && Random.Next(stat.PoisonAttackChance) == 0) item.AddedStats[Stat.PoisonAttack] = (byte)(RandomomRange(stat.PoisonAttackMaxStat-1, stat.PoisonAttackStatChance)+1);
+            if (stat.AttackSpeedChance > 0 && Random.Next(stat.AttackSpeedChance) == 0) item.AddedStats[Stat.AttackSpeed] = (sbyte)(RandomomRange(stat.AttackSpeedMaxStat-1, stat.AttackSpeedStatChance)+1);
+            if (stat.LuckChance > 0 && Random.Next(stat.LuckChance) == 0) item.AddedStats[Stat.Luck] = (sbyte)(RandomomRange(stat.LuckMaxStat-1, stat.LuckStatChance)+1);
             if (stat.CurseChance > 0 && Random.Next(100) <= stat.CurseChance) item.Cursed = true;
 
             if (stat.SlotChance > 0 && Random.Next(stat.SlotChance) == 0)
@@ -3158,7 +3184,7 @@ namespace Server.MirEnvir
             for (var i = 0; i < ItemInfoList.Count; i++)
             {
                 var info = ItemInfoList[i];
-                if (info.Type != ItemType.技能书 || info.Shape != Skill) continue;
+                if (info.Type != ItemType.Book || info.Shape != Skill) continue;
                 return info;
             }
             return null;
@@ -3174,7 +3200,7 @@ namespace Server.MirEnvir
                 return info;
             }
 
-            throw new NotImplementedException($"{type} 尚未实施");
+            throw new NotImplementedException($"{type} has not been implemented.");
         }
 
         public void MessageAccount(AccountInfo account, string message, ChatType type)
@@ -3192,20 +3218,20 @@ namespace Server.MirEnvir
 
         public void MailCharacter(CharacterInfo info, UserItem item = null, uint gold = 0, int reason = 0, string customMessage = null)
         {
-            string sender = "飞天城管理员";
+            string sender = "Bichon Administrator";
 
-            string message = "由于以下原因，您已收到邮件:\r\n\r\n";
+            string message = "You have been mailed due to the following reason:\r\n\r\n";
 
             switch (reason)
             {
                 case 1:
-                    message += "交易后无法将物品退回到背包中";
+                    message += "Could not return item to bag after trade.";
                     break;
                 case 99:
-                    message += "密码不正确不能打开仓库";
+                    message += "Code didn't correctly handle checking inventory space.";
                     break;
                 default:
-                    message += customMessage ?? "未知原因";
+                    message += customMessage ?? "No reason provided.";
                     break;
             }
 
@@ -3304,7 +3330,7 @@ namespace Server.MirEnvir
                             continue;
                         }
 
-                        rentingPlayer.Player.ReceiveChat($"仓库中 {item.Info.FriendlyName} 已过期", ChatType.Hint);
+                        rentingPlayer.Player.ReceiveChat($"{item.Info.FriendlyName} has just expired from your inventory.", ChatType.Hint);
                         rentingPlayer.Player.Enqueue(new S.DeleteItem { UniqueID = item.UniqueID, Count = item.Count });
                         rentingPlayer.Player.RefreshStats();
                     }
@@ -3332,7 +3358,7 @@ namespace Server.MirEnvir
                             continue;
                         }
 
-                        rentingPlayer.Player.ReceiveChat($"仓库中 {item.Info.FriendlyName} 已过期。", ChatType.Hint);
+                        rentingPlayer.Player.ReceiveChat($"{item.Info.FriendlyName} has just expired from your inventory.", ChatType.Hint);
                         rentingPlayer.Player.Enqueue(new S.DeleteItem { UniqueID = item.UniqueID, Count = item.Count });
                         rentingPlayer.Player.RefreshStats();
                     }
@@ -3405,7 +3431,7 @@ namespace Server.MirEnvir
         {
             foreach (var quest in QuestInfoList)
             {
-                if (quest.Type != QuestType.每日) continue;
+                if (quest.Type != QuestType.Daily) continue;
 
                 for (var i = 0; i < info.CompletedQuests.Count; i++)
                 {
@@ -3444,7 +3470,7 @@ namespace Server.MirEnvir
             }
 
             ResetGS = false;
-            MessageQueue.Enqueue("游戏商城购买日志已清除");
+            MessageQueue.Enqueue("Gameshop Purchase Logs Cleared.");
         }
 
         public void Inspect(MirConnection con, uint id)
@@ -3556,7 +3582,7 @@ namespace Server.MirEnvir
 
             con.Enqueue(new S.PlayerInspect
             {
-                Name = $"{ownerName}的英雄",
+                Name = $"{ownerName}'s Hero",
                 Equipment = heroInfo.Equipment,
                 GuildName = String.Empty,
                 GuildRank = String.Empty,
@@ -3796,7 +3822,7 @@ namespace Server.MirEnvir
                 Scripts[key].Load();
             }
 
-            MessageQueue.Enqueue("NPC脚本已重新加载");
+            MessageQueue.Enqueue("NPC Scripts reloaded...");
         }
 
         public void ReloadDrops()
@@ -3821,19 +3847,19 @@ namespace Server.MirEnvir
                 var path = Path.Combine(Settings.DropPath, Settings.FishingDropFilename + ".txt");
                 path = path.Replace("00", i.ToString("D2"));
 
-                DropInfo.Load(FishingDrops, $"钓鱼功能 {i}", path, (byte)i, i < 2);
+                DropInfo.Load(FishingDrops, $"Fishing {i}", path, (byte)i, i < 2);
             }
 
             AwakeningDrops.Clear();
-            DropInfo.Load(AwakeningDrops, "觉醒功能", Path.Combine(Settings.DropPath, Settings.AwakeningDropFilename + ".txt"));
+            DropInfo.Load(AwakeningDrops, "Awakening", Path.Combine(Settings.DropPath, Settings.AwakeningDropFilename + ".txt"));
 
             StrongboxDrops.Clear();
-            DropInfo.Load(StrongboxDrops, "宝箱功能", Path.Combine(Settings.DropPath, Settings.StrongboxDropFilename + ".txt"));
+            DropInfo.Load(StrongboxDrops, "StrongBox", Path.Combine(Settings.DropPath, Settings.StrongboxDropFilename + ".txt"));
 
             BlackstoneDrops.Clear();
-            DropInfo.Load(BlackstoneDrops, "灵物石功能", Path.Combine(Settings.DropPath, Settings.BlackstoneDropFilename + ".txt"));
+            DropInfo.Load(BlackstoneDrops, "Blackstone", Path.Combine(Settings.DropPath, Settings.BlackstoneDropFilename + ".txt"));
 
-            MessageQueue.Enqueue("怪物掉落加载完成");
+            MessageQueue.Enqueue("Drops Loaded.");
         }
 
         public void ReloadLineMessages()
@@ -3855,7 +3881,7 @@ namespace Server.MirEnvir
                     if (lines[i].StartsWith(";") || string.IsNullOrWhiteSpace(lines[i])) continue;
                     LineMessages.Add(lines[i]);
                 }
-                MessageQueue.Enqueue("LineMessages 已重新加载");
+                MessageQueue.Enqueue("LineMessages reloaded.");
             }
         }
 
@@ -3877,7 +3903,7 @@ namespace Server.MirEnvir
             GuildList.Remove(guild.Info);
 
             GuildRefreshNeeded = true;
-            MessageQueue.Enqueue(guild.Info.Name + " 注销行会完成服务器数据已删除");
+            MessageQueue.Enqueue(guild.Info.Name + " guild will be deleted from the server.");
         }
     }
 }

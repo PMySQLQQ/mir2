@@ -13,86 +13,85 @@ namespace Server
         public MagicInfoForm()
         {
             InitializeComponent();
-            for (int i = 0; i < Envir.MagicInfoList.Count; i++)
-                MagiclistBox.Items.Add(Envir.MagicInfoList[i]);
+            MagicSearchBox_TextChanged(this, EventArgs.Empty);
             UpdateMagicForm();
         }
 
         private void UpdateMagicForm(byte field = 0)
         {
-             _selectedMagicInfo = (MagicInfo)MagiclistBox.SelectedItem;
+            _selectedMagicInfo = (MagicInfo)MagiclistBox.SelectedItem;
 
-             lblBookValid.BackColor = SystemColors.Window;
+            lblBookValid.BackColor = SystemColors.Window;
 
-             if (_selectedMagicInfo == null)
-             {
-                 tabControl1.Enabled = false;
-                 lblBookValid.Text = "Searching";
-                 lblSelected.Text = "Selected Skill: none";
-                 lblDamageExample.Text = "";
-                 lblDamageExplained.Text = "";
-                 txtSkillIcon.Text = "0";
-                 txtSkillLvl1Points.Text = "0";
-                 txtSkillLvl1Req.Text = "0";
-                 txtSkillLvl2Points.Text = "0";
-                 txtSkillLvl2Req.Text = "0";
-                 txtSkillLvl3Points.Text = "0";
-                 txtSkillLvl3Req.Text = "0";
-                 txtMPBase.Text = "0";
-                 txtMPIncrease.Text = "0";
-                 txtDelayBase.Text = "0";
-                 txtDelayReduction.Text = "0";
-                 txtDmgBaseMin.Text = "0";
-                 txtDmgBaseMax.Text = "0";
-                 txtDmgBonusMin.Text = "0";
-                 txtDmgBonusMax.Text = "0";
-             }
-             else
-             {
-                 tabControl1.Enabled = true;
-                lblSelected.Text = " 技能  " + _selectedMagicInfo.ToString();
-                 lblDamageExample.Text =
-                    $"实际伤害 0级伤害:{GetMinPower(0):000}-{GetMaxPower(0):000} → 1级伤害:{GetMinPower(1):000}-{GetMaxPower(1):000} →→ 2级伤害:{GetMinPower(2):000}-{GetMaxPower(2):000} →→→ 3级伤害:{GetMinPower(3):000}-{GetMaxPower(3):000}";
-                 lblDamageExplained.Text =
-                    $"伤害公式 {{随机(最小值<->最大值)+[<(随机({_selectedMagicInfo.MPowerBase}-{_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus})/4)X(技能等级+1)>+随机<{_selectedMagicInfo.PowerBase}-{_selectedMagicInfo.PowerBonus + _selectedMagicInfo.PowerBase}>]}}X{{{_selectedMagicInfo.MultiplierBase}+(技能等级 * {_selectedMagicInfo.MultiplierBonus})}}";
-                 txtSkillIcon.Text = _selectedMagicInfo.Icon.ToString();
-                 txtSkillLvl1Points.Text = _selectedMagicInfo.Need1.ToString();
-                 txtSkillLvl1Req.Text = _selectedMagicInfo.Level1.ToString();
-                 txtSkillLvl2Points.Text = _selectedMagicInfo.Need2.ToString();
-                 txtSkillLvl2Req.Text = _selectedMagicInfo.Level2.ToString();
-                 txtSkillLvl3Points.Text = _selectedMagicInfo.Need3.ToString();
-                 txtSkillLvl3Req.Text = _selectedMagicInfo.Level3.ToString();
-                 txtMPBase.Text = _selectedMagicInfo.BaseCost.ToString();
-                 txtMPIncrease.Text = _selectedMagicInfo.LevelCost.ToString();
-                 txtDelayBase.Text = _selectedMagicInfo.DelayBase.ToString();
-                 txtDelayReduction.Text = _selectedMagicInfo.DelayReduction.ToString();
-                 txtDmgBaseMin.Text = _selectedMagicInfo.PowerBase.ToString();
-                 txtDmgBaseMax.Text = (_selectedMagicInfo.PowerBase + _selectedMagicInfo.PowerBonus).ToString();
-                 txtDmgBonusMin.Text = _selectedMagicInfo.MPowerBase.ToString();
-                 txtDmgBonusMax.Text = (_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus).ToString();
-                 if (field != 1)
+            if (_selectedMagicInfo == null)
+            {
+                tabControl1.Enabled = false;
+                lblBookValid.Text = "Searching";
+                lblSelected.Text = "Selected Skill: none";
+                lblDamageExample.Text = "";
+                lblDamageExplained.Text = "";
+                txtSkillIcon.Text = "0";
+                txtSkillLvl1Points.Text = "0";
+                txtSkillLvl1Req.Text = "0";
+                txtSkillLvl2Points.Text = "0";
+                txtSkillLvl2Req.Text = "0";
+                txtSkillLvl3Points.Text = "0";
+                txtSkillLvl3Req.Text = "0";
+                txtMPBase.Text = "0";
+                txtMPIncrease.Text = "0";
+                txtDelayBase.Text = "0";
+                txtDelayReduction.Text = "0";
+                txtDmgBaseMin.Text = "0";
+                txtDmgBaseMax.Text = "0";
+                txtDmgBonusMin.Text = "0";
+                txtDmgBonusMax.Text = "0";
+            }
+            else
+            {
+                tabControl1.Enabled = true;
+                lblSelected.Text = "Selected Skill: " + _selectedMagicInfo.ToString();
+                lblDamageExample.Text =
+                    $"Damage @ Skill level 0: {GetMinPower(0):000}-{GetMaxPower(0):000}   |||   level 1: {GetMinPower(1):000}-{GetMaxPower(1):000}   |||   level 2: {GetMinPower(2):000}-{GetMaxPower(2):000}   |||   level 3: {GetMinPower(3):000}-{GetMaxPower(3):000}";
+                lblDamageExplained.Text =
+                    $"Damage: {{Random(minstat-maxstat) + [<(random({_selectedMagicInfo.MPowerBase}-{_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus})/4) X (skill level +1)> + random<{_selectedMagicInfo.PowerBase}-{_selectedMagicInfo.PowerBonus + _selectedMagicInfo.PowerBase}>]}}  X  {{{_selectedMagicInfo.MultiplierBase} + (skill level * {_selectedMagicInfo.MultiplierBonus})}}";
+                txtSkillIcon.Text = _selectedMagicInfo.Icon.ToString();
+                txtSkillLvl1Points.Text = _selectedMagicInfo.Need1.ToString();
+                txtSkillLvl1Req.Text = _selectedMagicInfo.Level1.ToString();
+                txtSkillLvl2Points.Text = _selectedMagicInfo.Need2.ToString();
+                txtSkillLvl2Req.Text = _selectedMagicInfo.Level2.ToString();
+                txtSkillLvl3Points.Text = _selectedMagicInfo.Need3.ToString();
+                txtSkillLvl3Req.Text = _selectedMagicInfo.Level3.ToString();
+                txtMPBase.Text = _selectedMagicInfo.BaseCost.ToString();
+                txtMPIncrease.Text = _selectedMagicInfo.LevelCost.ToString();
+                txtDelayBase.Text = _selectedMagicInfo.DelayBase.ToString();
+                txtDelayReduction.Text = _selectedMagicInfo.DelayReduction.ToString();
+                txtDmgBaseMin.Text = _selectedMagicInfo.PowerBase.ToString();
+                txtDmgBaseMax.Text = (_selectedMagicInfo.PowerBase + _selectedMagicInfo.PowerBonus).ToString();
+                txtDmgBonusMin.Text = _selectedMagicInfo.MPowerBase.ToString();
+                txtDmgBonusMax.Text = (_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus).ToString();
+                if (field != 1)
                     txtDmgMultBase.Text = _selectedMagicInfo.MultiplierBase.ToString();
-                 if (field != 2)
-                 txtDmgMultBoost.Text = _selectedMagicInfo.MultiplierBonus.ToString();
-                 txtRange.Text = _selectedMagicInfo.Range.ToString();
-                 ItemInfo Book = Envir.GetBook((short)_selectedMagicInfo.Spell);
-                 if (Book != null)
-                 {
-                     lblBookValid.Text = Book.Name;
-                 }
-                 else
-                 {
-                    lblBookValid.Text = "物品库没有对应的技能书";
-                     lblBookValid.BackColor = Color.Red;
-                 }
-                this.textBoxName.Text = _selectedMagicInfo.Name;
-             }
+                if (field != 2)
+                    txtDmgMultBoost.Text = _selectedMagicInfo.MultiplierBonus.ToString();
+                txtRange.Text = _selectedMagicInfo.Range.ToString();
+                ItemInfo Book = Envir.GetBook((short)_selectedMagicInfo.Spell);
+                if (Book != null)
+                {
+                    lblBookValid.Text = Book.Name;
+                }
+                else
+                {
+                    lblBookValid.Text = "No book found";
+                    lblBookValid.BackColor = Color.Red;
+                }
+                textBoxName.Text = _selectedMagicInfo.Name;
+            }
         }
 
         private int GetMaxPower(byte level)
         {
             if (_selectedMagicInfo == null) return 0;
-            return (int)Math.Round((((_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus) / 4F) * (level + 1) + (_selectedMagicInfo.PowerBase + _selectedMagicInfo.PowerBonus))* (_selectedMagicInfo.MultiplierBase + (level * _selectedMagicInfo.MultiplierBonus)));
+            return (int)Math.Round((((_selectedMagicInfo.MPowerBase + _selectedMagicInfo.MPowerBonus) / 4F) * (level + 1) + (_selectedMagicInfo.PowerBase + _selectedMagicInfo.PowerBonus)) * (_selectedMagicInfo.MultiplierBase + (level * _selectedMagicInfo.MultiplierBonus)));
         }
         private int GetMinPower(byte level)
         {
@@ -106,6 +105,9 @@ namespace Server
             MagiclistBox = new ListBox();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            label24 = new Label();
+            label23 = new Label();
+            textBoxName = new TextBox();
             lblDamageExample = new Label();
             lblDamageExplained = new Label();
             lblSelected = new Label();
@@ -155,9 +157,7 @@ namespace Server
             label1 = new Label();
             lblBookValid = new Label();
             toolTip1 = new ToolTip(components);
-            textBoxName = new TextBox();
-            label23 = new Label();
-            label24 = new Label();
+            MagicSearchBox = new TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             panel4.SuspendLayout();
@@ -170,7 +170,7 @@ namespace Server
             // 
             MagiclistBox.Dock = DockStyle.Left;
             MagiclistBox.FormattingEnabled = true;
-            MagiclistBox.ItemHeight = 17;
+            MagiclistBox.ItemHeight = 15;
             MagiclistBox.Location = new Point(0, 0);
             MagiclistBox.Name = "MagiclistBox";
             MagiclistBox.Size = new Size(225, 542);
@@ -202,40 +202,66 @@ namespace Server
             tabPage1.Controls.Add(txtSkillIcon);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(lblBookValid);
-            tabPage1.Location = new Point(4, 26);
+            tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(694, 512);
+            tabPage1.Size = new Size(694, 514);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "基本设置";
+            tabPage1.Text = "Basics";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Location = new Point(20, 23);
+            label24.Name = "label24";
+            label24.Size = new Size(63, 15);
+            label24.TabIndex = 12;
+            label24.Text = "SkillName:";
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Location = new Point(181, 3);
+            label23.Name = "label23";
+            label23.Size = new Size(37, 15);
+            label23.TabIndex = 11;
+            label23.Text = "book:";
+            // 
+            // textBoxName
+            // 
+            textBoxName.Location = new Point(89, 18);
+            textBoxName.Name = "textBoxName";
+            textBoxName.Size = new Size(112, 23);
+            textBoxName.TabIndex = 10;
+            textBoxName.TextChanged += textBoxName_TextChanged;
             // 
             // lblDamageExample
             // 
             lblDamageExample.AutoSize = true;
             lblDamageExample.Location = new Point(11, 394);
             lblDamageExample.Name = "lblDamageExample";
-            lblDamageExample.Size = new Size(56, 17);
+            lblDamageExample.Size = new Size(98, 15);
             lblDamageExample.TabIndex = 0;
-            lblDamageExample.Text = "实际伤害";
+            lblDamageExample.Text = "Damage example";
             // 
             // lblDamageExplained
             // 
             lblDamageExplained.AutoSize = true;
             lblDamageExplained.Location = new Point(11, 366);
             lblDamageExplained.Name = "lblDamageExplained";
-            lblDamageExplained.Size = new Size(56, 17);
+            lblDamageExplained.Size = new Size(54, 15);
             lblDamageExplained.TabIndex = 9;
-            lblDamageExplained.Text = "伤害公式";
+            lblDamageExplained.Text = "Damage:";
             // 
             // lblSelected
             // 
             lblSelected.AutoSize = true;
-            lblSelected.Location = new Point(4, 4);
+            lblSelected.Location = new Point(20, 3);
             lblSelected.Name = "lblSelected";
-            lblSelected.Size = new Size(32, 17);
+            lblSelected.Size = new Size(80, 15);
             lblSelected.TabIndex = 8;
-            lblSelected.Text = "技能";
+            lblSelected.Text = "Selected skill: ";
             // 
             // panel4
             // 
@@ -264,7 +290,7 @@ namespace Server
             txtDmgMultBoost.Name = "txtDmgMultBoost";
             txtDmgMultBoost.Size = new Size(46, 23);
             txtDmgMultBoost.TabIndex = 14;
-            toolTip1.SetToolTip(txtDmgMultBoost, "该倍率值应用于每个等级技能的伤害");
+            toolTip1.SetToolTip(txtDmgMultBoost, "extra multiplyer apply'd for every skill level");
             txtDmgMultBoost.TextChanged += txtDmgMultBoost_TextChanged;
             // 
             // txtDmgMultBase
@@ -273,26 +299,26 @@ namespace Server
             txtDmgMultBase.Name = "txtDmgMultBase";
             txtDmgMultBase.Size = new Size(46, 23);
             txtDmgMultBase.TabIndex = 13;
-            toolTip1.SetToolTip(txtDmgMultBase, "该倍率值应用于总的技能伤害");
+            toolTip1.SetToolTip(txtDmgMultBase, "multiplier apply'd to total skill dmg");
             txtDmgMultBase.TextChanged += txtDmgMultBase_TextChanged;
             // 
             // label21
             // 
             label21.AutoSize = true;
-            label21.Location = new Point(37, 160);
+            label21.Location = new Point(12, 160);
             label21.Name = "label21";
-            label21.Size = new Size(128, 17);
+            label21.Size = new Size(178, 15);
             label21.TabIndex = 12;
-            label21.Text = "技能升级伤害倍率差值";
+            label21.Text = "Damage multiplyer boost/skilllvl";
             // 
             // label22
             // 
             label22.AutoSize = true;
-            label22.Location = new Point(73, 134);
+            label22.Location = new Point(12, 134);
             label22.Name = "label22";
-            label22.Size = new Size(92, 17);
+            label22.Size = new Size(135, 15);
             label22.TabIndex = 11;
-            label22.Text = "基本伤害倍率值";
+            label22.Text = "Damage multiplyer base";
             // 
             // txtDmgBonusMax
             // 
@@ -300,7 +326,7 @@ namespace Server
             txtDmgBonusMax.Name = "txtDmgBonusMax";
             txtDmgBonusMax.Size = new Size(46, 23);
             txtDmgBonusMax.TabIndex = 10;
-            toolTip1.SetToolTip(txtDmgBonusMax, "技能等级伤害加成'4' \r\n你会得到1/4数值 每级技能加成1级\r\n注意:游戏中0级=1级加成, 所以3级=最大加成 (4)");
+            toolTip1.SetToolTip(txtDmgBonusMax, "Damage bonus at skill level '4' ");
             txtDmgBonusMax.TextChanged += txtDmgBonusMax_TextChanged;
             // 
             // txtDmgBonusMin
@@ -309,26 +335,26 @@ namespace Server
             txtDmgBonusMin.Name = "txtDmgBonusMin";
             txtDmgBonusMin.Size = new Size(46, 23);
             txtDmgBonusMin.TabIndex = 9;
-            toolTip1.SetToolTip(txtDmgBonusMin, "技能等级伤害加成'4' \r\n你会得到1/4数值 每级技能加成1级\r\n注意:游戏中0级=1级加成, 所以3级=最大加成 (4)");
+            toolTip1.SetToolTip(txtDmgBonusMin, "Damage bonus at skill level '4' \r\nyou will get 1/4th of this bonus for every skill level\r\nnote ingame level 0 = 1 bonus, so level 3 = max bonus (4)");
             txtDmgBonusMin.TextChanged += txtDmgBonusMin_TextChanged;
             // 
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(54, 109);
+            label18.Location = new Point(12, 108);
             label18.Name = "label18";
-            label18.Size = new Size(111, 17);
+            label18.Size = new Size(154, 15);
             label18.TabIndex = 8;
-            label18.Text = "3级技能伤害上限值";
+            label18.Text = "Maximum skill lvl 3 damage";
             // 
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(54, 82);
+            label19.Location = new Point(12, 82);
             label19.Name = "label19";
-            label19.Size = new Size(111, 17);
+            label19.Size = new Size(156, 15);
             label19.TabIndex = 7;
-            label19.Text = "3级技能伤害下限值";
+            label19.Text = "Minimum skill lvl 3 damage:";
             // 
             // txtDmgBaseMax
             // 
@@ -336,7 +362,7 @@ namespace Server
             txtDmgBaseMax.Name = "txtDmgBaseMax";
             txtDmgBaseMax.Size = new Size(46, 23);
             txtDmgBaseMax.TabIndex = 6;
-            toolTip1.SetToolTip(txtDmgBaseMax, "0级技能上限伤害数值");
+            toolTip1.SetToolTip(txtDmgBaseMax, "Damage at skill level 0");
             txtDmgBaseMax.TextChanged += txtDmgBaseMax_TextChanged;
             // 
             // txtDmgBaseMin
@@ -345,35 +371,35 @@ namespace Server
             txtDmgBaseMin.Name = "txtDmgBaseMin";
             txtDmgBaseMin.Size = new Size(46, 23);
             txtDmgBaseMin.TabIndex = 5;
-            toolTip1.SetToolTip(txtDmgBaseMin, "0级技能下限伤害数值");
+            toolTip1.SetToolTip(txtDmgBaseMin, "Damage at skill level 0");
             txtDmgBaseMin.TextChanged += txtDmgBaseMin_TextChanged;
             // 
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(73, 57);
+            label17.Location = new Point(12, 56);
             label17.Name = "label17";
-            label17.Size = new Size(92, 17);
+            label17.Size = new Size(134, 15);
             label17.TabIndex = 2;
-            label17.Text = "基础伤害上限值";
+            label17.Text = "Maximum base damage";
             // 
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(73, 31);
+            label16.Location = new Point(12, 30);
             label16.Name = "label16";
-            label16.Size = new Size(92, 17);
+            label16.Size = new Size(136, 15);
             label16.TabIndex = 1;
-            label16.Text = "基础伤害下限值";
+            label16.Text = "Minimum base damage:";
             // 
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(3, 3);
+            label15.Location = new Point(5, 8);
             label15.Name = "label15";
-            label15.Size = new Size(56, 17);
+            label15.Size = new Size(95, 15);
             label15.TabIndex = 0;
-            label15.Text = "伤害设置";
+            label15.Text = "Damage settings";
             // 
             // panel3
             // 
@@ -389,20 +415,20 @@ namespace Server
             panel3.Name = "panel3";
             panel3.Size = new Size(216, 191);
             panel3.TabIndex = 5;
-            toolTip1.SetToolTip(panel3, "延时=<基准延时>-(技能等级*等级延时差值)");
+            toolTip1.SetToolTip(panel3, "delay = <base delay> - (skill level * <decrease>)");
             // 
             // label20
             // 
             label20.AutoSize = true;
-            label20.Location = new Point(19, 88);
+            label20.Location = new Point(12, 77);
             label20.Name = "label20";
-            label20.Size = new Size(99, 17);
+            label20.Size = new Size(103, 15);
             label20.TabIndex = 15;
-            label20.Text = "（0为不限）范围";
+            label20.Text = "Range (0 No limit)";
             // 
             // txtRange
             // 
-            txtRange.Location = new Point(121, 84);
+            txtRange.Location = new Point(121, 74);
             txtRange.Name = "txtRange";
             txtRange.Size = new Size(79, 23);
             txtRange.TabIndex = 14;
@@ -410,48 +436,48 @@ namespace Server
             // 
             // txtDelayReduction
             // 
-            txtDelayReduction.Location = new Point(121, 58);
+            txtDelayReduction.Location = new Point(121, 47);
             txtDelayReduction.Name = "txtDelayReduction";
             txtDelayReduction.Size = new Size(79, 23);
             txtDelayReduction.TabIndex = 13;
-            toolTip1.SetToolTip(txtDelayReduction, "等级延时差值=技能升级后每级的时间差值");
+            toolTip1.SetToolTip(txtDelayReduction, "delay = <base delay> - (skill level * <decrease>)");
             txtDelayReduction.TextChanged += txtDelayReduction_TextChanged;
             // 
             // txtDelayBase
             // 
-            txtDelayBase.Location = new Point(121, 33);
+            txtDelayBase.Location = new Point(121, 22);
             txtDelayBase.Name = "txtDelayBase";
             txtDelayBase.Size = new Size(79, 23);
             txtDelayBase.TabIndex = 12;
-            toolTip1.SetToolTip(txtDelayBase, "基准延时=技能使用的间隔时间");
+            toolTip1.SetToolTip(txtDelayBase, "delay = <base delay> - (skill level * <decrease>)");
             txtDelayBase.TextChanged += txtDelayBase_TextChanged;
             // 
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(25, 61);
+            label14.Location = new Point(12, 50);
             label14.Name = "label14";
-            label14.Size = new Size(93, 17);
+            label14.Size = new Size(112, 15);
             label14.TabIndex = 2;
-            label14.Text = "降低 / 技能等级";
+            label14.Text = "Decrease / skill level";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(63, 36);
+            label13.Location = new Point(12, 25);
             label13.Name = "label13";
-            label13.Size = new Size(56, 17);
+            label13.Size = new Size(62, 15);
             label13.TabIndex = 1;
-            label13.Text = "基准延时";
+            label13.Text = "Base delay";
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(3, 3);
+            label12.Location = new Point(12, 8);
             label12.Name = "label12";
-            label12.Size = new Size(128, 17);
+            label12.Size = new Size(129, 15);
             label12.TabIndex = 0;
-            label12.Text = "技能使用延时（毫秒）";
+            label12.Text = "Delay (in milliseconds!)";
             // 
             // panel2
             // 
@@ -472,44 +498,44 @@ namespace Server
             txtMPIncrease.Name = "txtMPIncrease";
             txtMPIncrease.Size = new Size(46, 23);
             txtMPIncrease.TabIndex = 12;
-            toolTip1.SetToolTip(txtMPIncrease, "每级之间使用的MP的差值");
+            toolTip1.SetToolTip(txtMPIncrease, "extra amount of mp used each level");
             txtMPIncrease.TextChanged += txtMPIncrease_TextChanged;
             // 
             // txtMPBase
             // 
-            txtMPBase.Location = new Point(135, 23);
+            txtMPBase.Location = new Point(135, 22);
             txtMPBase.Name = "txtMPBase";
             txtMPBase.Size = new Size(46, 23);
             txtMPBase.TabIndex = 11;
-            toolTip1.SetToolTip(txtMPBase, "技能为0级时使用MP的数值");
+            toolTip1.SetToolTip(txtMPBase, "Mp usage when skill is level 0");
             txtMPBase.TextChanged += txtMPBase_TextChanged;
             // 
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(33, 50);
+            label11.Location = new Point(12, 50);
             label11.Name = "label11";
-            label11.Size = new Size(99, 17);
+            label11.Size = new Size(126, 15);
             label11.TabIndex = 2;
-            label11.Text = "技能升级MP差值";
+            label11.Text = "MP increase each level";
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(71, 26);
+            label10.Location = new Point(12, 25);
             label10.Name = "label10";
-            label10.Size = new Size(63, 17);
+            label10.Size = new Size(86, 15);
             label10.TabIndex = 1;
-            label10.Text = "基本MP值";
+            label10.Text = "Base mp usage";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(4, 3);
+            label9.Location = new Point(12, 6);
             label9.Name = "label9";
-            label9.Size = new Size(111, 17);
+            label9.Size = new Size(59, 15);
             label9.TabIndex = 0;
-            label9.Text = "使用技能MP消耗值";
+            label9.Text = "MP usage";
             // 
             // panel1
             // 
@@ -559,29 +585,29 @@ namespace Server
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(125, 76);
+            label6.Location = new Point(110, 75);
             label6.Name = "label6";
-            label6.Size = new Size(44, 17);
+            label6.Size = new Size(64, 15);
             label6.TabIndex = 9;
-            label6.Text = "技能点";
+            label6.Text = "Skill points";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(125, 52);
+            label7.Location = new Point(110, 50);
             label7.Name = "label7";
-            label7.Size = new Size(44, 17);
+            label7.Size = new Size(64, 15);
             label7.TabIndex = 8;
-            label7.Text = "技能点";
+            label7.Text = "Skill points";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(125, 27);
+            label8.Location = new Point(110, 25);
             label8.Name = "label8";
-            label8.Size = new Size(44, 17);
+            label8.Size = new Size(64, 15);
             label8.TabIndex = 7;
-            label8.Text = "技能点";
+            label8.Text = "Skill points";
             // 
             // txtSkillLvl3Req
             // 
@@ -610,42 +636,42 @@ namespace Server
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(19, 76);
+            label5.Location = new Point(13, 75);
             label5.Name = "label5";
-            label5.Size = new Size(39, 17);
+            label5.Size = new Size(40, 15);
             label5.TabIndex = 3;
-            label5.Text = "等级3";
+            label5.Text = "level 3";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(19, 51);
+            label4.Location = new Point(13, 50);
             label4.Name = "label4";
-            label4.Size = new Size(39, 17);
+            label4.Size = new Size(40, 15);
             label4.TabIndex = 2;
-            label4.Text = "等级2";
+            label4.Text = "level 2";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(19, 26);
+            label3.Location = new Point(13, 25);
             label3.Name = "label3";
-            label3.Size = new Size(39, 17);
+            label3.Size = new Size(40, 15);
             label3.TabIndex = 1;
-            label3.Text = "等级1";
+            label3.Text = "level 1";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(3, 3);
+            label2.Location = new Point(6, 6);
             label2.Name = "label2";
-            label2.Size = new Size(116, 17);
+            label2.Size = new Size(174, 15);
             label2.TabIndex = 0;
-            label2.Text = "技能升级所需技能点";
+            label2.Text = "Skill level increase requirements";
             // 
             // txtSkillIcon
             // 
-            txtSkillIcon.Location = new Point(299, 26);
+            txtSkillIcon.Location = new Point(311, 20);
             txtSkillIcon.Name = "txtSkillIcon";
             txtSkillIcon.Size = new Size(41, 23);
             txtSkillIcon.TabIndex = 2;
@@ -654,54 +680,38 @@ namespace Server
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(244, 31);
+            label1.Location = new Point(250, 23);
             label1.Name = "label1";
-            label1.Size = new Size(56, 17);
+            label1.Size = new Size(60, 15);
             label1.TabIndex = 1;
-            label1.Text = "技能图标";
+            label1.Text = "Skill icon: ";
             // 
             // lblBookValid
             // 
             lblBookValid.AutoSize = true;
-            lblBookValid.Location = new Point(233, 4);
+            lblBookValid.Location = new Point(222, 3);
             lblBookValid.Name = "lblBookValid";
-            lblBookValid.Size = new Size(80, 17);
+            lblBookValid.Size = new Size(112, 15);
             lblBookValid.TabIndex = 0;
-            lblBookValid.Text = "搜索相应书籍";
+            lblBookValid.Text = "Searching for books";
             // 
-            // textBoxName
+            // MagicSearchBox
             // 
-            textBoxName.Location = new Point(93, 26);
-            textBoxName.Name = "textBoxName";
-            textBoxName.Size = new Size(112, 23);
-            textBoxName.TabIndex = 10;
-            textBoxName.TextChanged += textBoxName_TextChanged;
-            // 
-            // label23
-            // 
-            label23.AutoSize = true;
-            label23.Location = new Point(181, 3);
-            label23.Name = "label23";
-            label23.Size = new Size(47, 17);
-            label23.TabIndex = 11;
-            label23.Text = "技能书:";
-            // 
-            // label24
-            // 
-            label24.AutoSize = true;
-            label24.Location = new Point(32, 29);
-            label24.Name = "label24";
-            label24.Size = new Size(59, 17);
-            label24.TabIndex = 12;
-            label24.Text = "技能名称:";
+            MagicSearchBox.Location = new Point(276, 0);
+            MagicSearchBox.Name = "MagicSearchBox";
+            MagicSearchBox.PlaceholderText = "Search...";
+            MagicSearchBox.Size = new Size(201, 23);
+            MagicSearchBox.TabIndex = 2;
+            MagicSearchBox.TextChanged += MagicSearchBox_TextChanged;
             // 
             // MagicInfoForm
             // 
             ClientSize = new Size(927, 542);
+            Controls.Add(MagicSearchBox);
             Controls.Add(tabControl1);
             Controls.Add(MagiclistBox);
             Name = "MagicInfoForm";
-            Text = "技能设置列表";
+            Text = "Magic Settings";
             FormClosed += MagicInfoForm_FormClosed;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
@@ -715,7 +725,7 @@ namespace Server
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-
+            PerformLayout();
         }
 
         private void MagicInfoForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -880,7 +890,7 @@ namespace Server
                 return;
             }
             ActiveControl.BackColor = SystemColors.Window;
-            _selectedMagicInfo.PowerBonus =  (ushort)(temp - _selectedMagicInfo.PowerBase);
+            _selectedMagicInfo.PowerBonus = (ushort)(temp - _selectedMagicInfo.PowerBase);
             UpdateMagicForm();
         }
 
@@ -936,7 +946,7 @@ namespace Server
             if (ActiveControl != sender) return;
             byte temp = 0;
             if (!IsValid(ref temp)) return;
-            
+
             ActiveControl.BackColor = SystemColors.Window;
             _selectedMagicInfo.Range = temp;
         }
@@ -973,9 +983,38 @@ namespace Server
             {
                 ActiveControl.BackColor = Color.Red;
             }
-            else {
-                ActiveControl.BackColor = SystemColors.Window;              
-            }            
+            else
+            {
+                ActiveControl.BackColor = SystemColors.Window;
+            }
         }
+
+        #region Search Box
+        private void MagicSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            // Show all items when the search box is cleared or placeholder is active
+            if (string.IsNullOrWhiteSpace(MagicSearchBox.Text))
+            {
+                MagiclistBox.Items.Clear();
+                foreach (var magic in Envir.MagicInfoList)
+                {
+                    MagiclistBox.Items.Add(magic);
+                }
+                return;
+            }
+
+            string searchText = MagicSearchBox.Text.ToLower();
+            MagiclistBox.Items.Clear();
+
+            // Add filtered items to the list
+            foreach (var magic in Envir.MagicInfoList)
+            {
+                if (!string.IsNullOrEmpty(magic.Name) && magic.Name.ToLower().Contains(searchText))
+                {
+                    MagiclistBox.Items.Add(magic);
+                }
+            }
+        }
+        #endregion
     }
 }

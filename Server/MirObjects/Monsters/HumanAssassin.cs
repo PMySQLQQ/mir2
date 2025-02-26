@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -99,7 +99,7 @@ namespace Server.MirObjects.Monsters
 
             if (Hidden)
             {
-                RemoveBuff(BuffType.隐身术);
+                RemoveBuff(BuffType.Hiding);
             }
 
             CellTime = Envir.Time + 500;
@@ -288,13 +288,14 @@ namespace Server.MirObjects.Monsters
 
             PoisonList.Clear();
             Envir.MonsterCount--;
+
             if (CurrentMap != null)
-            CurrentMap.MonsterCount--;
+                CurrentMap.MonsterCount--;
         }
 
         private void ExplosionDie()
         {
-            int criticalDamage = Envir.Random.Next(0, 100) <= Stats[Stat.准确] ? Stats[Stat.MaxDC] * 2 : Stats[Stat.MinDC] * 2;
+            int criticalDamage = Envir.Random.Next(0, 100) <= Stats[Stat.Accuracy] ? Stats[Stat.MaxDC] * 2 : Stats[Stat.MinDC] * 2;
             int damage = (Stats[Stat.MinDC] / 5 + 4 * (Level / 20)) * criticalDamage / 20 + Stats[Stat.MaxDC];
 
             for (int i = 0; i < 16; i++)
@@ -333,8 +334,6 @@ namespace Server.MirObjects.Monsters
             short weapon = -1;
             short armour = 0;
             byte wing = 0;
-            short weaponeffects = 0;
-
             if (Master != null && Master is PlayerObject) 
                 master = (PlayerObject)Master;
 
@@ -343,7 +342,6 @@ namespace Server.MirObjects.Monsters
                 weapon = master.Looks_Weapon;
                 armour = master.Looks_Armour;
                 wing = master.Looks_Wings;
-                weaponeffects = master.Looks_WeaponEffect;
             }
 
             return new S.ObjectPlayer
@@ -351,8 +349,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = master != null ? master.Class : MirClass.刺客,
-                Gender = master != null ? master.Gender : MirGender.男性,
+                Class = master != null ? master.Class : MirClass.Assassin,
+                Gender = master != null ? master.Gender : MirGender.Male,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)0,
@@ -364,7 +362,6 @@ namespace Server.MirObjects.Monsters
                 Hidden = Hidden,
                 Effect = SpellEffect.None,
                 WingEffect = wing,
-                WeaponEffect = weaponeffects,
                 Extra = false,
                 TransformType = -1
             };

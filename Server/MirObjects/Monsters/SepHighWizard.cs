@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
@@ -29,8 +30,6 @@ namespace Server.MirObjects.Monsters
                 return;
             }
 
-            //DelayedAction action;
-
             ShockTime = 0;
             ActionTime = Envir.Time + 300;
             AttackTime = Envir.Time + AttackSpeed;
@@ -39,7 +38,6 @@ namespace Server.MirObjects.Monsters
             if (damage == 0) return;
 
             Direction = Functions.DirectionFromPoint(CurrentLocation, Target.CurrentLocation);
-
             int delay = Functions.MaxDistance(CurrentLocation, Target.CurrentLocation) * 50 + 500; //50 MS per Step
 
             List<MapObject> targets = FindAllTargets(1, CurrentLocation, false);
@@ -156,7 +154,6 @@ namespace Server.MirObjects.Monsters
             }
         }
 
-
         public bool Walk(MirDirection dir, bool br = false)
         {
             if (!CanMove) return false;
@@ -227,7 +224,7 @@ namespace Server.MirObjects.Monsters
 
                 for (int i = 0; i < Buffs.Count; i++)
                 {
-                    if (Buffs[i].Type != BuffType.隐身术) continue;
+                    if (Buffs[i].Type != BuffType.Hiding) continue;
 
                     Buffs[i].ExpireTime = 0;
                     break;
@@ -311,8 +308,8 @@ namespace Server.MirObjects.Monsters
                 ObjectID = ObjectID,
                 Name = master != null ? master.Name : Name,
                 NameColour = NameColour,
-                Class = MirClass.法师,
-                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.男性 : MirGender.女性,
+                Class = MirClass.Wizard,
+                Gender = master != null ? master.Gender : Envir.Random.Next(2) == 0 ? MirGender.Male : MirGender.Female,
                 Location = CurrentLocation,
                 Direction = Direction,
                 Hair = master != null ? master.Hair : (byte)Envir.Random.Next(0, 5),
@@ -326,6 +323,7 @@ namespace Server.MirObjects.Monsters
                 WingEffect = wing,
                 Extra = Summoned,
                 TransformType = -1,
+
             };
         }
     }

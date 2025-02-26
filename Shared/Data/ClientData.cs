@@ -19,7 +19,7 @@ public class ClientMagic
     public ClientMagic(BinaryReader reader)
     {
         Name = reader.ReadString();
-        Spell = (Spell)reader.ReadUInt16();
+        Spell = (Spell)reader.ReadByte();
 
         BaseCost = reader.ReadByte();
         LevelCost = reader.ReadByte();
@@ -44,7 +44,7 @@ public class ClientMagic
     public void Save(BinaryWriter writer)
     {
         writer.Write(Name);
-        writer.Write((ushort)Spell);
+        writer.Write((byte)Spell);
 
         writer.Write(BaseCost);
         writer.Write(LevelCost);
@@ -465,8 +465,8 @@ public class ClientQuestInfo
 
         switch (Type)
         {
-            case QuestType.一般:
-            case QuestType.重复:
+            case QuestType.General:
+            case QuestType.Repeatable:
                 if (completed)
                     icon = QuestIcon.QuestionYellow;
                 else if (taken)
@@ -474,7 +474,7 @@ public class ClientQuestInfo
                 else
                     icon = QuestIcon.ExclamationYellow;
                 break;
-            case QuestType.每日:
+            case QuestType.Daily:
                 if (completed)
                     icon = QuestIcon.QuestionBlue;
                 else if (taken)
@@ -482,7 +482,7 @@ public class ClientQuestInfo
                 else
                     icon = QuestIcon.ExclamationBlue;
                 break;
-            case QuestType.主线:
+            case QuestType.Story:
                 if (completed)
                     icon = QuestIcon.QuestionGreen;
                 else if (taken)

@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -84,7 +84,7 @@ namespace Server.MirObjects.Monsters
                     {
                         if (!ob.IsAttackTarget(this)) continue;
 
-                        if (Envir.Random.Next(Settings.MagicResistWeight) >= ob.Stats[Stat.魔法躲避])
+                        if (Envir.Random.Next(Settings.MagicResistWeight) >= ob.Stats[Stat.MagicResist])
                         {
                             int delay = Functions.MaxDistance(CurrentLocation, ob.CurrentLocation) * 50 + additionalDelay; //50 MS per Step
                             DelayedAction action = new DelayedAction(DelayedType.Damage, Envir.Time + delay, ob, damage, defenceType, true);

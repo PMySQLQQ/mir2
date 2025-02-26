@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -50,7 +50,7 @@ namespace Server.MirObjects.Monsters
             ShockTime = 0;
 
             Direction = Functions.DirectionFromPoint(CurrentLocation, Target.CurrentLocation);
-            bool ranged = CurrentLocation == Target.CurrentLocation || !Functions.InRange(CurrentLocation, Target.CurrentLocation, 2);
+            bool ranged = CurrentLocation == Target.CurrentLocation || !Functions.InRange(CurrentLocation, Target.CurrentLocation, 1);
 
             AttackTime = Envir.Time + AttackSpeed;
 
@@ -171,7 +171,7 @@ namespace Server.MirObjects.Monsters
 
                     if (!cell.Valid) continue;
 
-                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MaxMC]);
+                    int damage = GetAttackPower(Stats[Stat.MinMC], Stats[Stat.MinMC]);
 
                     var start = 1000;
                     var time = Settings.Second * 15;
@@ -200,12 +200,18 @@ namespace Server.MirObjects.Monsters
         private void Thrust(MapObject target)
         {
             MirDirection jumpDir = Functions.DirectionFromPoint(CurrentLocation, target.CurrentLocation);
+
             Point location;
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
                 location = Functions.PointMove(CurrentLocation, jumpDir, 1);
                 if (!CurrentMap.ValidPoint(location)) return;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                location = Functions.PointMove(CurrentLocation, jumpDir, 1);
 
                 CurrentMap.GetCell(CurrentLocation).Remove(this);
                 RemoveObjects(jumpDir, 1);
@@ -222,7 +228,7 @@ namespace Server.MirObjects.Monsters
                 }
             }
 
-            Broadcast(new S.ObjectDashAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Distance = 1 });
+            Broadcast(new S.ObjectDashAttack { ObjectID = ObjectID, Direction = Direction, Location = CurrentLocation, Distance = 3 });
         }
 
         protected override void CompleteRangeAttack(IList<object> data)

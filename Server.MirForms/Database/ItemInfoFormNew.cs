@@ -448,33 +448,33 @@ namespace Server.Database
             if (col.ValueType == typeof(int) && col.Name != "StatAttackSpeed" && int.TryParse(val, out int val1) && val1 < 0)
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "该值必须是正整数";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be a positive integer";
             }
 
             if (col.ValueType == typeof(int) && !int.TryParse(val, out _))
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "该值必须是整数";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be an integer";
             }
             else if (col.ValueType == typeof(byte) && !byte.TryParse(val, out _))
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "该值必须是一个字节";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be a byte";
             }
             else if (col.ValueType == typeof(short) && !short.TryParse(val, out _))
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "值必须是短的";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be a short";
             }
             else if (col.ValueType == typeof(ushort) && !ushort.TryParse(val, out _))
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "该值必须是 0-65535之间的无符号整数值";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be a ushort";
             }
             else if (col.ValueType == typeof(long) && !long.TryParse(val, out _))
             {
                 e.Cancel = true;
-                itemInfoGridView.Rows[e.RowIndex].ErrorText = "该值必须是长的";
+                itemInfoGridView.Rows[e.RowIndex].ErrorText = "the value must be a long";
             }
 
             if (!e.Cancel)
@@ -607,7 +607,7 @@ namespace Server.Database
 
             var filterType = ((KeyValuePair<string, string>)drpFilterType.SelectedItem).Value;
 
-            if (filterType == global::ItemType.宝玉神珠.ToString())
+            if (filterType == global::ItemType.Gem.ToString())
             {
                 SwapGemContext(true);
             }
@@ -648,7 +648,7 @@ namespace Server.Database
                     if (columns.Length < 2)
                     {
                         fileError = true;
-                        MessageBox.Show("没有要导入的列");
+                        MessageBox.Show("No columns to import.");
                     }
 
                     if (!fileError)
@@ -673,7 +673,7 @@ namespace Server.Database
                             if (cells.Length != columns.Length)
                             {
                                 fileError = true;
-                                MessageBox.Show($"{i} 行列数与标题列数不匹配");
+                                MessageBox.Show($"Row {i} column count does not match the headers column count.");
                                 break;
                             }
 
@@ -704,7 +704,7 @@ namespace Server.Database
                                     if (dataColumn == null)
                                     {
                                         fileError = true;
-                                        MessageBox.Show($"未找到列 {column}");
+                                        MessageBox.Show($"Column {column} was not found.");
                                         break;
                                     }
 
@@ -734,7 +734,7 @@ namespace Server.Database
                                 fileError = true;
                                 itemInfoGridView.EndEdit();
 
-                                MessageBox.Show($"导入数据出错 {cells[0]}. {ex.Message}");
+                                MessageBox.Show($"Error when importing item {cells[0]}. {ex.Message}");
                                 continue;
                             }
 
@@ -750,13 +750,13 @@ namespace Server.Database
                         {
                             itemInfoGridView.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
 
-                            MessageBox.Show($"{rowsEdited} 行数据导入成功");
+                            MessageBox.Show($"{rowsEdited} items have been imported.");
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("没有要导入的数据");
+                    MessageBox.Show("No rows to import.");
                 }
             }
         }
@@ -767,7 +767,7 @@ namespace Server.Database
             {
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.Filter = "CSV (*.csv)|*.csv";
-                sfd.FileName = "2_物品数据.csv";
+                sfd.FileName = "ItemInfo Output.csv";
                 bool fileError = false;
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
@@ -780,7 +780,7 @@ namespace Server.Database
                         catch (IOException ex)
                         {
                             fileError = true;
-                            MessageBox.Show("无法将数据写入" + ex.Message);
+                            MessageBox.Show("It wasn't possible to write the data to the disk." + ex.Message);
                         }
                     }
                     if (!fileError)
@@ -840,18 +840,18 @@ namespace Server.Database
                             }
 
                             File.WriteAllLines(sfd.FileName, outputCsv, Encoding.UTF8);
-                            MessageBox.Show("物品数据导出成功", "导出信息");
+                            MessageBox.Show("Data Exported Successfully.", "Info");
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("错误:" + ex.Message);
+                            MessageBox.Show("Error :" + ex.Message);
                         }
                     }
                 }
             }
             else
             {
-                MessageBox.Show("没有要导出的物品数据", "导出信息");
+                MessageBox.Show("No Items To Export.", "Info");
             }
         }
 
@@ -865,8 +865,8 @@ namespace Server.Database
             row.Cells["ItemType"].Value = (ItemType)0;
             row.Cells["ItemGrade"].Value = (ItemGrade)0;
             row.Cells["ItemRequiredType"].Value = (RequiredType)0;
-            row.Cells["ItemRequiredGender"].Value = RequiredGender.性别不限;
-            row.Cells["ItemRequiredClass"].Value = RequiredClass.全职业;
+            row.Cells["ItemRequiredGender"].Value = RequiredGender.None;
+            row.Cells["ItemRequiredClass"].Value = RequiredClass.None;
             row.Cells["ItemSet"].Value = (ItemSet)0;
             row.Cells["ItemRandomStatsId"].Value = (byte)0;
             row.Cells["ItemRequiredAmount"].Value = (byte)0;
@@ -937,10 +937,10 @@ namespace Server.Database
                         return;
                     }
 
-                    String promptText = $"在框中输入新的值 [{colName}]:";
+                    String promptText = $"Enter new value for column [{colName}]:";
                     if (itemInfoGridView.Rows[mouseOverRow].Cells[mouseOverCol] is DataGridViewCheckBoxCell)
                     {
-                        promptText += $"{Environment.NewLine}[[输入1表示勾选，输入0表示取消勾选]]";
+                        promptText += $"{Environment.NewLine}[[Enter 1 for tick or 0 for untick]]";
                     }
 
                     var updateValue = Interaction.InputBox(promptText,
@@ -1020,7 +1020,7 @@ namespace Server.Database
                 itemInfoGridView.CurrentRow.Index != -1)
             {
                 var itemType = itemInfoGridView.CurrentRow.Cells["ItemType"];
-                bool isGemSelected = (global::ItemType)itemType.Value == global::ItemType.宝玉神珠;
+                bool isGemSelected = (global::ItemType)itemType.Value == global::ItemType.Gem;
                 SwapGemContext(isGemSelected);
             }   
         }
@@ -1050,7 +1050,7 @@ namespace Server.Database
             if (inError.Count > 0)
             {
                 String msg = string.Join(Environment.NewLine, inError);
-                if (MessageBox.Show($"下列物品是无效的: {msg}", "是否删除无效物品", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                if (MessageBox.Show($"The following items are invalid: {msg}", "Discard Invalid Items?", MessageBoxButtons.OKCancel) != DialogResult.OK)
                 {
                     e.Cancel = true;
                     return;

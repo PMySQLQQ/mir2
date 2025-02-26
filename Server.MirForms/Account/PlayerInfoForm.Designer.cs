@@ -127,36 +127,36 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(10, 60);
+            label1.Location = new Point(10, 53);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(43, 17);
+            label1.Size = new Size(48, 15);
             label1.TabIndex = 1;
-            label1.Text = "名称 : ";
+            label1.Text = "Name : ";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(10, 26);
+            label2.Location = new Point(10, 23);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(43, 17);
+            label2.Size = new Size(45, 15);
             label2.TabIndex = 2;
-            label2.Text = "序号 : ";
+            label2.Text = "Index : ";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(10, 96);
+            label3.Location = new Point(10, 85);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
-            label3.Size = new Size(43, 17);
+            label3.Size = new Size(43, 15);
             label3.TabIndex = 3;
-            label3.Text = "等级 : ";
+            label3.Text = "Level : ";
             // 
             // NameTextBox
             // 
-            NameTextBox.Location = new Point(70, 57);
+            NameTextBox.Location = new Point(70, 50);
             NameTextBox.Margin = new Padding(4, 3, 4, 3);
             NameTextBox.Name = "NameTextBox";
             NameTextBox.Size = new Size(116, 23);
@@ -165,7 +165,7 @@
             // IndexTextBox
             // 
             IndexTextBox.Enabled = false;
-            IndexTextBox.Location = new Point(70, 23);
+            IndexTextBox.Location = new Point(70, 20);
             IndexTextBox.Margin = new Padding(4, 3, 4, 3);
             IndexTextBox.Name = "IndexTextBox";
             IndexTextBox.Size = new Size(116, 23);
@@ -173,7 +173,7 @@
             // 
             // LevelTextBox
             // 
-            LevelTextBox.Location = new Point(70, 93);
+            LevelTextBox.Location = new Point(70, 82);
             LevelTextBox.Margin = new Padding(4, 3, 4, 3);
             LevelTextBox.Name = "LevelTextBox";
             LevelTextBox.Size = new Size(116, 23);
@@ -181,29 +181,29 @@
             // 
             // UpdateButton
             // 
-            UpdateButton.Location = new Point(86, 257);
+            UpdateButton.Location = new Point(86, 227);
             UpdateButton.Margin = new Padding(4, 3, 4, 3);
             UpdateButton.Name = "UpdateButton";
-            UpdateButton.Size = new Size(88, 31);
+            UpdateButton.Size = new Size(88, 27);
             UpdateButton.TabIndex = 7;
-            UpdateButton.Text = "刷新";
+            UpdateButton.Text = "Update";
             UpdateButton.UseVisualStyleBackColor = true;
             UpdateButton.Click += UpdateButton_Click;
             // 
             // KickButton
             // 
-            KickButton.Location = new Point(7, 25);
+            KickButton.Location = new Point(7, 22);
             KickButton.Margin = new Padding(4, 3, 4, 3);
             KickButton.Name = "KickButton";
-            KickButton.Size = new Size(88, 31);
+            KickButton.Size = new Size(88, 27);
             KickButton.TabIndex = 8;
-            KickButton.Text = "下线玩家";
+            KickButton.Text = "Kick Player";
             KickButton.UseVisualStyleBackColor = true;
             KickButton.Click += KickButton_Click;
             // 
             // SendMessageTextBox
             // 
-            SendMessageTextBox.Location = new Point(7, 25);
+            SendMessageTextBox.Location = new Point(7, 22);
             SendMessageTextBox.Margin = new Padding(4, 3, 4, 3);
             SendMessageTextBox.Name = "SendMessageTextBox";
             SendMessageTextBox.Size = new Size(244, 23);
@@ -211,12 +211,12 @@
             // 
             // SendMessageButton
             // 
-            SendMessageButton.Location = new Point(265, 25);
+            SendMessageButton.Location = new Point(265, 22);
             SendMessageButton.Margin = new Padding(4, 3, 4, 3);
             SendMessageButton.Name = "SendMessageButton";
-            SendMessageButton.Size = new Size(68, 31);
+            SendMessageButton.Size = new Size(68, 27);
             SendMessageButton.TabIndex = 10;
-            SendMessageButton.Text = "发送";
+            SendMessageButton.Text = "Send";
             SendMessageButton.UseVisualStyleBackColor = true;
             SendMessageButton.Click += SendMessageButton_Click;
             // 
@@ -250,15 +250,15 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(341, 300);
+            groupBox1.Size = new Size(341, 265);
             groupBox1.TabIndex = 11;
             groupBox1.TabStop = false;
-            groupBox1.Text = "游戏角色信息";
+            groupBox1.Text = "Character Info";
             // 
             // ATKSPDBox
             // 
             ATKSPDBox.Enabled = false;
-            ATKSPDBox.Location = new Point(261, 260);
+            ATKSPDBox.Location = new Point(261, 229);
             ATKSPDBox.Margin = new Padding(4, 3, 4, 3);
             ATKSPDBox.Name = "ATKSPDBox";
             ATKSPDBox.ReadOnly = true;
@@ -268,7 +268,7 @@
             // AGILBox
             // 
             AGILBox.Enabled = false;
-            AGILBox.Location = new Point(261, 227);
+            AGILBox.Location = new Point(261, 200);
             AGILBox.Margin = new Padding(4, 3, 4, 3);
             AGILBox.Name = "AGILBox";
             AGILBox.ReadOnly = true;
@@ -278,7 +278,7 @@
             // ACCBox
             // 
             ACCBox.Enabled = false;
-            ACCBox.Location = new Point(261, 190);
+            ACCBox.Location = new Point(261, 168);
             ACCBox.Margin = new Padding(4, 3, 4, 3);
             ACCBox.Name = "ACCBox";
             ACCBox.ReadOnly = true;
@@ -288,7 +288,7 @@
             // SCBox
             // 
             SCBox.Enabled = false;
-            SCBox.Location = new Point(261, 158);
+            SCBox.Location = new Point(261, 139);
             SCBox.Margin = new Padding(4, 3, 4, 3);
             SCBox.Name = "SCBox";
             SCBox.ReadOnly = true;
@@ -298,7 +298,7 @@
             // MCBox
             // 
             MCBox.Enabled = false;
-            MCBox.Location = new Point(261, 125);
+            MCBox.Location = new Point(261, 110);
             MCBox.Margin = new Padding(4, 3, 4, 3);
             MCBox.Name = "MCBox";
             MCBox.ReadOnly = true;
@@ -308,7 +308,7 @@
             // DCBox
             // 
             DCBox.Enabled = false;
-            DCBox.Location = new Point(261, 92);
+            DCBox.Location = new Point(261, 81);
             DCBox.Margin = new Padding(4, 3, 4, 3);
             DCBox.Name = "DCBox";
             DCBox.ReadOnly = true;
@@ -318,7 +318,7 @@
             // AMCBox
             // 
             AMCBox.Enabled = false;
-            AMCBox.Location = new Point(261, 56);
+            AMCBox.Location = new Point(261, 49);
             AMCBox.Margin = new Padding(4, 3, 4, 3);
             AMCBox.Name = "AMCBox";
             AMCBox.ReadOnly = true;
@@ -328,7 +328,7 @@
             // ACBox
             // 
             ACBox.Enabled = false;
-            ACBox.Location = new Point(261, 23);
+            ACBox.Location = new Point(261, 20);
             ACBox.Margin = new Padding(4, 3, 4, 3);
             ACBox.Name = "ACBox";
             ACBox.ReadOnly = true;
@@ -338,27 +338,27 @@
             // StatsLabel
             // 
             StatsLabel.AutoSize = true;
-            StatsLabel.Location = new Point(194, 26);
+            StatsLabel.Location = new Point(197, 23);
             StatsLabel.Margin = new Padding(4, 0, 4, 0);
             StatsLabel.Name = "StatsLabel";
-            StatsLabel.Size = new Size(63, 255);
+            StatsLabel.Size = new Size(57, 225);
             StatsLabel.TabIndex = 25;
-            StatsLabel.Text = "物理防御 :\r\n\r\n魔法防御 :\r\n\r\n物理攻击 :\r\n\r\n魔法攻击 :\r\n\r\n道术攻击 :\r\n\r\n准确 :\r\n\r\n敏捷 :\r\n\r\n攻击速度 :";
+            StatsLabel.Text = "AC :\r\n\r\nAMC :\r\n\r\nDC :\r\n\r\nMC :\r\n\r\nSC :\r\n\r\nACC :\r\n\r\nAGIL :\r\n\r\nATK SPD :";
             // 
             // GameGold
             // 
             GameGold.AutoSize = true;
             GameGold.Font = new Font("Segoe UI", 8F);
-            GameGold.Location = new Point(10, 228);
+            GameGold.Location = new Point(10, 201);
             GameGold.Margin = new Padding(4, 0, 4, 0);
             GameGold.Name = "GameGold";
-            GameGold.Size = new Size(55, 13);
+            GameGold.Size = new Size(52, 13);
             GameGold.TabIndex = 22;
-            GameGold.Text = "信用币 : ";
+            GameGold.Text = "Credits : ";
             // 
             // GameGoldTextBox
             // 
-            GameGoldTextBox.Location = new Point(70, 224);
+            GameGoldTextBox.Location = new Point(70, 198);
             GameGoldTextBox.Margin = new Padding(4, 3, 4, 3);
             GameGoldTextBox.Name = "GameGoldTextBox";
             GameGoldTextBox.Size = new Size(116, 23);
@@ -367,16 +367,16 @@
             // Gold
             // 
             Gold.AutoSize = true;
-            Gold.Location = new Point(10, 195);
+            Gold.Location = new Point(10, 172);
             Gold.Margin = new Padding(4, 0, 4, 0);
             Gold.Name = "Gold";
-            Gold.Size = new Size(43, 17);
+            Gold.Size = new Size(41, 15);
             Gold.TabIndex = 20;
-            Gold.Text = "金币 : ";
+            Gold.Text = "Gold : ";
             // 
             // GoldTextBox
             // 
-            GoldTextBox.Location = new Point(70, 192);
+            GoldTextBox.Location = new Point(70, 169);
             GoldTextBox.Margin = new Padding(4, 3, 4, 3);
             GoldTextBox.Name = "GoldTextBox";
             GoldTextBox.Size = new Size(116, 23);
@@ -385,16 +385,16 @@
             // PKPoints
             // 
             PKPoints.AutoSize = true;
-            PKPoints.Location = new Point(10, 162);
+            PKPoints.Location = new Point(10, 143);
             PKPoints.Margin = new Padding(4, 0, 4, 0);
             PKPoints.Name = "PKPoints";
-            PKPoints.Size = new Size(54, 17);
+            PKPoints.Size = new Size(58, 15);
             PKPoints.TabIndex = 18;
-            PKPoints.Text = "PK点数: ";
+            PKPoints.Text = "PKPoint : ";
             // 
             // PKPointsTextBox
             // 
-            PKPointsTextBox.Location = new Point(70, 159);
+            PKPointsTextBox.Location = new Point(70, 140);
             PKPointsTextBox.Margin = new Padding(4, 3, 4, 3);
             PKPointsTextBox.Name = "PKPointsTextBox";
             PKPointsTextBox.Size = new Size(116, 23);
@@ -403,16 +403,16 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(10, 129);
+            label12.Location = new Point(10, 114);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
-            label12.Size = new Size(43, 17);
+            label12.Size = new Size(36, 15);
             label12.TabIndex = 16;
-            label12.Text = "经验 : ";
+            label12.Text = "EXP : ";
             // 
             // ExpTextBox
             // 
-            ExpTextBox.Location = new Point(70, 126);
+            ExpTextBox.Location = new Point(70, 111);
             ExpTextBox.Margin = new Padding(4, 3, 4, 3);
             ExpTextBox.Name = "ExpTextBox";
             ExpTextBox.ReadOnly = true;
@@ -434,57 +434,57 @@
             groupBox2.Margin = new Padding(4, 3, 4, 3);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(4, 3, 4, 3);
-            groupBox2.Size = new Size(324, 178);
+            groupBox2.Size = new Size(324, 157);
             groupBox2.TabIndex = 12;
             groupBox2.TabStop = false;
-            groupBox2.Text = "操作";
+            groupBox2.Text = "Actions";
             // 
             // AccountBanButton
             // 
-            AccountBanButton.Location = new Point(7, 100);
+            AccountBanButton.Location = new Point(7, 88);
             AccountBanButton.Margin = new Padding(4, 3, 4, 3);
             AccountBanButton.Name = "AccountBanButton";
-            AccountBanButton.Size = new Size(88, 31);
+            AccountBanButton.Size = new Size(88, 27);
             AccountBanButton.TabIndex = 25;
-            AccountBanButton.Text = "账户禁用";
+            AccountBanButton.Text = "Account Ban";
             AccountBanButton.UseVisualStyleBackColor = true;
             AccountBanButton.Click += AccountBanButton_Click;
             // 
             // OpenAccountButton
             // 
-            OpenAccountButton.Location = new Point(196, 25);
+            OpenAccountButton.Location = new Point(196, 22);
             OpenAccountButton.Margin = new Padding(4, 3, 4, 3);
             OpenAccountButton.Name = "OpenAccountButton";
-            OpenAccountButton.Size = new Size(115, 31);
+            OpenAccountButton.Size = new Size(115, 27);
             OpenAccountButton.TabIndex = 23;
-            OpenAccountButton.Text = "打开账户";
+            OpenAccountButton.Text = "Open Account";
             OpenAccountButton.UseVisualStyleBackColor = true;
             OpenAccountButton.Click += OpenAccountButton_Click;
             // 
             // SafeZoneButton
             // 
-            SafeZoneButton.Location = new Point(102, 25);
+            SafeZoneButton.Location = new Point(102, 22);
             SafeZoneButton.Margin = new Padding(4, 3, 4, 3);
             SafeZoneButton.Name = "SafeZoneButton";
-            SafeZoneButton.Size = new Size(88, 31);
+            SafeZoneButton.Size = new Size(88, 27);
             SafeZoneButton.TabIndex = 22;
-            SafeZoneButton.Text = "移到安全区";
+            SafeZoneButton.Text = "Safezone";
             SafeZoneButton.UseVisualStyleBackColor = true;
             SafeZoneButton.Click += SafeZoneButton_Click;
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(108, 125);
+            label9.Location = new Point(108, 110);
             label9.Margin = new Padding(4, 0, 4, 0);
             label9.Name = "label9";
-            label9.Size = new Size(67, 17);
+            label9.Size = new Size(53, 15);
             label9.TabIndex = 21;
-            label9.Text = "封禁时间 : ";
+            label9.Text = "Expires : ";
             // 
             // ChatBanExpiryTextBox
             // 
-            ChatBanExpiryTextBox.Location = new Point(174, 120);
+            ChatBanExpiryTextBox.Location = new Point(174, 106);
             ChatBanExpiryTextBox.Margin = new Padding(4, 3, 4, 3);
             ChatBanExpiryTextBox.Name = "ChatBanExpiryTextBox";
             ChatBanExpiryTextBox.Size = new Size(137, 23);
@@ -493,34 +493,34 @@
             // 
             // ChatBanButton
             // 
-            ChatBanButton.Location = new Point(7, 137);
+            ChatBanButton.Location = new Point(7, 121);
             ChatBanButton.Margin = new Padding(4, 3, 4, 3);
             ChatBanButton.Name = "ChatBanButton";
-            ChatBanButton.Size = new Size(88, 31);
+            ChatBanButton.Size = new Size(88, 27);
             ChatBanButton.TabIndex = 19;
-            ChatBanButton.Text = "禁用聊天";
+            ChatBanButton.Text = "Chat Ban";
             ChatBanButton.UseVisualStyleBackColor = true;
             ChatBanButton.Click += ChatBanButton_Click;
             // 
             // KillPetsButton
             // 
-            KillPetsButton.Location = new Point(103, 62);
+            KillPetsButton.Location = new Point(103, 55);
             KillPetsButton.Margin = new Padding(4, 3, 4, 3);
             KillPetsButton.Name = "KillPetsButton";
-            KillPetsButton.Size = new Size(88, 31);
+            KillPetsButton.Size = new Size(88, 27);
             KillPetsButton.TabIndex = 18;
-            KillPetsButton.Text = "杀死宠物";
+            KillPetsButton.Text = "Kill Pets";
             KillPetsButton.UseVisualStyleBackColor = true;
             KillPetsButton.Click += KillPetsButton_Click;
             // 
             // KillButton
             // 
-            KillButton.Location = new Point(7, 62);
+            KillButton.Location = new Point(7, 55);
             KillButton.Margin = new Padding(4, 3, 4, 3);
             KillButton.Name = "KillButton";
-            KillButton.Size = new Size(88, 31);
+            KillButton.Size = new Size(88, 27);
             KillButton.TabIndex = 17;
-            KillButton.Text = "杀死玩家";
+            KillButton.Text = "Kill Player";
             KillButton.UseVisualStyleBackColor = true;
             KillButton.Click += KillButton_Click;
             // 
@@ -528,72 +528,72 @@
             // 
             groupBox3.Controls.Add(SendMessageTextBox);
             groupBox3.Controls.Add(SendMessageButton);
-            groupBox3.Location = new Point(5, 425);
+            groupBox3.Location = new Point(5, 375);
             groupBox3.Margin = new Padding(4, 3, 4, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(4, 3, 4, 3);
-            groupBox3.Size = new Size(341, 65);
+            groupBox3.Size = new Size(341, 57);
             groupBox3.TabIndex = 13;
             groupBox3.TabStop = false;
-            groupBox3.Text = "发送消息";
+            groupBox3.Text = "Send Message";
             // 
             // CurrentMapLabel
             // 
             CurrentMapLabel.AutoSize = true;
-            CurrentMapLabel.Location = new Point(128, 22);
+            CurrentMapLabel.Location = new Point(128, 19);
             CurrentMapLabel.Margin = new Padding(4, 0, 4, 0);
             CurrentMapLabel.Name = "CurrentMapLabel";
-            CurrentMapLabel.Size = new Size(41, 17);
+            CurrentMapLabel.Size = new Size(37, 15);
             CurrentMapLabel.TabIndex = 15;
             CurrentMapLabel.Text = "$map";
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(8, 22);
+            label5.Location = new Point(8, 19);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
-            label5.Size = new Size(67, 17);
+            label5.Size = new Size(83, 15);
             label5.TabIndex = 16;
-            label5.Text = "当前地图 : ";
+            label5.Text = "Current Map : ";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(8, 63);
+            label6.Location = new Point(8, 56);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new Size(67, 17);
+            label6.Size = new Size(80, 15);
             label6.TabIndex = 19;
-            label6.Text = "连线时间 : ";
+            label6.Text = "Online Time : ";
             // 
             // OnlineTimeLabel
             // 
             OnlineTimeLabel.AutoSize = true;
-            OnlineTimeLabel.Location = new Point(128, 63);
+            OnlineTimeLabel.Location = new Point(128, 56);
             OnlineTimeLabel.Margin = new Padding(4, 0, 4, 0);
             OnlineTimeLabel.Name = "OnlineTimeLabel";
-            OnlineTimeLabel.Size = new Size(75, 17);
+            OnlineTimeLabel.Size = new Size(70, 15);
             OnlineTimeLabel.TabIndex = 20;
             OnlineTimeLabel.Text = "$onlinetime";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(8, 86);
+            label8.Location = new Point(8, 76);
             label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
-            label8.Size = new Size(58, 17);
+            label8.Size = new Size(69, 15);
             label8.TabIndex = 23;
-            label8.Text = "IP 地址 : ";
+            label8.Text = "Current IP : ";
             // 
             // CurrentIPLabel
             // 
             CurrentIPLabel.AutoSize = true;
-            CurrentIPLabel.Location = new Point(128, 86);
+            CurrentIPLabel.Location = new Point(128, 76);
             CurrentIPLabel.Margin = new Padding(4, 0, 4, 0);
             CurrentIPLabel.Name = "CurrentIPLabel";
-            CurrentIPLabel.Size = new Size(26, 17);
+            CurrentIPLabel.Size = new Size(23, 15);
             CurrentIPLabel.TabIndex = 24;
             CurrentIPLabel.Text = "$IP";
             CurrentIPLabel.Click += CurrentIPLabel_Click;
@@ -608,34 +608,34 @@
             groupBox4.Controls.Add(label5);
             groupBox4.Controls.Add(OnlineTimeLabel);
             groupBox4.Controls.Add(label6);
-            groupBox4.Location = new Point(4, 311);
+            groupBox4.Location = new Point(4, 274);
             groupBox4.Margin = new Padding(4, 3, 4, 3);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(4, 3, 4, 3);
-            groupBox4.Size = new Size(341, 108);
+            groupBox4.Size = new Size(341, 95);
             groupBox4.TabIndex = 25;
             groupBox4.TabStop = false;
-            groupBox4.Text = "详情";
+            groupBox4.Text = "Details";
             // 
             // CurrentXY
             // 
             CurrentXY.AutoSize = true;
-            CurrentXY.Location = new Point(128, 43);
+            CurrentXY.Location = new Point(128, 38);
             CurrentXY.Margin = new Padding(4, 0, 4, 0);
             CurrentXY.Name = "CurrentXY";
-            CurrentXY.Size = new Size(32, 17);
+            CurrentXY.Size = new Size(30, 15);
             CurrentXY.TabIndex = 25;
             CurrentXY.Text = "$x/y";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(8, 43);
+            label7.Location = new Point(8, 38);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
-            label7.Size = new Size(67, 17);
+            label7.Size = new Size(105, 15);
             label7.TabIndex = 26;
-            label7.Text = "当前位置 : ";
+            label7.Text = "Current Location : ";
             // 
             // tabControl1
             // 
@@ -647,7 +647,7 @@
             tabControl1.Location = new Point(-1, 2);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(693, 527);
+            tabControl1.Size = new Size(693, 465);
             tabControl1.TabIndex = 47;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
@@ -659,12 +659,12 @@
             PlayerInfoTab.Controls.Add(groupBox2);
             PlayerInfoTab.Controls.Add(groupBox3);
             PlayerInfoTab.Controls.Add(groupBox4);
-            PlayerInfoTab.Location = new Point(4, 26);
+            PlayerInfoTab.Location = new Point(4, 24);
             PlayerInfoTab.Name = "PlayerInfoTab";
             PlayerInfoTab.Padding = new Padding(3);
-            PlayerInfoTab.Size = new Size(685, 497);
+            PlayerInfoTab.Size = new Size(685, 437);
             PlayerInfoTab.TabIndex = 0;
-            PlayerInfoTab.Text = "玩家信息";
+            PlayerInfoTab.Text = "Player Info";
             PlayerInfoTab.UseVisualStyleBackColor = true;
             // 
             // HeroListView
@@ -681,38 +681,38 @@
             // 
             // columnHeader1
             // 
-            columnHeader1.Text = "英雄名字";
+            columnHeader1.Text = "Hero Name";
             columnHeader1.Width = 100;
             // 
             // columnHeader2
             // 
-            columnHeader2.Text = "等级";
+            columnHeader2.Text = "Level";
             columnHeader2.Width = 80;
             // 
             // columnHeader3
             // 
-            columnHeader3.Text = "职业";
+            columnHeader3.Text = "Class";
             columnHeader3.Width = 80;
             // 
             // columnHeader4
             // 
-            columnHeader4.Text = "性别";
+            columnHeader4.Text = "Gender";
             // 
             // SearchBox
             // 
             SearchBox.Controls.Add(FlagSearchBox);
             SearchBox.Controls.Add(FlagSearch);
             SearchBox.Controls.Add(ResultLabel);
-            SearchBox.Location = new Point(354, 194);
+            SearchBox.Location = new Point(354, 171);
             SearchBox.Name = "SearchBox";
-            SearchBox.Size = new Size(189, 110);
+            SearchBox.Size = new Size(189, 97);
             SearchBox.TabIndex = 48;
             SearchBox.TabStop = false;
-            SearchBox.Text = "搜索";
+            SearchBox.Text = "Search";
             // 
             // FlagSearchBox
             // 
-            FlagSearchBox.Location = new Point(31, 40);
+            FlagSearchBox.Location = new Point(31, 35);
             FlagSearchBox.Name = "FlagSearchBox";
             FlagSearchBox.Size = new Size(120, 23);
             FlagSearchBox.TabIndex = 46;
@@ -721,66 +721,66 @@
             // FlagSearch
             // 
             FlagSearch.AutoSize = true;
-            FlagSearch.Location = new Point(57, 14);
+            FlagSearch.Location = new Point(57, 12);
             FlagSearch.Name = "FlagSearch";
-            FlagSearch.Size = new Size(56, 17);
+            FlagSearch.Size = new Size(67, 15);
             FlagSearch.TabIndex = 28;
-            FlagSearch.Text = "搜索标志";
+            FlagSearch.Text = "Flag Search";
             // 
             // ResultLabel
             // 
             ResultLabel.AutoSize = true;
-            ResultLabel.Location = new Point(31, 73);
+            ResultLabel.Location = new Point(31, 64);
             ResultLabel.Name = "ResultLabel";
-            ResultLabel.Size = new Size(0, 17);
+            ResultLabel.Size = new Size(0, 15);
             ResultLabel.TabIndex = 30;
             // 
             // QuestInfoTab
             // 
             QuestInfoTab.Controls.Add(QuestInfoListViewNF);
-            QuestInfoTab.Location = new Point(4, 26);
+            QuestInfoTab.Location = new Point(4, 24);
             QuestInfoTab.Name = "QuestInfoTab";
             QuestInfoTab.Padding = new Padding(3);
-            QuestInfoTab.Size = new Size(685, 497);
+            QuestInfoTab.Size = new Size(685, 437);
             QuestInfoTab.TabIndex = 1;
-            QuestInfoTab.Text = "任务信息";
+            QuestInfoTab.Text = "Quest Info";
             QuestInfoTab.UseVisualStyleBackColor = true;
             // 
             // QuestInfoListViewNF
             // 
-            QuestInfoListViewNF.Columns.AddRange(new ColumnHeader[] { QuestIndexHeader, QuestStatusHeader });
+            QuestInfoListViewNF.Columns.AddRange(new ColumnHeader[] { QuestIndexHeader, QuestStatusHeader, QuestNameHeader });
             QuestInfoListViewNF.Dock = DockStyle.Fill;
             QuestInfoListViewNF.GridLines = true;
             QuestInfoListViewNF.Location = new Point(3, 3);
             QuestInfoListViewNF.Name = "QuestInfoListViewNF";
-            QuestInfoListViewNF.Size = new Size(679, 491);
+            QuestInfoListViewNF.Size = new Size(679, 431);
             QuestInfoListViewNF.TabIndex = 1;
             QuestInfoListViewNF.UseCompatibleStateImageBehavior = false;
             QuestInfoListViewNF.View = View.Details;
             // 
             // QuestIndexHeader
             // 
-            QuestIndexHeader.Text = "任务序号";
+            QuestIndexHeader.Text = "Index";
             QuestIndexHeader.Width = 100;
             // 
             // QuestStatusHeader
             // 
-            QuestStatusHeader.Text = "状态";
+            QuestStatusHeader.Text = "Status";
             QuestStatusHeader.Width = 100;
             // 
             // QuestNameHeader
             // 
-            QuestNameHeader.Text = "名字";
+            QuestNameHeader.Text = "Name";
             QuestNameHeader.Width = 200;
             // 
             // ItemInfoTab
             // 
             ItemInfoTab.Controls.Add(PlayerItemInfoListViewNF);
-            ItemInfoTab.Location = new Point(4, 26);
+            ItemInfoTab.Location = new Point(4, 24);
             ItemInfoTab.Name = "ItemInfoTab";
-            ItemInfoTab.Size = new Size(685, 497);
+            ItemInfoTab.Size = new Size(685, 437);
             ItemInfoTab.TabIndex = 2;
-            ItemInfoTab.Text = "物品信息";
+            ItemInfoTab.Text = "Item Info";
             ItemInfoTab.UseVisualStyleBackColor = true;
             // 
             // PlayerItemInfoListViewNF
@@ -790,44 +790,44 @@
             PlayerItemInfoListViewNF.GridLines = true;
             PlayerItemInfoListViewNF.Location = new Point(0, 0);
             PlayerItemInfoListViewNF.Name = "PlayerItemInfoListViewNF";
-            PlayerItemInfoListViewNF.Size = new Size(685, 497);
+            PlayerItemInfoListViewNF.Size = new Size(685, 437);
             PlayerItemInfoListViewNF.TabIndex = 2;
             PlayerItemInfoListViewNF.UseCompatibleStateImageBehavior = false;
             PlayerItemInfoListViewNF.View = View.Details;
             // 
             // UIDHeader
             // 
-            UIDHeader.Text = "用户识别码";
+            UIDHeader.Text = "UID";
             UIDHeader.Width = 100;
             // 
             // LocationHeader
             // 
-            LocationHeader.Text = "位置";
+            LocationHeader.Text = "Location";
             LocationHeader.Width = 150;
             // 
             // NameHeader
             // 
-            NameHeader.Text = "名称";
+            NameHeader.Text = "Name";
             NameHeader.Width = 150;
             // 
             // CountHeader
             // 
-            CountHeader.Text = "数量";
+            CountHeader.Text = "Count";
             CountHeader.Width = 80;
             // 
             // DurabilityHeader
             // 
-            DurabilityHeader.Text = "耐久";
+            DurabilityHeader.Text = "Durability";
             DurabilityHeader.Width = 90;
             // 
             // MagicInfoTab
             // 
             MagicInfoTab.Controls.Add(MagicListViewNF);
-            MagicInfoTab.Location = new Point(4, 26);
+            MagicInfoTab.Location = new Point(4, 24);
             MagicInfoTab.Name = "MagicInfoTab";
-            MagicInfoTab.Size = new Size(685, 497);
+            MagicInfoTab.Size = new Size(685, 437);
             MagicInfoTab.TabIndex = 3;
-            MagicInfoTab.Text = "技能信息";
+            MagicInfoTab.Text = "Magic Info";
             MagicInfoTab.UseVisualStyleBackColor = true;
             // 
             // MagicListViewNF
@@ -837,39 +837,39 @@
             MagicListViewNF.GridLines = true;
             MagicListViewNF.Location = new Point(0, 0);
             MagicListViewNF.Name = "MagicListViewNF";
-            MagicListViewNF.Size = new Size(685, 497);
+            MagicListViewNF.Size = new Size(685, 437);
             MagicListViewNF.TabIndex = 2;
             MagicListViewNF.UseCompatibleStateImageBehavior = false;
             MagicListViewNF.View = View.Details;
             // 
             // MagicNameHeader
             // 
-            MagicNameHeader.Text = "技能名称";
+            MagicNameHeader.Text = "Spell Name";
             MagicNameHeader.Width = 150;
             // 
             // MagicLevelHeader
             // 
-            MagicLevelHeader.Text = "等级";
+            MagicLevelHeader.Text = "Level";
             MagicLevelHeader.Width = 50;
             // 
             // MagicExperienceHeader
             // 
-            MagicExperienceHeader.Text = "技能经验";
+            MagicExperienceHeader.Text = "Experience";
             MagicExperienceHeader.Width = 150;
             // 
             // Key
             // 
-            Key.Text = "技能键";
+            Key.Text = "Key";
             Key.Width = 80;
             // 
             // PetInfoTab
             // 
             PetInfoTab.Controls.Add(PetView);
-            PetInfoTab.Location = new Point(4, 26);
+            PetInfoTab.Location = new Point(4, 24);
             PetInfoTab.Name = "PetInfoTab";
-            PetInfoTab.Size = new Size(685, 497);
+            PetInfoTab.Size = new Size(685, 437);
             PetInfoTab.TabIndex = 4;
-            PetInfoTab.Text = "随从信息";
+            PetInfoTab.Text = "Pet Info";
             PetInfoTab.UseVisualStyleBackColor = true;
             // 
             // PetView
@@ -879,38 +879,38 @@
             PetView.GridLines = true;
             PetView.Location = new Point(0, 0);
             PetView.Name = "PetView";
-            PetView.Size = new Size(685, 497);
+            PetView.Size = new Size(685, 437);
             PetView.TabIndex = 1;
             PetView.UseCompatibleStateImageBehavior = false;
             PetView.View = View.Details;
             // 
             // PetName
             // 
-            PetName.Text = "名称";
+            PetName.Text = "Name";
             PetName.Width = 150;
             // 
             // Level
             // 
-            Level.Text = "等级";
+            Level.Text = "Level";
             // 
             // HP
             // 
-            HP.Text = "生命";
+            HP.Text = "HP";
             // 
             // Location
             // 
-            Location.Text = "位置";
+            Location.Text = "Location";
             Location.Width = 240;
             // 
             // PlayerInfoForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(692, 534);
+            ClientSize = new Size(709, 471);
             Controls.Add(tabControl1);
             Margin = new Padding(4, 3, 4, 3);
             Name = "PlayerInfoForm";
-            Text = "玩家信息窗口";
+            Text = "PlayerInfoForm";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -1000,7 +1000,7 @@
         private ColumnHeader PetName;
         private ColumnHeader Level;
         private ColumnHeader HP;
-        private new ColumnHeader Location;
+        private ColumnHeader Location;
         private CustomFormControl.ListViewNF PlayerItemInfoListViewNF;
         private ColumnHeader UIDHeader;
         private ColumnHeader LocationHeader;

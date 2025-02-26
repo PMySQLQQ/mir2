@@ -39,9 +39,9 @@ namespace Client.MirScenes.Dialogs
                 Visible = true,
                 Enabled = true,
             };
-            ReportType.Items.Add("选择投诉类型");
-            ReportType.Items.Add("上报 Bug");
-            ReportType.Items.Add("投诉玩家");
+            ReportType.Items.Add("Select Report Type.");
+            ReportType.Items.Add("Submit Bug");
+            ReportType.Items.Add("Report Player");
 
             MessageArea = new MirTextBox
             {

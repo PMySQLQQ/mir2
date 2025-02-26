@@ -107,7 +107,7 @@ namespace Server.Database
             itemInfoGridView.Name = "itemInfoGridView";
             itemInfoGridView.RowTemplate.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             itemInfoGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            itemInfoGridView.Size = new Size(1115, 567);
+            itemInfoGridView.Size = new Size(1115, 500);
             itemInfoGridView.TabIndex = 0;
             itemInfoGridView.CurrentCellDirtyStateChanged += CurrentCellDirtyStateChanged;
             itemInfoGridView.DataError += itemInfoGridView_DataError;
@@ -119,137 +119,137 @@ namespace Server.Database
             Modified.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             Modified.DataPropertyName = "Modified";
             Modified.Frozen = true;
-            Modified.HeaderText = "修改";
+            Modified.HeaderText = "Modified";
             Modified.Name = "Modified";
             Modified.ReadOnly = true;
-            Modified.Width = 38;
+            Modified.Width = 61;
             // 
             // ItemIndex
             // 
             ItemIndex.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             ItemIndex.DataPropertyName = "ItemIndex";
             ItemIndex.Frozen = true;
-            ItemIndex.HeaderText = "物品编号";
+            ItemIndex.HeaderText = "Index";
             ItemIndex.Name = "ItemIndex";
             ItemIndex.ReadOnly = true;
-            ItemIndex.Width = 81;
+            ItemIndex.Width = 61;
             // 
             // ItemName
             // 
             ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             ItemName.DataPropertyName = "ItemName";
             ItemName.Frozen = true;
-            ItemName.HeaderText = "物品名称";
+            ItemName.HeaderText = "Name";
             ItemName.Name = "ItemName";
-            ItemName.Width = 81;
+            ItemName.Width = 64;
             // 
             // ItemType
             // 
             ItemType.DataPropertyName = "ItemType";
-            ItemType.HeaderText = "物品类型";
+            ItemType.HeaderText = "Type";
             ItemType.Name = "ItemType";
             ItemType.SortMode = DataGridViewColumnSortMode.Automatic;
             // 
             // ItemGrade
             // 
             ItemGrade.DataPropertyName = "ItemGrade";
-            ItemGrade.HeaderText = "物品品质";
+            ItemGrade.HeaderText = "Grade";
             ItemGrade.Name = "ItemGrade";
             // 
             // ItemRequiredType
             // 
             ItemRequiredType.DataPropertyName = "ItemRequiredType";
-            ItemRequiredType.HeaderText = "需要类型";
+            ItemRequiredType.HeaderText = "Required Type";
             ItemRequiredType.Name = "ItemRequiredType";
             // 
             // ItemRequiredGender
             // 
             ItemRequiredGender.DataPropertyName = "ItemRequiredGender";
-            ItemRequiredGender.HeaderText = "性别类型";
+            ItemRequiredGender.HeaderText = "Required Gender";
             ItemRequiredGender.Name = "ItemRequiredGender";
             // 
             // ItemRequiredClass
             // 
             ItemRequiredClass.DataPropertyName = "ItemRequiredClass";
-            ItemRequiredClass.HeaderText = "职业类型";
+            ItemRequiredClass.HeaderText = "Required Class";
             ItemRequiredClass.Name = "ItemRequiredClass";
             // 
             // ItemSet
             // 
             ItemSet.DataPropertyName = "ItemSet";
-            ItemSet.HeaderText = "套装设置";
+            ItemSet.HeaderText = "Set";
             ItemSet.Name = "ItemSet";
             // 
             // ItemRandomStatsId
             // 
             ItemRandomStatsId.DataPropertyName = "ItemRandomStatsId";
-            ItemRandomStatsId.HeaderText = "随机附加";
+            ItemRandomStatsId.HeaderText = "Random Stats";
             ItemRandomStatsId.Name = "ItemRandomStatsId";
             // 
             // ItemRequiredAmount
             // 
             ItemRequiredAmount.DataPropertyName = "ItemRequiredAmount";
-            ItemRequiredAmount.HeaderText = "需求等级";
+            ItemRequiredAmount.HeaderText = "Required Amount";
             ItemRequiredAmount.Name = "ItemRequiredAmount";
             // 
             // ItemImage
             // 
             ItemImage.DataPropertyName = "ItemImage";
-            ItemImage.HeaderText = "内观";
+            ItemImage.HeaderText = "Image";
             ItemImage.Name = "ItemImage";
             // 
             // ItemShape
             // 
             ItemShape.DataPropertyName = "ItemShape";
-            ItemShape.HeaderText = "外观";
+            ItemShape.HeaderText = "Shape";
             ItemShape.Name = "ItemShape";
             // 
             // ItemEffect
             // 
             ItemEffect.DataPropertyName = "ItemEffect";
-            ItemEffect.HeaderText = "特效";
+            ItemEffect.HeaderText = "Effect";
             ItemEffect.Name = "ItemEffect";
             // 
             // ItemStackSize
             // 
             ItemStackSize.DataPropertyName = "ItemStackSize";
-            ItemStackSize.HeaderText = "叠加数量";
+            ItemStackSize.HeaderText = "Stack Size";
             ItemStackSize.Name = "ItemStackSize";
             // 
             // ItemSlots
             // 
             ItemSlots.DataPropertyName = "ItemSlots";
-            ItemSlots.HeaderText = "镶嵌孔位";
+            ItemSlots.HeaderText = "Slots";
             ItemSlots.Name = "ItemSlots";
             // 
             // ItemWeight
             // 
             ItemWeight.DataPropertyName = "ItemWeight";
-            ItemWeight.HeaderText = "重量";
+            ItemWeight.HeaderText = "Weight";
             ItemWeight.Name = "ItemWeight";
             // 
             // ItemLightRange
             // 
             ItemLightRange.DataPropertyName = "ItemLightRange";
-            ItemLightRange.HeaderText = "发光范围";
+            ItemLightRange.HeaderText = "Light Range";
             ItemLightRange.Name = "ItemLightRange";
             // 
             // ItemLightIntensity
             // 
             ItemLightIntensity.DataPropertyName = "ItemLightIntensity";
-            ItemLightIntensity.HeaderText = "发光强度";
+            ItemLightIntensity.HeaderText = "Intensity";
             ItemLightIntensity.Name = "ItemLightIntensity";
             // 
             // ItemDurability
             // 
             ItemDurability.DataPropertyName = "ItemDurability";
-            ItemDurability.HeaderText = "持久度";
+            ItemDurability.HeaderText = "Durability";
             ItemDurability.Name = "ItemDurability";
             // 
             // ItemPrice
             // 
             ItemPrice.DataPropertyName = "ItemPrice";
-            ItemPrice.HeaderText = "商店价格";
+            ItemPrice.HeaderText = "Price";
             ItemPrice.Name = "ItemPrice";
             // 
             // ItemToolTip
@@ -257,63 +257,63 @@ namespace Server.Database
             ItemToolTip.DataPropertyName = "ItemToolTip";
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             ItemToolTip.DefaultCellStyle = dataGridViewCellStyle2;
-            ItemToolTip.HeaderText = "物品说明";
+            ItemToolTip.HeaderText = "ToolTip";
             ItemToolTip.Name = "ItemToolTip";
             ItemToolTip.Width = 68;
             // 
             // StartItem
             // 
             StartItem.DataPropertyName = "StartItem";
-            StartItem.HeaderText = "新手物品";
+            StartItem.HeaderText = "Start Item";
             StartItem.Name = "StartItem";
             StartItem.Resizable = DataGridViewTriState.True;
             // 
             // NeedIdentify
             // 
             NeedIdentify.DataPropertyName = "NeedIdentify";
-            NeedIdentify.HeaderText = "需要鉴定";
+            NeedIdentify.HeaderText = "Need Identify";
             NeedIdentify.Name = "NeedIdentify";
             // 
             // ShowGroupPickup
             // 
             ShowGroupPickup.DataPropertyName = "ShowGroupPickup";
-            ShowGroupPickup.HeaderText = "组队收集";
+            ShowGroupPickup.HeaderText = "Show Group Pickup";
             ShowGroupPickup.Name = "ShowGroupPickup";
             // 
             // GlobalDropNotify
             // 
             GlobalDropNotify.DataPropertyName = "GlobalDropNotify";
-            GlobalDropNotify.HeaderText = "掉落通告";
+            GlobalDropNotify.HeaderText = "Global Drop Notify";
             GlobalDropNotify.Name = "GlobalDropNotify";
             // 
             // ClassBased
             // 
             ClassBased.DataPropertyName = "ClassBased";
-            ClassBased.HeaderText = "基于职业";
+            ClassBased.HeaderText = "Class Based";
             ClassBased.Name = "ClassBased";
             // 
             // LevelBased
             // 
             LevelBased.DataPropertyName = "LevelBased";
-            LevelBased.HeaderText = "基本等级";
+            LevelBased.HeaderText = "Level Based";
             LevelBased.Name = "LevelBased";
             // 
             // CanMine
             // 
             CanMine.DataPropertyName = "CanMine";
-            CanMine.HeaderText = "允许挖矿";
+            CanMine.HeaderText = "Can Mine";
             CanMine.Name = "CanMine";
             // 
             // CanFastRun
             // 
             CanFastRun.DataPropertyName = "CanFastRun";
-            CanFastRun.HeaderText = "允许助跑";
+            CanFastRun.HeaderText = "Can FastRun";
             CanFastRun.Name = "CanFastRun";
             // 
             // CanAwakening
             // 
             CanAwakening.DataPropertyName = "CanAwakening";
-            CanAwakening.HeaderText = "允许觉醒";
+            CanAwakening.HeaderText = "Can Awakening";
             CanAwakening.Name = "CanAwakening";
             // 
             // panel1
@@ -323,7 +323,7 @@ namespace Server.Database
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(4, 3, 4, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1115, 61);
+            panel1.Size = new Size(1115, 54);
             panel1.TabIndex = 1;
             // 
             // panel3
@@ -340,51 +340,51 @@ namespace Server.Database
             panel3.Location = new Point(0, 0);
             panel3.Margin = new Padding(4, 3, 4, 3);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1115, 61);
+            panel3.Size = new Size(1115, 54);
             panel3.TabIndex = 5;
             // 
             // Gameshop_button
             // 
-            Gameshop_button.Location = new Point(943, 28);
+            Gameshop_button.Location = new Point(903, 25);
             Gameshop_button.Margin = new Padding(4, 3, 4, 3);
             Gameshop_button.Name = "Gameshop_button";
-            Gameshop_button.Size = new Size(107, 31);
+            Gameshop_button.Size = new Size(97, 27);
             Gameshop_button.TabIndex = 30;
-            Gameshop_button.Text = "添加到游戏商城";
+            Gameshop_button.Text = "+ Gameshop";
             Gameshop_button.UseVisualStyleBackColor = true;
             Gameshop_button.Click += Gameshop_button_Click;
             // 
             // btnExport
             // 
-            btnExport.Location = new Point(853, 28);
+            btnExport.Location = new Point(808, 25);
             btnExport.Margin = new Padding(4, 3, 4, 3);
             btnExport.Name = "btnExport";
-            btnExport.Size = new Size(88, 31);
+            btnExport.Size = new Size(88, 27);
             btnExport.TabIndex = 6;
-            btnExport.Text = "导出";
+            btnExport.Text = "Export";
             btnExport.UseVisualStyleBackColor = true;
             btnExport.Click += btnExport_Click;
             // 
             // btnImport
             // 
-            btnImport.Location = new Point(764, 28);
+            btnImport.Location = new Point(713, 25);
             btnImport.Margin = new Padding(4, 3, 4, 3);
             btnImport.Name = "btnImport";
-            btnImport.Size = new Size(88, 31);
+            btnImport.Size = new Size(88, 27);
             btnImport.TabIndex = 5;
-            btnImport.Text = "导入";
+            btnImport.Text = "Import";
             btnImport.UseVisualStyleBackColor = true;
             btnImport.Click += btnImport_Click;
             // 
             // lblFilterType
             // 
             lblFilterType.AutoSize = true;
-            lblFilterType.Location = new Point(444, 11);
+            lblFilterType.Location = new Point(390, 10);
             lblFilterType.Margin = new Padding(4, 0, 4, 0);
             lblFilterType.Name = "lblFilterType";
-            lblFilterType.Size = new Size(39, 17);
+            lblFilterType.Size = new Size(37, 15);
             lblFilterType.TabIndex = 3;
-            lblFilterType.Text = "类型 :";
+            lblFilterType.Text = "Type :";
             // 
             // groupView
             // 
@@ -397,21 +397,21 @@ namespace Server.Database
             groupView.Margin = new Padding(4, 3, 4, 3);
             groupView.Name = "groupView";
             groupView.Padding = new Padding(4, 3, 4, 3);
-            groupView.Size = new Size(428, 53);
+            groupView.Size = new Size(379, 47);
             groupView.TabIndex = 4;
             groupView.TabStop = false;
-            groupView.Text = "查看模式";
+            groupView.Text = "View Mode";
             // 
             // rBtnViewSpecial
             // 
             rBtnViewSpecial.AutoSize = true;
-            rBtnViewSpecial.Location = new Point(342, 26);
+            rBtnViewSpecial.Location = new Point(289, 23);
             rBtnViewSpecial.Margin = new Padding(4, 3, 4, 3);
             rBtnViewSpecial.Name = "rBtnViewSpecial";
-            rBtnViewSpecial.Size = new Size(74, 21);
+            rBtnViewSpecial.Size = new Size(62, 19);
             rBtnViewSpecial.TabIndex = 4;
             rBtnViewSpecial.TabStop = true;
-            rBtnViewSpecial.Text = "特殊属性";
+            rBtnViewSpecial.Text = "Special";
             rBtnViewSpecial.UseVisualStyleBackColor = true;
             rBtnViewSpecial.CheckedChanged += rBtnViewSpecial_CheckedChanged;
             // 
@@ -419,52 +419,52 @@ namespace Server.Database
             // 
             rbtnViewAll.AutoSize = true;
             rbtnViewAll.Checked = true;
-            rbtnViewAll.Location = new Point(11, 25);
+            rbtnViewAll.Location = new Point(31, 22);
             rbtnViewAll.Margin = new Padding(4, 3, 4, 3);
             rbtnViewAll.Name = "rbtnViewAll";
-            rbtnViewAll.Size = new Size(74, 21);
+            rbtnViewAll.Size = new Size(39, 19);
             rbtnViewAll.TabIndex = 0;
             rbtnViewAll.TabStop = true;
-            rbtnViewAll.Text = "所有属性";
+            rbtnViewAll.Text = "All";
             rbtnViewAll.UseVisualStyleBackColor = true;
             rbtnViewAll.CheckedChanged += rbtnViewAll_CheckedChanged;
             // 
             // rbtnViewBinding
             // 
             rbtnViewBinding.AutoSize = true;
-            rbtnViewBinding.Location = new Point(261, 25);
+            rbtnViewBinding.Location = new Point(211, 22);
             rbtnViewBinding.Margin = new Padding(4, 3, 4, 3);
             rbtnViewBinding.Name = "rbtnViewBinding";
-            rbtnViewBinding.Size = new Size(74, 21);
+            rbtnViewBinding.Size = new Size(66, 19);
             rbtnViewBinding.TabIndex = 3;
             rbtnViewBinding.TabStop = true;
-            rbtnViewBinding.Text = "绑定属性";
+            rbtnViewBinding.Text = "Binding";
             rbtnViewBinding.UseVisualStyleBackColor = true;
             rbtnViewBinding.CheckedChanged += rbtnViewBinding_CheckedChanged;
             // 
             // rbtnViewBasic
             // 
             rbtnViewBasic.AutoSize = true;
-            rbtnViewBasic.Location = new Point(95, 25);
+            rbtnViewBasic.Location = new Point(80, 22);
             rbtnViewBasic.Margin = new Padding(4, 3, 4, 3);
             rbtnViewBasic.Name = "rbtnViewBasic";
-            rbtnViewBasic.Size = new Size(74, 21);
+            rbtnViewBasic.Size = new Size(52, 19);
             rbtnViewBasic.TabIndex = 1;
             rbtnViewBasic.TabStop = true;
-            rbtnViewBasic.Text = "常规属性";
+            rbtnViewBasic.Text = "Basic";
             rbtnViewBasic.UseVisualStyleBackColor = true;
             rbtnViewBasic.CheckedChanged += rbtnViewBasic_CheckedChanged;
             // 
             // rbtnViewStats
             // 
             rbtnViewStats.AutoSize = true;
-            rbtnViewStats.Location = new Point(178, 25);
+            rbtnViewStats.Location = new Point(147, 22);
             rbtnViewStats.Margin = new Padding(4, 3, 4, 3);
             rbtnViewStats.Name = "rbtnViewStats";
-            rbtnViewStats.Size = new Size(74, 21);
+            rbtnViewStats.Size = new Size(50, 19);
             rbtnViewStats.TabIndex = 2;
             rbtnViewStats.TabStop = true;
-            rbtnViewStats.Text = "基本属性";
+            rbtnViewStats.Text = "Stats";
             rbtnViewStats.UseVisualStyleBackColor = true;
             rbtnViewStats.CheckedChanged += rbtnViewStats_CheckedChanged;
             // 
@@ -472,26 +472,26 @@ namespace Server.Database
             // 
             drpFilterType.DropDownStyle = ComboBoxStyle.DropDownList;
             drpFilterType.FormattingEnabled = true;
-            drpFilterType.Location = new Point(440, 32);
+            drpFilterType.Location = new Point(393, 28);
             drpFilterType.Margin = new Padding(4, 3, 4, 3);
             drpFilterType.Name = "drpFilterType";
-            drpFilterType.Size = new Size(140, 25);
+            drpFilterType.Size = new Size(140, 23);
             drpFilterType.TabIndex = 2;
             drpFilterType.SelectedIndexChanged += drpFilterType_SelectedIndexChanged;
             // 
             // lblSearch
             // 
             lblSearch.AutoSize = true;
-            lblSearch.Location = new Point(590, 11);
+            lblSearch.Location = new Point(538, 10);
             lblSearch.Margin = new Padding(4, 0, 4, 0);
             lblSearch.Name = "lblSearch";
-            lblSearch.Size = new Size(35, 17);
+            lblSearch.Size = new Size(45, 15);
             lblSearch.TabIndex = 1;
-            lblSearch.Text = "搜索:";
+            lblSearch.Text = "Search:";
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(587, 33);
+            txtSearch.Location = new Point(541, 29);
             txtSearch.Margin = new Padding(4, 3, 4, 3);
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(164, 23);
@@ -502,22 +502,22 @@ namespace Server.Database
             // 
             panel2.Controls.Add(itemInfoGridView);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 61);
+            panel2.Location = new Point(0, 54);
             panel2.Margin = new Padding(4, 3, 4, 3);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1115, 567);
+            panel2.Size = new Size(1115, 500);
             panel2.TabIndex = 2;
             // 
             // ItemInfoFormNew
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1115, 628);
+            ClientSize = new Size(1115, 554);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Margin = new Padding(4, 3, 4, 3);
             Name = "ItemInfoFormNew";
-            Text = "物品信息";
+            Text = "ItemInfoFormNew";
             FormClosing += ItemInfoFormNew_FormClosing;
             ((System.ComponentModel.ISupportInitialize)itemInfoGridView).EndInit();
             panel1.ResumeLayout(false);

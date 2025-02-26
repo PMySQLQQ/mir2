@@ -40,9 +40,9 @@
             SearchLabel = new Label();
             RefreshListings = new Button();
             SearchGroupBox = new GroupBox();
+            DeleteListingButton = new Button();
             TotalItemsOwnedLabel = new Label();
             TotalItemsLabel = new Label();
-            DeleteListingButton = new Button();
             ActionsGroupBox = new GroupBox();
             ReasonTextBox = new TextBox();
             ReasonLabel = new Label();
@@ -58,42 +58,41 @@
             MarketListing.Dock = DockStyle.Bottom;
             MarketListing.FullRowSelect = true;
             MarketListing.GridLines = true;
-            MarketListing.Location = new Point(0, 203);
+            MarketListing.Location = new Point(0, 179);
             MarketListing.Name = "MarketListing";
-            MarketListing.Size = new Size(562, 459);
+            MarketListing.Size = new Size(562, 405);
             MarketListing.TabIndex = 0;
             MarketListing.UseCompatibleStateImageBehavior = false;
             MarketListing.View = View.Details;
-            MarketListing.SelectedIndexChanged += MarketListing_SelectedIndexChanged;
             // 
             // ItemName
             // 
-            ItemName.Text = "物品名称";
+            ItemName.Text = "Item";
             ItemName.Width = 120;
             // 
             // AID
             // 
-            AID.Text = "拍卖编号";
+            AID.Text = "Auction ID";
             AID.Width = 80;
             // 
             // Price
             // 
-            Price.Text = "价格";
+            Price.Text = "Price";
             Price.Width = 100;
             // 
             // Seller
             // 
-            Seller.Text = "卖家";
+            Seller.Text = "Seller";
             Seller.Width = 120;
             // 
             // Expiry
             // 
-            Expiry.Text = "失效期";
+            Expiry.Text = "Expiry";
             Expiry.Width = 140;
             // 
             // SearchBox
             // 
-            SearchBox.Location = new Point(72, 25);
+            SearchBox.Location = new Point(72, 22);
             SearchBox.Name = "SearchBox";
             SearchBox.Size = new Size(100, 23);
             SearchBox.TabIndex = 1;
@@ -101,39 +100,39 @@
             // FilterByPlayer
             // 
             FilterByPlayer.AutoSize = true;
-            FilterByPlayer.Location = new Point(176, 27);
+            FilterByPlayer.Location = new Point(189, 24);
             FilterByPlayer.Name = "FilterByPlayer";
-            FilterByPlayer.Size = new Size(87, 21);
+            FilterByPlayer.Size = new Size(103, 19);
             FilterByPlayer.TabIndex = 2;
-            FilterByPlayer.Text = "按玩家筛选";
+            FilterByPlayer.Text = "Filter by Player";
             FilterByPlayer.UseVisualStyleBackColor = true;
             // 
             // FilterByItem
             // 
             FilterByItem.AutoSize = true;
-            FilterByItem.Location = new Point(278, 27);
+            FilterByItem.Location = new Point(298, 24);
             FilterByItem.Name = "FilterByItem";
-            FilterByItem.Size = new Size(87, 21);
+            FilterByItem.Size = new Size(95, 19);
             FilterByItem.TabIndex = 3;
-            FilterByItem.Text = "按物品筛选";
+            FilterByItem.Text = "Filter by Item";
             FilterByItem.UseVisualStyleBackColor = true;
             // 
             // SearchLabel
             // 
             SearchLabel.AutoSize = true;
-            SearchLabel.Location = new Point(24, 29);
+            SearchLabel.Location = new Point(24, 26);
             SearchLabel.Name = "SearchLabel";
-            SearchLabel.Size = new Size(32, 17);
+            SearchLabel.Size = new Size(42, 15);
             SearchLabel.TabIndex = 4;
-            SearchLabel.Text = "查找";
+            SearchLabel.Text = "Search";
             // 
             // RefreshListings
             // 
-            RefreshListings.Location = new Point(421, 25);
+            RefreshListings.Location = new Point(399, 22);
             RefreshListings.Name = "RefreshListings";
-            RefreshListings.Size = new Size(75, 26);
+            RefreshListings.Size = new Size(75, 23);
             RefreshListings.TabIndex = 5;
-            RefreshListings.Text = "刷新";
+            RefreshListings.Text = "Refresh";
             RefreshListings.UseVisualStyleBackColor = true;
             RefreshListings.Click += RefreshListings_Click;
             // 
@@ -148,38 +147,38 @@
             SearchGroupBox.Controls.Add(FilterByItem);
             SearchGroupBox.Location = new Point(0, 0);
             SearchGroupBox.Name = "SearchGroupBox";
-            SearchGroupBox.Size = new Size(562, 97);
+            SearchGroupBox.Size = new Size(562, 86);
             SearchGroupBox.TabIndex = 6;
             SearchGroupBox.TabStop = false;
-            SearchGroupBox.Text = "搜索/统计";
+            SearchGroupBox.Text = "Search/Stats";
+            // 
+            // DeleteListingButton
+            // 
+            DeleteListingButton.Location = new Point(6, 26);
+            DeleteListingButton.Name = "DeleteListingButton";
+            DeleteListingButton.Size = new Size(96, 23);
+            DeleteListingButton.TabIndex = 4;
+            DeleteListingButton.Text = "Delete Listing";
+            DeleteListingButton.UseVisualStyleBackColor = true;
+            DeleteListingButton.Click += DeleteListingButton_Click;
             // 
             // TotalItemsOwnedLabel
             // 
             TotalItemsOwnedLabel.AutoSize = true;
-            TotalItemsOwnedLabel.Location = new Point(133, 66);
+            TotalItemsOwnedLabel.Location = new Point(133, 58);
             TotalItemsOwnedLabel.Name = "TotalItemsOwnedLabel";
-            TotalItemsOwnedLabel.Size = new Size(107, 17);
+            TotalItemsOwnedLabel.Size = new Size(122, 15);
             TotalItemsOwnedLabel.TabIndex = 7;
-            TotalItemsOwnedLabel.Text = "玩家拍卖物品数量:";
+            TotalItemsOwnedLabel.Text = "Total Items owned by:";
             // 
             // TotalItemsLabel
             // 
             TotalItemsLabel.AutoSize = true;
-            TotalItemsLabel.Location = new Point(24, 66);
+            TotalItemsLabel.Location = new Point(24, 58);
             TotalItemsLabel.Name = "TotalItemsLabel";
-            TotalItemsLabel.Size = new Size(63, 17);
+            TotalItemsLabel.Size = new Size(70, 15);
             TotalItemsLabel.TabIndex = 6;
-            TotalItemsLabel.Text = "物品总数: ";
-            // 
-            // DeleteListingButton
-            // 
-            DeleteListingButton.Location = new Point(6, 29);
-            DeleteListingButton.Name = "DeleteListingButton";
-            DeleteListingButton.Size = new Size(96, 26);
-            DeleteListingButton.TabIndex = 4;
-            DeleteListingButton.Text = "删除列表";
-            DeleteListingButton.UseVisualStyleBackColor = true;
-            DeleteListingButton.Click += DeleteListingButton_Click;
+            TotalItemsLabel.Text = "Total Items: ";
             // 
             // ActionsGroupBox
             // 
@@ -187,16 +186,16 @@
             ActionsGroupBox.Controls.Add(ReasonTextBox);
             ActionsGroupBox.Controls.Add(ReasonLabel);
             ActionsGroupBox.Controls.Add(ExpireListingButton);
-            ActionsGroupBox.Location = new Point(0, 104);
+            ActionsGroupBox.Location = new Point(0, 92);
             ActionsGroupBox.Name = "ActionsGroupBox";
-            ActionsGroupBox.Size = new Size(562, 95);
+            ActionsGroupBox.Size = new Size(562, 84);
             ActionsGroupBox.TabIndex = 7;
             ActionsGroupBox.TabStop = false;
-            ActionsGroupBox.Text = "操作";
+            ActionsGroupBox.Text = "Actions";
             // 
             // ReasonTextBox
             // 
-            ReasonTextBox.Location = new Point(161, 45);
+            ReasonTextBox.Location = new Point(165, 40);
             ReasonTextBox.Name = "ReasonTextBox";
             ReasonTextBox.Size = new Size(385, 23);
             ReasonTextBox.TabIndex = 3;
@@ -204,33 +203,32 @@
             // ReasonLabel
             // 
             ReasonLabel.AutoSize = true;
-            ReasonLabel.Location = new Point(122, 49);
+            ReasonLabel.Location = new Point(114, 43);
             ReasonLabel.Name = "ReasonLabel";
-            ReasonLabel.Size = new Size(35, 17);
+            ReasonLabel.Size = new Size(48, 15);
             ReasonLabel.TabIndex = 2;
-            ReasonLabel.Text = "因由:";
+            ReasonLabel.Text = "Reason:";
             // 
             // ExpireListingButton
             // 
-            ExpireListingButton.Location = new Point(6, 60);
+            ExpireListingButton.Location = new Point(6, 53);
             ExpireListingButton.Name = "ExpireListingButton";
-            ExpireListingButton.Size = new Size(96, 26);
+            ExpireListingButton.Size = new Size(96, 23);
             ExpireListingButton.TabIndex = 1;
-            ExpireListingButton.Text = "过期列表";
+            ExpireListingButton.Text = "Expire Listing";
             ExpireListingButton.UseVisualStyleBackColor = true;
             ExpireListingButton.Click += ExpireListingButton_Click;
             // 
             // Market
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(562, 662);
+            ClientSize = new Size(562, 584);
             Controls.Add(ActionsGroupBox);
             Controls.Add(SearchGroupBox);
             Controls.Add(MarketListing);
             Name = "Market";
-            Text = "游戏市场窗口";
-            Load += Market_Load;
+            Text = "Market";
             SearchGroupBox.ResumeLayout(false);
             SearchGroupBox.PerformLayout();
             ActionsGroupBox.ResumeLayout(false);

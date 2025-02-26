@@ -18,43 +18,43 @@ namespace Server.MirForms.DropBuilder
         string Gold = "0", GoldOdds;
 
         List<DropItem>
-            武器 = new List<DropItem>(),
-            盔甲 = new List<DropItem>(),
-            头盔 = new List<DropItem>(),
-            项链 = new List<DropItem>(),
-            手镯 = new List<DropItem>(),
-            戒指 = new List<DropItem>(),
-            护身符 = new List<DropItem>(),
-            腰带 = new List<DropItem>(),
-            靴子 = new List<DropItem>(),
-            守护石 = new List<DropItem>(),
-            照明物 = new List<DropItem>(),
-            药水 = new List<DropItem>(),
-            矿石 = new List<DropItem>(),
-            肉 = new List<DropItem>(),
-            工艺材料 = new List<DropItem>(),
-            卷轴 = new List<DropItem>(),
-            宝玉神珠 = new List<DropItem>(),
-            坐骑 = new List<DropItem>(),
-            技能书 = new List<DropItem>(),
-            杂物 = new List<DropItem>(),
-            特殊消耗品 = new List<DropItem>(),
-            缰绳 = new List<DropItem>(),
-            铃铛 = new List<DropItem>(),
-            马鞍 = new List<DropItem>(),
-            蝴蝶结 = new List<DropItem>(),
-            面甲 = new List<DropItem>(),
-            坐骑食物 = new List<DropItem>(),
-            鱼钩 = new List<DropItem>(),
-            鱼漂 = new List<DropItem>(),
-            鱼饵 = new List<DropItem>(),
-            探鱼器 = new List<DropItem>(),
-            摇轮 = new List<DropItem>(),
-            鱼 = new List<DropItem>(),
-            任务物品 = new List<DropItem>(),
-            觉醒物品 = new List<DropItem>(),
-            灵物 = new List<DropItem>(),
-            外形物品 = new List<DropItem>();
+            Weapon = new List<DropItem>(),
+            Armour = new List<DropItem>(),
+            Helmet = new List<DropItem>(),
+            Necklace = new List<DropItem>(),
+            Bracelet = new List<DropItem>(),
+            Ring = new List<DropItem>(),
+            Amulet = new List<DropItem>(),
+            Belt = new List<DropItem>(),
+            Boot = new List<DropItem>(),
+            Stone = new List<DropItem>(),
+            Torch = new List<DropItem>(),
+            Potion = new List<DropItem>(),
+            Ore = new List<DropItem>(),
+            Meat = new List<DropItem>(),
+            CraftingMaterial = new List<DropItem>(),
+            Scrolls = new List<DropItem>(),
+            Gem = new List<DropItem>(),
+            Mount = new List<DropItem>(),
+            Book = new List<DropItem>(),
+            Nothing = new List<DropItem>(),
+            Script = new List<DropItem>(),
+            Reins = new List<DropItem>(),
+            Bells = new List<DropItem>(),
+            Saddle = new List<DropItem>(),
+            Ribbon = new List<DropItem>(),
+            Mask = new List<DropItem>(),
+            Food = new List<DropItem>(),
+            Hook = new List<DropItem>(),
+            Float = new List<DropItem>(),
+            Bait = new List<DropItem>(),
+            Finder = new List<DropItem>(),
+            Reel = new List<DropItem>(),
+            Fish = new List<DropItem>(),
+            Quest = new List<DropItem>(),
+            Awakening = new List<DropItem>(),
+            Pets = new List<DropItem>(),
+            Transform = new List<DropItem>();
 
         List<DropItem>[] ItemLists;
         ListBox[] ItemListBoxes;
@@ -66,43 +66,43 @@ namespace Server.MirForms.DropBuilder
             // Array of items
             ItemLists = new List<DropItem>[37]
             {
-                武器,
-                盔甲,
-                头盔,
-                项链,
-                手镯,
-                戒指,
-                护身符,
-                腰带,
-                靴子,
-                守护石,
-                照明物,
-                药水,
-                矿石,
-                肉,
-                工艺材料,
-                卷轴,
-                宝玉神珠,
-                坐骑,
-                技能书,
-                杂物,
-                特殊消耗品,
-                缰绳,
-                铃铛,
-                马鞍,
-                蝴蝶结,
-                面甲,
-                坐骑食物,
-                鱼钩,
-                鱼漂,
-                鱼饵,
-                探鱼器,
-                摇轮,
-                鱼,
-                任务物品,
-                觉醒物品,
-                灵物,
-                外形物品
+                Weapon,
+                Armour,
+                Helmet,
+                Necklace,
+                Bracelet,
+                Ring,
+                Amulet,
+                Belt,
+                Boot,
+                Stone,
+                Torch,
+                Potion,
+                Ore,
+                Meat,
+                CraftingMaterial,
+                Scrolls,
+                Gem,
+                Mount,
+                Book,
+                Nothing,
+                Script,
+                Reins,
+                Bells,
+                Saddle,
+                Ribbon,
+                Mask,
+                Food,
+                Hook,
+                Float,
+                Bait,
+                Finder,
+                Reel,
+                Fish,
+                Quest,
+                Awakening,
+                Pets,
+                Transform
             };
 
             // Array of item list boxes
@@ -155,7 +155,7 @@ namespace Server.MirForms.DropBuilder
 
             tabControlSeperateItems_SelectedIndexChanged(tabControlSeperateItems, null);
             listBoxMonsters.SelectedIndex = 0;
-            labelMonsterList.Text = $"怪物总数: {Envir.MonsterInfoList.Count}";
+            labelMonsterList.Text = $"Monster Count: {Envir.MonsterInfoList.Count}";
         }
 
         // Gets server data
@@ -179,153 +179,158 @@ namespace Server.MirForms.DropBuilder
                 textBoxGoldOdds.Text = string.Empty;
             }
                 
-            textBoxDropList.Text += string.Format("{0};武器{0}", Environment.NewLine);
-            for (int i = 0; i < 武器.Count; i++)
-                textBoxDropList.Text += $"{武器[i].Odds} {武器[i].Name} {武器[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Weapons{0}", Environment.NewLine);
+            for (int i = 0; i < Weapon.Count; i++)
+                textBoxDropList.Text += $"{Weapon[i].Odds} {Weapon[i].Name} {Weapon[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};盔甲{0}", Environment.NewLine);
-            for (int i = 0; i < 盔甲.Count; i++)
-                textBoxDropList.Text += $"{盔甲[i].Odds} {盔甲[i].Name} {盔甲[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Armours{0}", Environment.NewLine);
+            for (int i = 0; i < Armour.Count; i++)
+                textBoxDropList.Text += $"{Armour[i].Odds} {Armour[i].Name} {Armour[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};头盔{0}", Environment.NewLine);
-            for (int i = 0; i < 头盔.Count; i++)
-                textBoxDropList.Text += $"{头盔[i].Odds} {头盔[i].Name} {头盔[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Helmets{0}", Environment.NewLine);
+            for (int i = 0; i < Helmet.Count; i++)
+                textBoxDropList.Text += $"{Helmet[i].Odds} {Helmet[i].Name} {Helmet[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};项链{0}", Environment.NewLine);
-            for (int i = 0; i < 项链.Count; i++)
-                textBoxDropList.Text += $"{项链[i].Odds} {项链[i].Name} {项链[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Necklaces{0}", Environment.NewLine);
+            for (int i = 0; i < Necklace.Count; i++)
+                textBoxDropList.Text +=
+                    $"{Necklace[i].Odds} {Necklace[i].Name} {Necklace[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};手镯{0}", Environment.NewLine);
-            for (int i = 0; i < 手镯.Count; i++)
-                textBoxDropList.Text += $"{手镯[i].Odds} {手镯[i].Name} {手镯[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Bracelets{0}", Environment.NewLine);
+            for (int i = 0; i < Bracelet.Count; i++)
+                textBoxDropList.Text +=
+                    $"{Bracelet[i].Odds} {Bracelet[i].Name} {Bracelet[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};戒指{0}", Environment.NewLine);
-            for (int i = 0; i < 戒指.Count; i++)
-                textBoxDropList.Text += $"{戒指[i].Odds} {戒指[i].Name} {戒指[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Rings{0}", Environment.NewLine);
+            for (int i = 0; i < Ring.Count; i++)
+                textBoxDropList.Text += $"{Ring[i].Odds} {Ring[i].Name} {Ring[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};护身符{0}", Environment.NewLine);
-            for (int i = 0; i < 护身符.Count; i++)
-                textBoxDropList.Text += $"{护身符[i].Odds} {护身符[i].Name} {护身符[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Amulets{0}", Environment.NewLine);
+            for (int i = 0; i < Amulet.Count; i++)
+                textBoxDropList.Text += $"{Amulet[i].Odds} {Amulet[i].Name} {Amulet[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};腰带{0}", Environment.NewLine);
-            for (int i = 0; i < 腰带.Count; i++)
-                textBoxDropList.Text += $"{腰带[i].Odds} {腰带[i].Name} {腰带[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Belts{0}", Environment.NewLine);
+            for (int i = 0; i < Belt.Count; i++)
+                textBoxDropList.Text += $"{Belt[i].Odds} {Belt[i].Name} {Belt[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};靴子{0}", Environment.NewLine);
-            for (int i = 0; i < 靴子.Count; i++)
-                textBoxDropList.Text += $"{靴子[i].Odds} {靴子[i].Name} {靴子[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Boots{0}", Environment.NewLine);
+            for (int i = 0; i < Boot.Count; i++)
+                textBoxDropList.Text += $"{Boot[i].Odds} {Boot[i].Name} {Boot[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};守护石{0}", Environment.NewLine);
-            for (int i = 0; i < 守护石.Count; i++)
-                textBoxDropList.Text += $"{守护石[i].Odds} {守护石[i].Name} {守护石[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Stones{0}", Environment.NewLine);
+            for (int i = 0; i < Stone.Count; i++)
+                textBoxDropList.Text += $"{Stone[i].Odds} {Stone[i].Name} {Stone[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};照明物{0}", Environment.NewLine);
-            for (int i = 0; i < 照明物.Count; i++)
-                textBoxDropList.Text += $"{照明物[i].Odds} {照明物[i].Name} {照明物[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Torches{0}", Environment.NewLine);
+            for (int i = 0; i < Torch.Count; i++)
+                textBoxDropList.Text += $"{Torch[i].Odds} {Torch[i].Name} {Torch[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};药水{0}", Environment.NewLine);
-            for (int i = 0; i < 药水.Count; i++)
-                textBoxDropList.Text += $"{药水[i].Odds} {药水[i].Name} {药水[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Potions{0}", Environment.NewLine);
+            for (int i = 0; i < Potion.Count; i++)
+                textBoxDropList.Text += $"{Potion[i].Odds} {Potion[i].Name} {Potion[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};矿石{0}", Environment.NewLine);
-            for (int i = 0; i < 矿石.Count; i++)
-                textBoxDropList.Text += $"{矿石[i].Odds} {矿石[i].Name} {矿石[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Ores{0}", Environment.NewLine);
+            for (int i = 0; i < Ore.Count; i++)
+                textBoxDropList.Text += $"{Ore[i].Odds} {Ore[i].Name} {Ore[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};肉{0}", Environment.NewLine);
-            for (int i = 0; i < 肉.Count; i++)
-                textBoxDropList.Text += $"{肉[i].Odds} {肉[i].Name} {肉[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Meat{0}", Environment.NewLine);
+            for (int i = 0; i < Meat.Count; i++)
+                textBoxDropList.Text += $"{Meat[i].Odds} {Meat[i].Name} {Meat[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};工艺材料{0}", Environment.NewLine);
-            for (int i = 0; i < 工艺材料.Count; i++)
-                textBoxDropList.Text += $"{工艺材料[i].Odds} {工艺材料[i].Name} {工艺材料[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Crafting Materials{0}", Environment.NewLine);
+            for (int i = 0; i < CraftingMaterial.Count; i++)
+                textBoxDropList.Text +=
+                    $"{CraftingMaterial[i].Odds} {CraftingMaterial[i].Name} {CraftingMaterial[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};卷轴{0}", Environment.NewLine);
-            for (int i = 0; i < 卷轴.Count; i++)
-                textBoxDropList.Text += $"{卷轴[i].Odds} {卷轴[i].Name} {卷轴[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Scrolls{0}", Environment.NewLine);
+            for (int i = 0; i < Scrolls.Count; i++)
+                textBoxDropList.Text += $"{Scrolls[i].Odds} {Scrolls[i].Name} {Scrolls[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};宝玉神珠{0}", Environment.NewLine);
-            for (int i = 0; i < 宝玉神珠.Count; i++)
-                textBoxDropList.Text += $"{宝玉神珠[i].Odds} {宝玉神珠[i].Name} {宝玉神珠[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Gems{0}", Environment.NewLine);
+            for (int i = 0; i < Gem.Count; i++)
+                textBoxDropList.Text += $"{Gem[i].Odds} {Gem[i].Name} {Gem[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};坐骑{0}", Environment.NewLine);
-            for (int i = 0; i < 坐骑.Count; i++)
-                textBoxDropList.Text += $"{坐骑[i].Odds} {坐骑[i].Name} {坐骑[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Mount{0}", Environment.NewLine);
+            for (int i = 0; i < Mount.Count; i++)
+                textBoxDropList.Text += $"{Mount[i].Odds} {Mount[i].Name} {Mount[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};技能书{0}", Environment.NewLine);
-            for (int i = 0; i < 技能书.Count; i++)
-                textBoxDropList.Text += $"{技能书[i].Odds} {技能书[i].Name} {技能书[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Books{0}", Environment.NewLine);
+            for (int i = 0; i < Book.Count; i++)
+                textBoxDropList.Text += $"{Book[i].Odds} {Book[i].Name} {Book[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};杂物{0}", Environment.NewLine);
-            for (int i = 0; i < 杂物.Count; i++)
-                textBoxDropList.Text += $"{杂物[i].Odds} {杂物[i].Name} {杂物[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Nothing{0}", Environment.NewLine);
+            for (int i = 0; i < Nothing.Count; i++)
+                textBoxDropList.Text += $"{Nothing[i].Odds} {Nothing[i].Name} {Nothing[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};特殊消耗品{0}", Environment.NewLine);
-            for (int i = 0; i < 特殊消耗品.Count; i++)
-                textBoxDropList.Text += $"{特殊消耗品[i].Odds} {特殊消耗品[i].Name} {特殊消耗品[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Script{0}", Environment.NewLine);
+            for (int i = 0; i < Script.Count; i++)
+                textBoxDropList.Text += $"{Script[i].Odds} {Script[i].Name} {Script[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};缰绳{0}", Environment.NewLine);
-            for (int i = 0; i < 缰绳.Count; i++)
-                textBoxDropList.Text += $"{缰绳[i].Odds} {缰绳[i].Name} {缰绳[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Reins{0}", Environment.NewLine);
+            for (int i = 0; i < Reins.Count; i++)
+                textBoxDropList.Text += $"{Reins[i].Odds} {Reins[i].Name} {Reins[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};铃铛{0}", Environment.NewLine);
-            for (int i = 0; i < 铃铛.Count; i++)
-                textBoxDropList.Text += $"{铃铛[i].Odds} {铃铛[i].Name} {铃铛[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Bells{0}", Environment.NewLine);
+            for (int i = 0; i < Bells.Count; i++)
+                textBoxDropList.Text += $"{Bells[i].Odds} {Bells[i].Name} {Bells[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};马鞍{0}", Environment.NewLine);
-            for (int i = 0; i < 马鞍.Count; i++)
-                textBoxDropList.Text += $"{马鞍[i].Odds} {马鞍[i].Name} {马鞍[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Saddle{0}", Environment.NewLine);
+            for (int i = 0; i < Saddle.Count; i++)
+                textBoxDropList.Text += $"{Saddle[i].Odds} {Saddle[i].Name} {Saddle[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};蝴蝶结{0}", Environment.NewLine);
-            for (int i = 0; i < 蝴蝶结.Count; i++)
-                textBoxDropList.Text += $"{蝴蝶结[i].Odds} {蝴蝶结[i].Name} {蝴蝶结[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Ribbon{0}", Environment.NewLine);
+            for (int i = 0; i < Ribbon.Count; i++)
+                textBoxDropList.Text += $"{Ribbon[i].Odds} {Ribbon[i].Name} {Ribbon[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};面甲{0}", Environment.NewLine);
-            for (int i = 0; i < 面甲.Count; i++)
-                textBoxDropList.Text += $"{面甲[i].Odds} {面甲[i].Name} {面甲[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Mask{0}", Environment.NewLine);
+            for (int i = 0; i < Mask.Count; i++)
+                textBoxDropList.Text += $"{Mask[i].Odds} {Mask[i].Name} {Mask[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};坐骑食物{0}", Environment.NewLine);
-            for (int i = 0; i < 坐骑食物.Count; i++)
-                textBoxDropList.Text += $"{坐骑食物[i].Odds} {坐骑食物[i].Name} {坐骑食物[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Food{0}", Environment.NewLine);
+            for (int i = 0; i < Food.Count; i++)
+                textBoxDropList.Text += $"{Food[i].Odds} {Food[i].Name} {Food[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};鱼钩{0}", Environment.NewLine);
-            for (int i = 0; i < 鱼钩.Count; i++)
-                textBoxDropList.Text += $"{鱼钩[i].Odds} {鱼钩[i].Name} {鱼钩[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Hook{0}", Environment.NewLine);
+            for (int i = 0; i < Hook.Count; i++)
+                textBoxDropList.Text += $"{Hook[i].Odds} {Hook[i].Name} {Hook[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};鱼漂{0}", Environment.NewLine);
-            for (int i = 0; i < 鱼漂.Count; i++)
-                textBoxDropList.Text += $"{鱼漂[i].Odds} {鱼漂[i].Name} {鱼漂[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Float{0}", Environment.NewLine);
+            for (int i = 0; i < Float.Count; i++)
+                textBoxDropList.Text += $"{Float[i].Odds} {Float[i].Name} {Float[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};鱼饵{0}", Environment.NewLine);
-            for (int i = 0; i < 鱼饵.Count; i++)
-                textBoxDropList.Text += $"{鱼饵[i].Odds} {鱼饵[i].Name} {鱼饵[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Bait{0}", Environment.NewLine);
+            for (int i = 0; i < Bait.Count; i++)
+                textBoxDropList.Text += $"{Bait[i].Odds} {Bait[i].Name} {Bait[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};探鱼器{0}", Environment.NewLine);
-            for (int i = 0; i < 探鱼器.Count; i++)
-                textBoxDropList.Text += $"{探鱼器[i].Odds} {探鱼器[i].Name} {探鱼器[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Finder{0}", Environment.NewLine);
+            for (int i = 0; i < Finder.Count; i++)
+                textBoxDropList.Text += $"{Finder[i].Odds} {Finder[i].Name} {Finder[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};摇轮{0}", Environment.NewLine);
-            for (int i = 0; i < 摇轮.Count; i++)
-                textBoxDropList.Text += $"{摇轮[i].Odds} {摇轮[i].Name} {摇轮[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Reel{0}", Environment.NewLine);
+            for (int i = 0; i < Reel.Count; i++)
+                textBoxDropList.Text += $"{Reel[i].Odds} {Reel[i].Name} {Reel[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};鱼{0}", Environment.NewLine);
-            for (int i = 0; i < 鱼.Count; i++)
-                textBoxDropList.Text += $"{鱼[i].Odds} {鱼[i].Name} {鱼[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Fish{0}", Environment.NewLine);
+            for (int i = 0; i < Fish.Count; i++)
+                textBoxDropList.Text += $"{Fish[i].Odds} {Fish[i].Name} {Fish[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};任务物品{0}", Environment.NewLine);
-            for (int i = 0; i < 任务物品.Count; i++)
-                textBoxDropList.Text += $"{任务物品[i].Odds} {任务物品[i].Name} {任务物品[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Quest{0}", Environment.NewLine);
+            for (int i = 0; i < Quest.Count; i++)
+                textBoxDropList.Text += $"{Quest[i].Odds} {Quest[i].Name} {Quest[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};觉醒物品{0}", Environment.NewLine);
-            for (int i = 0; i < 觉醒物品.Count; i++)
-                textBoxDropList.Text += $"{觉醒物品[i].Odds} {觉醒物品[i].Name} {觉醒物品[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Awakening{0}", Environment.NewLine);
+            for (int i = 0; i < Awakening.Count; i++)
+                textBoxDropList.Text +=
+                    $"{Awakening[i].Odds} {Awakening[i].Name} {Awakening[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};灵物{0}", Environment.NewLine);
-            for (int i = 0; i < 灵物.Count; i++)
-                textBoxDropList.Text += $"{灵物[i].Odds} {灵物[i].Name} {灵物[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Pets{0}", Environment.NewLine);
+            for (int i = 0; i < Pets.Count; i++)
+                textBoxDropList.Text += $"{Pets[i].Odds} {Pets[i].Name} {Pets[i].Quest}{Environment.NewLine}";
 
-            textBoxDropList.Text += string.Format("{0};外形物品{0}", Environment.NewLine);
-            for (int i = 0; i < 外形物品.Count; i++)
-                textBoxDropList.Text += $"{外形物品[i].Odds} {外形物品[i].Name} {外形物品[i].Quest}{Environment.NewLine}";
+            textBoxDropList.Text += string.Format("{0};Transform{0}", Environment.NewLine);
+            for (int i = 0; i < Transform.Count; i++)
+                textBoxDropList.Text +=
+                    $"{Transform[i].Odds} {Transform[i].Name} {Transform[i].Quest}{Environment.NewLine}";
 
             SaveDropFile();
         }
@@ -353,7 +358,7 @@ namespace Server.MirForms.DropBuilder
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show("无法读取等级过滤");
+                        MessageBox.Show("Unreadable level filters.");
                         break;
                     }
                 }
@@ -361,115 +366,115 @@ namespace Server.MirForms.DropBuilder
 
             switch (Tab.SelectedTab.Tag.ToString())
             {
-                case "武器":
+                case "Weapon":
                     listBoxWeapon.Items.AddRange(TempListBox.Items);
                     break;
-                case "盔甲":
+                case "Armour":
                     listBoxArmour.Items.AddRange(TempListBox.Items);
                     break;
-                case "头盔":
+                case "Helmet":
                     listBoxHelmet.Items.AddRange(TempListBox.Items);
                     break;
-                case "项链":
+                case "Necklace":
                     listBoxNecklace.Items.AddRange(TempListBox.Items);
                     break;
-                case "手镯":
+                case "Bracelet":
                     listBoxBracelet.Items.AddRange(TempListBox.Items);
                     break;
-                case "戒指":
+                case "Ring":
                     listBoxRing.Items.AddRange(TempListBox.Items);
                     break;
-                case "护身符":
+                case "Amulet":
                     listBoxAmulet.Items.AddRange(TempListBox.Items);
                     break;
-                case "腰带":
+                case "Belt":
                     listBoxBelt.Items.AddRange(TempListBox.Items);
                     break;
-                case "靴子":
+                case "Boots":
                     listBoxBoot.Items.AddRange(TempListBox.Items);
                     break;
-                case "守护石":
+                case "Stone":
                     listBoxStone.Items.AddRange(TempListBox.Items);
                     break;
-                case "照明物":
+                case "Torch":
                     listBoxTorch.Items.AddRange(TempListBox.Items);
                     break;
-                case "药水":
+                case "Potion":
                     listBoxPotion.Items.AddRange(TempListBox.Items);
                     break;
-                case "矿石":
+                case "Ore":
                     listBoxOre.Items.AddRange(TempListBox.Items);
                     break;
-                case "肉":
+                case "Meat":
                     listBoxMeat.Items.AddRange(TempListBox.Items);
                     break;
-                case "工艺材料":
+                case "CraftingMaterial":
                     listBoxCraftingMaterial.Items.AddRange(TempListBox.Items);
                     break;
-                case "卷轴":
+                case "Scroll":
                     listBoxScroll.Items.AddRange(TempListBox.Items);
                     break;
-                case "宝玉神珠":
+                case "Gem":
                     listBoxGem.Items.AddRange(TempListBox.Items);
                     break;
-                case "坐骑":
+                case "Mount":
                     listBoxMount.Items.AddRange(TempListBox.Items);
                     break;
-                case "技能书":
+                case "Book":
                     listBoxBook.Items.AddRange(TempListBox.Items);
                     break;
-                case "杂物":
+                case "Nothing":
                     listBoxNothing.Items.AddRange(TempListBox.Items);
                     break;
-                case "特殊消耗品":
+                case "Script":
                     listBoxScript.Items.AddRange(TempListBox.Items);
                     break;
-                case "缰绳":
+                case "Reins":
                     listBoxReins.Items.AddRange(TempListBox.Items);
                     break;
-                case "铃铛":
+                case "Bells":
                     listBoxBells.Items.AddRange(TempListBox.Items);
                     break;
-                case "马鞍":
+                case "Saddle":
                     listBoxSaddle.Items.AddRange(TempListBox.Items);
                     break;
-                case "蝴蝶结":
+                case "Ribbon":
                     listBoxRibbon.Items.AddRange(TempListBox.Items);
                     break;
-                case "面甲":
+                case "Mask":
                     listBoxMask.Items.AddRange(TempListBox.Items);
                     break;
-                case "坐骑食物":
+                case "Food":
                     listBoxFood.Items.AddRange(TempListBox.Items);
                     break;
-                case "鱼钩":
+                case "Hook":
                     listBoxHook.Items.AddRange(TempListBox.Items);
                     break;
-                case "鱼漂":
+                case "Float":
                     listBoxFloat.Items.AddRange(TempListBox.Items);
                     break;
-                case "鱼饵":
+                case "Bait":
                     listBoxBait.Items.AddRange(TempListBox.Items);
                     break;
-                case "探鱼器":
+                case "Finder":
                     listBoxFinder.Items.AddRange(TempListBox.Items);
                     break;
-                case "摇轮":
+                case "Reel":
                     listBoxReel.Items.AddRange(TempListBox.Items);
                     break;
-                case "鱼":
+                case "Fish":
                     listBoxFish.Items.AddRange(TempListBox.Items);
                     break;
-                case "任务物品":
+                case "Quest":
                     listBoxQuest.Items.AddRange(TempListBox.Items);
                     break;
-                case "觉醒物品":
+                case "Awakening":
                     listBoxAwakening.Items.AddRange(TempListBox.Items);
                     break;
-                case "灵物":
+                case "Pets":
                     listBoxPets.Items.AddRange(TempListBox.Items);
                     break;
-                case "外形物品":
+                case "Transform":
                     listBoxTransform.Items.AddRange(TempListBox.Items);
                     break;
             }
@@ -496,153 +501,153 @@ namespace Server.MirForms.DropBuilder
             {
                 switch (tabControlSeperateItems.SelectedTab.Tag.ToString())
                 {
-                    case "武器":
-                        武器.Add(new DropItem { Name = listBoxWeapon.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Weapon":
+                        Weapon.Add(new DropItem { Name = listBoxWeapon.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "盔甲":
-                        盔甲.Add(new DropItem { Name = listBoxArmour.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Armour":
+                        Armour.Add(new DropItem { Name = listBoxArmour.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "头盔":
-                        头盔.Add(new DropItem { Name = listBoxHelmet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Helmet":
+                        Helmet.Add(new DropItem { Name = listBoxHelmet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "项链":
-                        项链.Add(new DropItem { Name = listBoxNecklace.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Necklace":
+                        Necklace.Add(new DropItem { Name = listBoxNecklace.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "手镯":
-                        手镯.Add(new DropItem { Name = listBoxBracelet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Bracelet":
+                        Bracelet.Add(new DropItem { Name = listBoxBracelet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "戒指":
-                        戒指.Add(new DropItem { Name = listBoxRing.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Ring":
+                        Ring.Add(new DropItem { Name = listBoxRing.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "护身符":
-                        护身符.Add(new DropItem { Name = listBoxAmulet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Amulet":
+                        Amulet.Add(new DropItem { Name = listBoxAmulet.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "腰带":
-                        腰带.Add(new DropItem { Name = listBoxBelt.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Belt":
+                        Belt.Add(new DropItem { Name = listBoxBelt.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "靴子":
-                        靴子.Add(new DropItem { Name = listBoxBoot.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Boots":
+                        Boot.Add(new DropItem { Name = listBoxBoot.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "守护石":
-                        守护石.Add(new DropItem { Name = listBoxStone.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Stone":
+                        Stone.Add(new DropItem { Name = listBoxStone.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "照明物":
-                        照明物.Add(new DropItem { Name = listBoxTorch.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Torch":
+                        Torch.Add(new DropItem { Name = listBoxTorch.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "药水":
-                        药水.Add(new DropItem { Name = listBoxPotion.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Potion":
+                        Potion.Add(new DropItem { Name = listBoxPotion.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "矿石":
-                        矿石.Add(new DropItem { Name = listBoxOre.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Ore":
+                        Ore.Add(new DropItem { Name = listBoxOre.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "肉":
-                        肉.Add(new DropItem { Name = listBoxMeat.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Meat":
+                        Meat.Add(new DropItem { Name = listBoxMeat.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "工艺材料":
-                        工艺材料.Add(new DropItem { Name = listBoxCraftingMaterial.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "CraftingMaterial":
+                        CraftingMaterial.Add(new DropItem { Name = listBoxCraftingMaterial.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}"
                         });
                         break;
-                    case "卷轴":
-                        卷轴.Add(new DropItem { Name = listBoxScroll.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Scroll":
+                        Scrolls.Add(new DropItem { Name = listBoxScroll.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "宝玉神珠":
-                        宝玉神珠.Add(new DropItem { Name = listBoxGem.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Gem":
+                        Gem.Add(new DropItem { Name = listBoxGem.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "坐骑":
-                        坐骑.Add(new DropItem { Name = listBoxMount.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Mount":
+                        Mount.Add(new DropItem { Name = listBoxMount.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "技能书":
-                        技能书.Add(new DropItem { Name = listBoxBook.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Book":
+                        Book.Add(new DropItem { Name = listBoxBook.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "杂物":
-                        杂物.Add(new DropItem { Name = listBoxNothing.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Nothing":
+                        Nothing.Add(new DropItem { Name = listBoxNothing.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "特殊消耗品":
-                        特殊消耗品.Add(new DropItem { Name = listBoxScript.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Script":
+                        Script.Add(new DropItem { Name = listBoxScript.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "缰绳":
-                        缰绳.Add(new DropItem { Name = listBoxReins.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Reins":
+                        Reins.Add(new DropItem { Name = listBoxReins.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "铃铛":
-                        铃铛.Add(new DropItem { Name = listBoxBells.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Bells":
+                        Bells.Add(new DropItem { Name = listBoxBells.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "马鞍":
-                        马鞍.Add(new DropItem { Name = listBoxSaddle.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Saddle":
+                        Saddle.Add(new DropItem { Name = listBoxSaddle.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "蝴蝶结":
-                        蝴蝶结.Add(new DropItem { Name = listBoxRibbon.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Ribbon":
+                        Ribbon.Add(new DropItem { Name = listBoxRibbon.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "面甲":
-                        面甲.Add(new DropItem { Name = listBoxMask.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Mask":
+                        Mask.Add(new DropItem { Name = listBoxMask.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "坐骑食物":
-                        坐骑食物.Add(new DropItem { Name = listBoxFood.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Food":
+                        Food.Add(new DropItem { Name = listBoxFood.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "鱼钩":
-                        鱼钩.Add(new DropItem { Name = listBoxHook.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Hook":
+                        Hook.Add(new DropItem { Name = listBoxHook.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "鱼漂":
-                        鱼漂.Add(new DropItem { Name = listBoxFloat.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Float":
+                        Float.Add(new DropItem { Name = listBoxFloat.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "鱼饵":
-                        鱼饵.Add(new DropItem { Name = listBoxBait.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Bait":
+                        Bait.Add(new DropItem { Name = listBoxBait.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "探鱼器":
-                        探鱼器.Add(new DropItem { Name = listBoxFinder.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Finder":
+                        Finder.Add(new DropItem { Name = listBoxFinder.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "摇轮":
-                        摇轮.Add(new DropItem { Name = listBoxReel.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Reel":
+                        Reel.Add(new DropItem { Name = listBoxReel.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "鱼":
-                        鱼.Add(new DropItem { Name = listBoxFish.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Fish":
+                        Fish.Add(new DropItem { Name = listBoxFish.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "任务物品":
-                        任务物品.Add(new DropItem { Name = listBoxQuest.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Quest":
+                        Quest.Add(new DropItem { Name = listBoxQuest.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "觉醒物品":
-                        觉醒物品.Add(new DropItem { Name = listBoxAwakening.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Awakening":
+                        Awakening.Add(new DropItem { Name = listBoxAwakening.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "灵物":
-                        灵物.Add(new DropItem { Name = listBoxPets.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Pets":
+                        Pets.Add(new DropItem { Name = listBoxPets.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
-                    case "外形物品":
-                        外形物品.Add(new DropItem { Name = listBoxTransform.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
+                    case "Transform":
+                        Transform.Add(new DropItem { Name = listBoxTransform.SelectedItem.ToString().Replace(" ", string.Empty), Odds =
                             $"1/{dropChance}", Quest = quest });
                         break;
                 }
@@ -670,7 +675,7 @@ namespace Server.MirForms.DropBuilder
             checkBoxCap.Checked = false;
 
             labelMobLevel.Text =
-                $"当前编辑: {((MonsterDropInfo)listBoxMonsters.SelectedItem).Name} - 等级: {Envir.MonsterInfoList[listBoxMonsters.SelectedIndices[0]].Level}";
+                $"Currently Editing: {((MonsterDropInfo)listBoxMonsters.SelectedItem).Name} - Level: {Envir.MonsterInfoList[listBoxMonsters.SelectedIndices[0]].Level}";
         }
 
         public string GetPathOfSelectedItem()
@@ -720,43 +725,43 @@ namespace Server.MirForms.DropBuilder
 
             string[] Headers = new string[37]
             {
-            ";武器",
-            ";盔甲",
-            ";头盔",
-            ";项链",
-            ";手镯",
-            ";戒指",
-            ";护身符",
-            ";腰带",
-            ";靴子",
-            ";守护石",
-            ";照明物",
-            ";药水",
-            ";矿石",
-            ";肉",
-            ";工艺材料",
-            ";卷轴",
-            ";宝玉神珠",
-            ";坐骑",
-            ";技能书",
-            ";杂物",
-            ";特殊消耗品",
-            ";缰绳",
-            ";铃铛",
-            ";马鞍",
-            ";蝴蝶结",
-            ";面甲",
-            ";坐骑食物",
-            ";鱼钩",
-            ";鱼漂",
-            ";鱼饵",
-            ";探鱼器",
-            ";摇轮",
-            ";鱼",
-            ";任务物品",
-            ";觉醒物品",
-            ";灵物",
-            ";外形物品"
+            ";Weapons",
+            ";Armours",
+            ";Helmets",
+            ";Necklaces",
+            ";Bracelets",
+            ";Rings",
+            ";Amulets",
+            ";Belts",
+            ";Boots",
+            ";Stones",
+            ";Torches",
+            ";Potions",
+            ";Ores",
+            ";Meat",
+            ";Crafting Materials",
+            ";Scrolls",
+            ";Gems",
+            ";Mount",
+            ";Books",
+            ";Nothing",
+            ";Script",
+            ";Reins",
+            ";Bells",
+            ";Saddle",
+            ";Ribbon",
+            ";Mask",
+            ";Food",
+            ";Hook",
+            ";Float",
+            ";Bait",
+            ";Finder",
+            ";Reel",
+            ";Fish",
+            ";Quest",
+            ";Awakening",
+            ";Pets",
+            ";Transform"
             };
 
             for (int i = 0; i < Headers.Length; i++)
@@ -783,115 +788,115 @@ namespace Server.MirForms.DropBuilder
                             switch (i)
                             {
                                 case 0:
-                                    武器.Add(newDropItem);
+                                    Weapon.Add(newDropItem);
                                     break;
                                 case 1:
-                                    盔甲.Add(newDropItem);
+                                    Armour.Add(newDropItem);
                                     break;
                                 case 2:
-                                    头盔.Add(newDropItem);
+                                    Helmet.Add(newDropItem);
                                     break;
                                 case 3:
-                                    项链.Add(newDropItem);
+                                    Necklace.Add(newDropItem);
                                     break;
                                 case 4:
-                                    手镯.Add(newDropItem);
+                                    Bracelet.Add(newDropItem);
                                     break;
                                 case 5:
-                                    戒指.Add(newDropItem);
+                                    Ring.Add(newDropItem);
                                     break;
                                 case 6:
-                                    护身符.Add(newDropItem);
+                                    Amulet.Add(newDropItem);
                                     break;
                                 case 7:
-                                    腰带.Add(newDropItem);
+                                    Belt.Add(newDropItem);
                                     break;
                                 case 8:
-                                    靴子.Add(newDropItem);
+                                    Boot.Add(newDropItem);
                                     break;
                                 case 9:
-                                    守护石.Add(newDropItem);
+                                    Stone.Add(newDropItem);
                                     break;
                                 case 10:
-                                    照明物.Add(newDropItem);
+                                    Torch.Add(newDropItem);
                                     break;
                                 case 11:
-                                    药水.Add(newDropItem);
+                                    Potion.Add(newDropItem);
                                     break;
                                 case 12:
-                                    矿石.Add(newDropItem);
+                                    Ore.Add(newDropItem);
                                     break;
                                 case 13:
-                                    肉.Add(newDropItem);
+                                    Meat.Add(newDropItem);
                                     break;
                                 case 14:
-                                    工艺材料.Add(newDropItem);
+                                    CraftingMaterial.Add(newDropItem);
                                     break;
                                 case 15:
-                                    卷轴.Add(newDropItem);
+                                    Scrolls.Add(newDropItem);
                                     break;
                                 case 16:
-                                    宝玉神珠.Add(newDropItem);
+                                    Gem.Add(newDropItem);
                                     break;
                                 case 17:
-                                    坐骑.Add(newDropItem);
+                                    Mount.Add(newDropItem);
                                     break;
                                 case 18:
-                                    技能书.Add(newDropItem);
+                                    Book.Add(newDropItem);
                                     break;
                                 case 19:
-                                    杂物.Add(newDropItem);
+                                    Nothing.Add(newDropItem);
                                     break;
                                 case 20:
-                                    特殊消耗品.Add(newDropItem);
+                                    Script.Add(newDropItem);
                                     break;
                                 case 21:
-                                    缰绳.Add(newDropItem);
+                                    Reins.Add(newDropItem);
                                     break;
                                 case 22:
-                                    铃铛.Add(newDropItem);
+                                    Bells.Add(newDropItem);
                                     break;
                                 case 23:
-                                    马鞍.Add(newDropItem);
+                                    Saddle.Add(newDropItem);
                                     break;
                                 case 24:
-                                    蝴蝶结.Add(newDropItem);
+                                    Ribbon.Add(newDropItem);
                                     break;
                                 case 25:
-                                    面甲.Add(newDropItem);
+                                    Mask.Add(newDropItem);
                                     break;
                                 case 26:
-                                    坐骑食物.Add(newDropItem);
+                                    Food.Add(newDropItem);
                                     break;
                                 case 27:
-                                    鱼钩.Add(newDropItem);
+                                    Hook.Add(newDropItem);
                                     break;
                                 case 28:
-                                    鱼漂.Add(newDropItem);
+                                    Float.Add(newDropItem);
                                     break;
                                 case 29:
-                                    鱼饵.Add(newDropItem);
+                                    Bait.Add(newDropItem);
                                     break;
                                 case 30:
-                                    探鱼器.Add(newDropItem);
+                                    Finder.Add(newDropItem);
                                     break;
                                 case 31:
-                                    摇轮.Add(newDropItem);
+                                    Reel.Add(newDropItem);
                                     break;
                                 case 32:
-                                    鱼.Add(newDropItem);
+                                    Fish.Add(newDropItem);
                                     break;
                                 case 33:
-                                    任务物品.Add(newDropItem);
+                                    Quest.Add(newDropItem);
                                     break;
                                 case 34:
-                                    觉醒物品.Add(newDropItem);
+                                    Awakening.Add(newDropItem);
                                     break;
                                 case 35:
-                                    灵物.Add(newDropItem);
+                                    Pets.Add(newDropItem);
                                     break;
                                 case 36:
-                                    外形物品.Add(newDropItem);
+                                    Transform.Add(newDropItem);
                                     break;
                                 default:
                                     break;
@@ -931,11 +936,11 @@ namespace Server.MirForms.DropBuilder
         //Switch to Edit mode
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            if (buttonEdit.Text == "接受")
+            if (buttonEdit.Text == "Accept")
             {
                 textBoxDropList.ReadOnly = true;
                 textBoxDropList.BackColor = System.Drawing.Color.Cornsilk;
-                buttonEdit.Text = "编辑掉落文件";
+                buttonEdit.Text = "Edit Drop File";
                 //buttonEdit.Image = Properties.Resources.edit;
 
                 // Empty List<DropItem>'s
@@ -955,7 +960,7 @@ namespace Server.MirForms.DropBuilder
             {
                 textBoxDropList.ReadOnly = false;
                 textBoxDropList.BackColor = System.Drawing.Color.Honeydew;
-                buttonEdit.Text = "接受";
+                buttonEdit.Text = "Accept";
                 //buttonEdit.Image = Properties.Resources.accept;
 
                 buttonAdd.Enabled = false;

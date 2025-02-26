@@ -50,7 +50,7 @@ namespace LibraryEditor
             CurrentVersion = _reader.ReadInt32();
             if (CurrentVersion != LibVersion)
             {
-                MessageBox.Show("版本错误，要求LIB版本为: " + LibVersion.ToString() + " 基于版本: " + CurrentVersion.ToString() + ".", "打开失败", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Wrong version, expecting lib version: " + LibVersion.ToString() + " found version: " + CurrentVersion.ToString() + ".", "Failed to open", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
             Count = _reader.ReadInt32();

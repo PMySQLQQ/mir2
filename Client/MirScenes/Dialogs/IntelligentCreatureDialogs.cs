@@ -18,7 +18,7 @@ namespace Client.MirScenes.Dialogs
         public int SelectedCreatureSlot = -1;
         public MirControl HoverLabelParent = null;
 
-        private readonly Regex CreatureNameReg = new Regex(@"^[A-Za-z0-9\u4E00-\u9FA5]{" + Globals.MinCharacterNameLength + "," + Globals.MaxCharacterNameLength + "}$");
+        private readonly Regex CreatureNameReg = new Regex(@"^[A-Za-z0-9]{" + Globals.MinCharacterNameLength + "," + Globals.MaxCharacterNameLength + "}$");
 
         private MirAnimatedControl CreatureImage;
         public long SwitchAnimTime;
@@ -389,7 +389,7 @@ namespace Client.MirScenes.Dialogs
                 if (GameScene.User.IntelligentCreatures[selectedCreature].CreatureRules.CanProduceBlackStone)
                     HoverLabel.Text = string.Format("{0}", Functions.PrintTimeSpanFromSeconds(blackstoneProduceTime - GameScene.User.IntelligentCreatures[selectedCreature].BlackstoneTime));
                 else
-                    HoverLabel.Text = "不能生产";
+                    HoverLabel.Text = "No Production.";
             }
 
             Rectangle section = new Rectangle
@@ -408,7 +408,7 @@ namespace Client.MirScenes.Dialogs
             if (sender == FullnessMin)
             {
                 HoverLabel.Visible = true;
-                HoverLabel.Text = "需要 " + GameScene.User.IntelligentCreatures[selectedCreature].CreatureRules.MinimalFullness.ToString();
+                HoverLabel.Text = "Needed " + GameScene.User.IntelligentCreatures[selectedCreature].CreatureRules.MinimalFullness.ToString();
                 HoverLabel.Size = new Size(150, 15);
                 HoverLabel.Location = new Point((FullnessMin.Location.X + 8) - (HoverLabel.Size.Width / 2), FullnessFG.Location.Y - 18);
             }
@@ -446,13 +446,13 @@ namespace Client.MirScenes.Dialogs
 
             if (sender == CreatureRenameButton)
             {
-                MirInputBox inputBox = new MirInputBox("输入灵物新名称");
+                MirInputBox inputBox = new MirInputBox("Please enter a new name for the creature.");
                 inputBox.InputTextBox.Text = GameScene.User.IntelligentCreatures[selectedCreature].CustomName;
                 inputBox.OKButton.Click += (o1, e1) =>
                 {
                     if (!CreatureNameReg.IsMatch(inputBox.InputTextBox.Text))
                     {
-                        MirMessageBox failedMessage = new MirMessageBox(string.Format("灵物取名必须在 {0} 和 {1} 个字符之间", Globals.MinCharacterNameLength, Globals.MaxCharacterNameLength), MirMessageBoxButtons.OK);
+                        MirMessageBox failedMessage = new MirMessageBox(string.Format("Creature name must be between {0} and {1} characters.", Globals.MinCharacterNameLength, Globals.MaxCharacterNameLength), MirMessageBoxButtons.OK);
                         failedMessage.Show();
                     }
                     else
@@ -493,12 +493,12 @@ namespace Client.MirScenes.Dialogs
             }
             if (sender == ReleaseButton)
             {
-                MirInputBox verificationBox = new MirInputBox("输入灵物名进行验证");
+                MirInputBox verificationBox = new MirInputBox("Please enter the creature's name for verification.");
                 verificationBox.OKButton.Click += (o1, e1) =>
                 {
                     if (String.Compare(verificationBox.InputTextBox.Text, GameScene.User.IntelligentCreatures[selectedCreature].CustomName, StringComparison.OrdinalIgnoreCase) != 0)
                     {
-                        GameScene.Scene.ChatDialog.ReceiveChat("验证失败", ChatType.System);
+                        GameScene.Scene.ChatDialog.ReceiveChat("Verification Failed!!", ChatType.System);
                     }
                     else
                     {
@@ -726,13 +726,13 @@ namespace Client.MirScenes.Dialogs
 
             var rules = GameScene.User.IntelligentCreatures[selectedCreature].CreatureRules;
 
-            var semi = rules.SemiAutoPickupEnabled ? string.Format("{0}x{0} {1}{2}{3}", rules.AutoPickupRange, rules.AutoPickupEnabled ? "自动/" : "", rules.SemiAutoPickupEnabled ? "半自动" : "", rules.MousePickupEnabled ? ", " : "") : "";
-            var mouse = rules.SemiAutoPickupEnabled ? string.Format("{0}x{0} 鼠标点击", rules.MousePickupRange) : "";
+            var semi = rules.SemiAutoPickupEnabled ? string.Format("{0}x{0} {1}{2}{3}", rules.AutoPickupRange, rules.AutoPickupEnabled ? "auto/" : "", rules.SemiAutoPickupEnabled ? "semi-auto" : "", rules.MousePickupEnabled ? ", " : "") : "";
+            var mouse = rules.SemiAutoPickupEnabled ? string.Format("{0}x{0} mouse", rules.MousePickupRange) : "";
 
             CreatureName.Text = GameScene.User.IntelligentCreatures[selectedCreature].CustomName;
-            CreatureInfo.Text = string.Format("可拾取物品 ({0}{1})", semi, mouse);
-            CreatureInfo1.Text = rules.CanProduceBlackStone ? "可生产蓝色生物石" : "";
-            CreatureInfo2.Text = rules.CanProduceBlackStone ? "生产珍珠可用于购买灵物物品" : "";
+            CreatureInfo.Text = string.Format("Can pickup items ({0}{1}).", semi, mouse);
+            CreatureInfo1.Text = rules.CanProduceBlackStone ? "Can produce BlackStones." : "";
+            CreatureInfo2.Text = rules.CanProduceBlackStone ? "Can produce Pearls, used to buy Creature items." : "";
 
             //Expire
             if (GameScene.User.IntelligentCreatures[selectedCreature].Expire == DateTime.MinValue)
@@ -749,7 +749,7 @@ namespace Client.MirScenes.Dialogs
             if (GameScene.User.IntelligentCreatures[selectedCreature].MaintainFoodTime == 0)
                 CreatureMaintainFoodBuff.Text = "0";
             else
-                CreatureMaintainFoodBuff.Text = string.Format("食物特效: {0}", Functions.PrintTimeSpanFromSeconds(GameScene.User.IntelligentCreatures[selectedCreature].MaintainFoodTime));
+                CreatureMaintainFoodBuff.Text = string.Format("FoodBuff: {0}", Functions.PrintTimeSpanFromSeconds(GameScene.User.IntelligentCreatures[selectedCreature].MaintainFoodTime));
 
             int StartIndex = CreatureButtons[SelectedCreatureSlot].AnimDefaultIdx;
             int AnimCount = CreatureButtons[SelectedCreatureSlot].AnimDefaultCount;
@@ -984,7 +984,7 @@ namespace Client.MirScenes.Dialogs
         {
             switch (PetType)
             {
-                case IntelligentCreatureType.小猪:
+                case IntelligentCreatureType.BabyPig:
                     AnimDefaultIdx = 540;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 200;
@@ -993,7 +993,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 5;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.小鸡:
+                case IntelligentCreatureType.Chick:
                     AnimDefaultIdx = 570;
                     AnimDefaultCount = 4;
                     AnimDefaultDelay = 350;
@@ -1002,7 +1002,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 10;
                     AnimExDelay = 200;
                     break;
-                case IntelligentCreatureType.小猫:
+                case IntelligentCreatureType.Kitten:
                     AnimDefaultIdx = 600;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 250;
@@ -1011,7 +1011,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 10;
                     AnimExDelay = 200;
                     break;
-                case IntelligentCreatureType.精灵骷髅:
+                case IntelligentCreatureType.BabySkeleton:
                     AnimDefaultIdx = 630;
                     AnimDefaultCount = 11;
                     AnimDefaultDelay = 200;
@@ -1020,7 +1020,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 7;
                     AnimExDelay = 250;
                     break;
-                case IntelligentCreatureType.白猪:
+                case IntelligentCreatureType.Baekdon:
                     AnimDefaultIdx = 660;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 250;
@@ -1029,7 +1029,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 8;
                     AnimExDelay = 250;
                     break;
-                case IntelligentCreatureType.纸片人:
+                case IntelligentCreatureType.Wimaen:
                     AnimDefaultIdx = 690;
                     AnimDefaultCount = 4;
                     AnimDefaultDelay = 350;
@@ -1038,7 +1038,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 6;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.黑猫:
+                case IntelligentCreatureType.BlackKitten:
                     AnimDefaultIdx = 720;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 250;
@@ -1047,7 +1047,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 10;
                     AnimExDelay = 200;
                     break;
-                case IntelligentCreatureType.龙蛋:
+                case IntelligentCreatureType.BabyDragon:
                     AnimDefaultIdx = 750;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 300;
@@ -1056,16 +1056,16 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 7;
                     AnimExDelay = 250;
                     break;
-                case IntelligentCreatureType.火娃:
+                case IntelligentCreatureType.OlympicFlame:
                     AnimDefaultIdx = 780;
-                    AnimDefaultCount = 8;
+                    AnimDefaultCount = 6;
                     AnimDefaultDelay = 300;
 
-                    AnimExIdx = 788;
-                    AnimExCount = 8;
+                    AnimExIdx = 790;
+                    AnimExCount = 10;
                     AnimExDelay = 200;
                     break;
-                case IntelligentCreatureType.雪人:
+                case IntelligentCreatureType.BabySnowMan:
                     AnimDefaultIdx = 810;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 300;
@@ -1074,7 +1074,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 6;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.青蛙:
+                case IntelligentCreatureType.Frog:
                     AnimDefaultIdx = 840;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 300;
@@ -1082,7 +1082,7 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 6;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.红猴:
+                case IntelligentCreatureType.BabyMonkey:
                     AnimDefaultIdx = 870;
                     AnimDefaultCount = 6;
                     AnimDefaultDelay = 300;
@@ -1090,15 +1090,15 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 9;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.愤怒的小鸟:
+                case IntelligentCreatureType.AngryBird:
                     AnimDefaultIdx = 1400;
-                    AnimDefaultCount = 6;
+                    AnimDefaultCount = 12;
                     AnimDefaultDelay = 300;
-                    AnimExIdx = 1406;
-                    AnimExCount = 6;
+                    AnimExIdx = 1332;
+                    AnimExCount = 12;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.阿福:
+                case IntelligentCreatureType.Foxey:
                     AnimDefaultIdx = 1430;
                     AnimDefaultCount = 9;
                     AnimDefaultDelay = 300;
@@ -1106,27 +1106,11 @@ namespace Client.MirScenes.Dialogs
                     AnimExCount = 8;
                     AnimExDelay = 300;
                     break;
-                case IntelligentCreatureType.治疗拉拉:
+                case IntelligentCreatureType.MedicalRat:
                     AnimDefaultIdx = 1550;
                     AnimDefaultCount = 8;
                     AnimDefaultDelay = 300;
                     AnimExIdx = 1560;
-                    AnimExCount = 16;
-                    AnimExDelay = 300;
-                    break;
-                case IntelligentCreatureType.猫咪超人:
-                    AnimDefaultIdx = 1750;
-                    AnimDefaultCount = 4;
-                    AnimDefaultDelay = 300;
-                    AnimExIdx = 1760;
-                    AnimExCount = 18;
-                    AnimExDelay = 300;
-                    break;
-                case IntelligentCreatureType.龙宝宝:
-                    AnimDefaultIdx = 1790;
-                    AnimDefaultCount = 6;
-                    AnimDefaultDelay = 300;
-                    AnimExIdx = 1800;
                     AnimExCount = 16;
                     AnimExDelay = 300;
                     break;
@@ -1143,7 +1127,7 @@ namespace Client.MirScenes.Dialogs
     }
     public sealed class IntelligentCreatureOptionsDialog : MirImageControl
     {
-        public readonly string[] OptionNames = { "所有物品", "金币", "武器", "盔甲", "头盔", "靴子", "腰带", "宝玉", "其他" };
+        public readonly string[] OptionNames = { "All Items", "Gold", "Weapons", "Armours", "Helmets", "Boots", "Belts", "Jewelry", "Others" };
         public IntelligentCreatureItemFilter Filter;
         public Point locationOffset = new Point(450, 63);
 
@@ -1280,7 +1264,7 @@ namespace Client.MirScenes.Dialogs
     }
     public sealed class IntelligentCreatureOptionsGradeDialog : MirImageControl
     {
-        private string[] GradeStrings = { "所有", "普通", "宝物", "圣物", "神物", "英雄" };
+        private string[] GradeStrings = { "All", "Common", "Rare", "Mythical", "Legendary", "Heroic" };
 
         public MirButton NextButton, PrevButton;
         public MirLabel GradeLabel;
@@ -1355,15 +1339,15 @@ namespace Client.MirScenes.Dialogs
         {
             switch (grade)
             {
-                case ItemGrade.普通:
+                case ItemGrade.Common:
                     return Color.Yellow;
-                case ItemGrade.宝物:
+                case ItemGrade.Rare:
                     return Color.DeepSkyBlue;
-                case ItemGrade.圣物:
+                case ItemGrade.Legendary:
                     return Color.DarkOrange;
-                case ItemGrade.神物:
+                case ItemGrade.Mythical:
                     return Color.Plum;
-                case ItemGrade.英雄:
+                case ItemGrade.Heroic:
                     return Color.Red;
                 default:
                     return Color.White;

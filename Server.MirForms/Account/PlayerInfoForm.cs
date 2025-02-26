@@ -53,9 +53,9 @@ namespace Server
                 DCBox.Text = $"{Character.Player.Stats[Stat.MinDC]}-{Character.Player.Stats[Stat.MaxDC]}";
                 MCBox.Text = $"{Character.Player.Stats[Stat.MinMC]}-{Character.Player.Stats[Stat.MaxMC]}";
                 SCBox.Text = $"{Character.Player.Stats[Stat.MinSC]}-{Character.Player.Stats[Stat.MaxSC]}";
-                ACCBox.Text = $"{Character.Player.Stats[Stat.准确]}";
-                AGILBox.Text = $"{Character.Player.Stats[Stat.敏捷]}";
-                ATKSPDBox.Text = $"{Character.Player.Stats[Stat.攻击速度]}";
+                ACCBox.Text = $"{Character.Player.Stats[Stat.Accuracy]}";
+                AGILBox.Text = $"{Character.Player.Stats[Stat.Agility]}";
+                ATKSPDBox.Text = $"{Character.Player.Stats[Stat.AttackSpeed]}";
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Server
             }
 
             CurrentIPLabel.Text = Character.AccountInfo.LastIP;
-            OnlineTimeLabel.Text = Character.LastLoginDate > Character.LastLogoutDate ? (SMain.Envir.Now - Character.LastLoginDate).TotalMinutes.ToString("##") + " 分钟" : "Offline";
+            OnlineTimeLabel.Text = Character.LastLoginDate > Character.LastLogoutDate ? (SMain.Envir.Now - Character.LastLoginDate).TotalMinutes.ToString("##") + " minutes" : "Offline";
 
             ChatBanExpiryTextBox.Text = Character.ChatBanExpiryDate.ToString();
         }
@@ -82,7 +82,7 @@ namespace Server
                 var listItem = new ListViewItem(Pet.Name) { Tag = Pet };
                 listItem.SubItems.Add(Pet.PetLevel.ToString());
                 listItem.SubItems.Add($"{Pet.Health}/{Pet.MaxHealth}");
-                listItem.SubItems.Add($"地图: {Pet.CurrentMap.Info.Title}, X: {Pet.CurrentLocation.X}, Y: {Pet.CurrentLocation.Y}");
+                listItem.SubItems.Add($"Map: {Pet.CurrentMap.Info.Title}, X: {Pet.CurrentLocation.X}, Y: {Pet.CurrentLocation.Y}");
 
                 PetView.Items.Add(listItem);
             }
@@ -136,7 +136,7 @@ namespace Server
                 }
                 else if (magic.Key == 0)
                 {
-                    ListItem.SubItems.Add(string.Format("未设置", magic.Key));
+                    ListItem.SubItems.Add(string.Format("No Key", magic.Key));
                 }
 
                 ListItem.SubItems.Add(magic.Key.ToString());
@@ -155,7 +155,7 @@ namespace Server
                 QuestInfo completedQuest = SMain.Envir.GetQuestInfo(completedQuestID);
 
                 ListViewItem item = new ListViewItem(completedQuestID.ToString());
-                item.SubItems.Add("已完成");
+                item.SubItems.Add("Completed");
                 item.SubItems.Add(completedQuest.Name.ToString());
                 QuestInfoListViewNF.Items.Add(item);
             }
@@ -163,7 +163,7 @@ namespace Server
             foreach (QuestProgressInfo currentQuest in Character.CurrentQuests)
             {
                 ListViewItem item = new ListViewItem(currentQuest.Index.ToString());
-                item.SubItems.Add("进行中");
+                item.SubItems.Add("In Progress");
                 item.SubItems.Add(currentQuest.Info.Name.ToString());
                 QuestInfoListViewNF.Items.Add(item);
             }
@@ -187,15 +187,15 @@ namespace Server
 
                 if (i < 6)
                 {
-                    inventoryItemListItem.SubItems.Add($"物品栏 | 位置: [{i + 1}]");
+                    inventoryItemListItem.SubItems.Add($"Belt | Slot: [{i + 1}]");
                 }
                 else if (i >= 6 && i < 46)
                 {
-                    inventoryItemListItem.SubItems.Add($"背包 | 位置: [{i - 5}]");
+                    inventoryItemListItem.SubItems.Add($"Inventory Bag I | Slot: [{i - 5}]");
                 }
                 else
                 {
-                    inventoryItemListItem.SubItems.Add($"扩展背包 | 位置: [{i - 45}]");
+                    inventoryItemListItem.SubItems.Add($"Inventory Bag II | Slot: [{i - 45}]");
                 }
 
                 inventoryItemListItem.SubItems.Add($"{inventoryItem.FriendlyName}");
@@ -213,7 +213,7 @@ namespace Server
                 if (questItem == null) continue;
 
                 ListViewItem questItemListItem = new ListViewItem($"{questItem.UniqueID}");
-                questItemListItem.SubItems.Add($"任务物品 | 位置: [{i + 1}]");
+                questItemListItem.SubItems.Add($"Quest Bag | Slot: [{i + 1}]");
 
                 questItemListItem.SubItems.Add($"{questItem.FriendlyName}");
                 questItemListItem.SubItems.Add($"{questItem.Count}/{questItem.Info.StackSize}");
@@ -232,11 +232,11 @@ namespace Server
 
                 if (i < 80)
                 {
-                    storeItemListItem.SubItems.Add($"仓库 | 位置: [{i + 1}]");
+                    storeItemListItem.SubItems.Add($"Storage I | Slot: [{i + 1}]");
                 }
                 else
                 {
-                    storeItemListItem.SubItems.Add($"扩展仓库 | 位置: [{i - 79}]");
+                    storeItemListItem.SubItems.Add($"Storage II | Slot: [{i - 79}]");
                 }
 
                 storeItemListItem.SubItems.Add($"{storeItem.FriendlyName}");
@@ -254,7 +254,7 @@ namespace Server
 
                 ListViewItem equipItemListItem = new ListViewItem($"{equipItem.UniqueID}");
 
-                equipItemListItem.SubItems.Add($"装备栏 | 位置: [{i + 1}]");
+                equipItemListItem.SubItems.Add($"Equipment | Slot: [{i + 1}]");
 
                 equipItemListItem.SubItems.Add($"{equipItem.FriendlyName}");
                 equipItemListItem.SubItems.Add($"{equipItem.Count}/{equipItem.Info.StackSize}");
@@ -268,7 +268,7 @@ namespace Server
         #region Buttons
         private void UpdateButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("是否确定要更新", "更新", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            if (MessageBox.Show("Are you sure you want to Update?", "Update.", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
             SaveChanges();
         }
@@ -281,42 +281,10 @@ namespace Server
             string tempCredit = GameGoldTextBox.Text.Replace(",", "");
 
             info.Name = NameTextBox.Text;
-
-            if (ushort.TryParse(LevelTextBox.Text, out ushort level))
-            {
-                info.Level = level;
-            }
-            else
-            {
-                return;
-            }
-
-            if (int.TryParse(PKPointsTextBox.Text, out int pkPoints))
-            {
-                info.PKPoints = pkPoints;
-            }
-            else
-            {
-                return;
-            }
-
-            if (uint.TryParse(tempGold, out uint gold))
-            {
-                info.AccountInfo.Gold = gold;
-            }
-            else
-            {
-                return;
-            }
-
-            if (uint.TryParse(tempCredit, out uint credit))
-            {
-                info.AccountInfo.Credit = credit;
-            }
-            else
-            {
-                return;
-            }
+            info.Level = Convert.ToByte(LevelTextBox.Text);
+            info.PKPoints = Convert.ToInt32(PKPointsTextBox.Text);
+            info.AccountInfo.Gold = Convert.ToUInt32(tempGold);
+            info.AccountInfo.Credit = Convert.ToUInt32(tempCredit);
 
             UpdateTabs();
         }
@@ -402,7 +370,7 @@ namespace Server
         {
             string ipAddress = CurrentIPLabel.Text;
 
-            string url = $"https://127.0.0.1/ip/{ipAddress}";//默认 whatismyipaddress.com
+            string url = $"https://whatismyipaddress.com/ip/{ipAddress}";
 
             try
             {
@@ -415,7 +383,7 @@ namespace Server
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"打开统一资源定位符时出错: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error opening URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -458,18 +426,18 @@ namespace Server
 
                 if (flagValue)
                 {
-                    ResultLabel.Text = $"标志 {flagIndex} 是激活状态";
+                    ResultLabel.Text = $"Flag {flagIndex} is Active";
                     ResultLabel.ForeColor = Color.Green;
                 }
                 else
                 {
-                    ResultLabel.Text = $"标志 {flagIndex} 是未激活状态";
+                    ResultLabel.Text = $"Flag {flagIndex} is Inactive";
                     ResultLabel.ForeColor = Color.Red;
                 }
             }
             else
             {
-                ResultLabel.Text = "无效的标志编号";
+                ResultLabel.Text = "Invalid Flag Number";
                 ResultLabel.ForeColor = Color.Red;
             }
         }

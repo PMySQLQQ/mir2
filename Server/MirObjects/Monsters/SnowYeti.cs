@@ -6,7 +6,7 @@ namespace Server.MirObjects.Monsters
 {
     public class SnowYeti : MonsterObject
     {
-        private const byte AttackRange = 7;
+        private const byte AttackRange = 9;
 
         protected internal SnowYeti(MonsterInfo info)
             : base(info)
@@ -132,7 +132,7 @@ namespace Server.MirObjects.Monsters
 
             if (target.Attacked(this, damage, DefenceType.MAC) > 0)
             {
-                if (Envir.Random.Next(Settings.PoisonResistWeight) >= target.Stats[Stat.毒物躲避])
+                if (Envir.Random.Next(Settings.PoisonResistWeight) >= target.Stats[Stat.PoisonResist])
                 {
                     if (Envir.Random.Next(3) == 0)
                         target.ApplyPoison(new Poison { PType = PoisonType.Frozen, Duration = 5, TickSpeed = 1000 }, this);

@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Server.MirDatabase;
+using System.Drawing;
+﻿using Server.MirDatabase;
 using Server.MirEnvir;
 using S = ServerPackets;
 
@@ -149,7 +149,7 @@ namespace Server.MirObjects.Monsters
 
             if (Hidden)
             {
-                RemoveBuff(BuffType.隐身术);
+                RemoveBuff(BuffType.Hiding);
             }
 
             CellTime = Envir.Time + 500;
@@ -195,6 +195,7 @@ namespace Server.MirObjects.Monsters
                 Poison = CurrentPoison,
                 Hidden = Hidden,
                 Extra = Stoned,
+                Buffs = Buffs.Where(d => d.Info.Visible).Select(e => e.Type).ToList()
             };
         }
     }

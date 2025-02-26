@@ -47,7 +47,7 @@ namespace Server.MirObjects.Monsters
         private void PullAttack()
         {
             MirDirection pushdir = Functions.DirectionFromPoint(Target.CurrentLocation, CurrentLocation);
-            if (Envir.Random.Next(Settings.MagicResistWeight) < Target.Stats[Stat.魔法躲避]) return;
+            if (Envir.Random.Next(Settings.MagicResistWeight) < Target.Stats[Stat.MagicResist]) return;
             int distance = Functions.MaxDistance(Target.CurrentLocation, CurrentLocation) -1;
             if (distance <= 0) return;
             if (distance > 4) distance = 4;
@@ -89,7 +89,7 @@ namespace Server.MirObjects.Monsters
 
         public override void ChangeHP(int amount)
         {
-            //让它对绿色毒药免疫
+            //make it immune to green poison
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Server.Database
             List<AuctionInfo> activeAuctions = allAuctions.Where(a => !a.Expired && !a.Sold).ToList();
 
             // Update the TotalItemsLabel with the count of active items
-            TotalItemsLabel.Text = $"物品总数: {activeAuctions.Count}";
+            TotalItemsLabel.Text = $"Total Items: {activeAuctions.Count}";
 
             // Retrieve search keyword from SearchBox and convert to lowercase for case-insensitive search
             string searchKeyword = SearchBox.Text.Trim().ToLower();
@@ -53,11 +53,11 @@ namespace Server.Database
             // Update TotalItemsOwnedLabel based on the player filter results
             if (filterByPlayer && !string.IsNullOrEmpty(filteredPlayerName))
             {
-                TotalItemsOwnedLabel.Text = $"{filteredPlayerName} 拍卖物品数量: ({filteredPlayerItemCount})";
+                TotalItemsOwnedLabel.Text = $"Total Items owned by: {filteredPlayerName} ({filteredPlayerItemCount})";
             }
             else
             {
-                TotalItemsOwnedLabel.Text = "所有物品数量: ";
+                TotalItemsOwnedLabel.Text = "Total Items owned by: ";
             }
 
             // Iterate over each filtered auction listing and add it to the MarketListing
@@ -91,7 +91,7 @@ namespace Server.Database
             // Ensure an item is selected in the MarketListing
             if (MarketListing.SelectedItems.Count == 0)
             {
-                MessageBox.Show("请选择一个即将过期的列表");
+                MessageBox.Show("Please select a listing to expire.");
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace Server.Database
             var selectedItem = MarketListing.SelectedItems[0];
             if (!ulong.TryParse(selectedItem.SubItems[1].Text, out ulong auctionId))
             {
-                MessageBox.Show("选择的拍卖ID无效");
+                MessageBox.Show("Invalid Auction ID selected.");
                 return;
             }
 
@@ -107,7 +107,7 @@ namespace Server.Database
             var auction = Envir.Main.Auctions.FirstOrDefault(a => a.AuctionID == auctionId);
             if (auction == null)
             {
-                MessageBox.Show("未找到拍卖列表");
+                MessageBox.Show("Auction listing not found.");
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace Server.Database
             // Refresh the MarketListing to reflect the update
             LoadMarket();
 
-            MessageBox.Show("列表已成功标记为过期");
+            MessageBox.Show("Listing marked as expired successfully.");
         }
         #endregion
 
@@ -126,28 +126,28 @@ namespace Server.Database
         {
             if (MarketListing.SelectedItems.Count == 0)
             {
-                MessageBox.Show("请选择一个要删除的列表");
+                MessageBox.Show("Please select a listing to delete.");
                 return;
             }
 
             var selectedItem = MarketListing.SelectedItems[0];
             if (!ulong.TryParse(selectedItem.SubItems[1].Text, out ulong auctionId))
             {
-                MessageBox.Show("选择的拍卖ID无效");
+                MessageBox.Show("Invalid Auction ID selected.");
                 return;
             }
 
             var auction = Envir.Main.Auctions.FirstOrDefault(a => a.AuctionID == auctionId);
             if (auction == null)
             {
-                MessageBox.Show("未找到拍卖列表");
+                MessageBox.Show("Auction listing not found.");
                 return;
             }
 
             var confirmResult = MessageBox.Show(
-                "你确定要删除这个列表吗?\n\n" +
-                "警告：此操作是不可逆的，既不会返回物品也不会返回出价给玩家",
-                "确认删除",
+                "Are you sure you want to delete this listing?\n\n" +
+                "Warning: This action is irreversible, and neither the item nor the asking price will be returned to the player.",
+                "Confirm Deletion",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
             );
@@ -166,18 +166,8 @@ namespace Server.Database
 
             LoadMarket();
 
-            MessageBox.Show("列表已成功删除，并且已通知拥有者");
+            MessageBox.Show("Listing deleted successfully, and the owner has been notified.");
         }
         #endregion
-
-        private void Market_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MarketListing_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
