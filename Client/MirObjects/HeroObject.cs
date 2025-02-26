@@ -44,7 +44,7 @@ namespace Client.MirObjects
             base.CreateLabel();
 
             OwnerLabel = null;
-            string ownerText = $"{OwnerName}'s Hero";
+            string ownerText = $"{OwnerName}'的英雄";
 
             for (int i = 0; i < LabelList.Count; i++)
             {

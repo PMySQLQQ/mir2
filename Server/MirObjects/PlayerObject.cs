@@ -5617,8 +5617,8 @@ namespace Server.MirObjects
                                 if (item.GetTotal(Stat.MaxSC) > 0)
                                     AddBuff(BuffType.Taoist, this, time * Settings.Minute, new Stats { [Stat.MaxSC] = item.GetTotal(Stat.MaxSC) });
 
-                                if (item.GetTotal(Stat.AttackSpeed) > 0)
-                                    AddBuff(BuffType.Storm, this, time * Settings.Minute, new Stats { [Stat.AttackSpeed] = item.GetTotal(Stat.AttackSpeed) });
+                                if (item.GetTotal(Stat.攻击速度) > 0)
+                                    AddBuff(BuffType.Storm, this, time * Settings.Minute, new Stats { [Stat.攻击速度] = item.GetTotal(Stat.攻击速度) });
 
                                 if (item.GetTotal(Stat.HP) > 0)
                                     AddBuff(BuffType.HealthAid, this, time * Settings.Minute, new Stats { [Stat.HP] = item.GetTotal(Stat.HP) });
@@ -6658,16 +6658,16 @@ namespace Server.MirObjects
                                 successchance *= (int)tempTo.AddedStats[Stat.MaxSC];
                                 break;
 
-                            case Stat.AttackSpeed:
-                                successchance *= (int)tempTo.AddedStats[Stat.AttackSpeed];
+                            case Stat.攻击速度:
+                                successchance *= (int)tempTo.AddedStats[Stat.攻击速度];
                                 break;
 
-                            case Stat.Accuracy:
-                                successchance *= (int)tempTo.AddedStats[Stat.Accuracy];
+                            case Stat.准确:
+                                successchance *= (int)tempTo.AddedStats[Stat.准确];
                                 break;
 
-                            case Stat.Agility:
-                                successchance *= (int)tempTo.AddedStats[Stat.Agility];
+                            case Stat.敏捷:
+                                successchance *= (int)tempTo.AddedStats[Stat.敏捷];
                                 break;
 
                             case Stat.Freezing:
@@ -6784,19 +6784,19 @@ namespace Server.MirObjects
                         if (succeeded) tempTo.MaxDura = (ushort)Math.Min(ushort.MaxValue, tempTo.MaxDura + tempFrom.MaxDura);
                     }
 
-                    else if (tempFrom.GetTotal(Stat.AttackSpeed) > 0)
+                    else if (tempFrom.GetTotal(Stat.攻击速度) > 0)
                     {
-                        if (succeeded) tempTo.AddedStats[Stat.AttackSpeed] += tempFrom.GetTotal(Stat.AttackSpeed);
+                        if (succeeded) tempTo.AddedStats[Stat.攻击速度] += tempFrom.GetTotal(Stat.攻击速度);
                     }
 
-                    else if (tempFrom.GetTotal(Stat.Agility) > 0)
+                    else if (tempFrom.GetTotal(Stat.敏捷) > 0)
                     {
-                        if (succeeded) tempTo.AddedStats[Stat.Agility] += tempFrom.GetTotal(Stat.Agility);
+                        if (succeeded) tempTo.AddedStats[Stat.敏捷] += tempFrom.GetTotal(Stat.敏捷);
                     }
 
-                    else if (tempFrom.GetTotal(Stat.Accuracy) > 0)
+                    else if (tempFrom.GetTotal(Stat.准确) > 0)
                     {
-                        if (succeeded) tempTo.AddedStats[Stat.Accuracy] += tempFrom.GetTotal(Stat.Accuracy);
+                        if (succeeded) tempTo.AddedStats[Stat.准确] += tempFrom.GetTotal(Stat.准确);
                     }
 
                     else if (tempFrom.GetTotal(Stat.PoisonAttack) > 0)
@@ -6993,14 +6993,14 @@ namespace Server.MirObjects
             else if (gem.GetTotal(Stat.MaxMAC) > 0)
                 return Stat.MaxMAC;
 
-            else if (gem.GetTotal(Stat.AttackSpeed) > 0)
-                return Stat.AttackSpeed;
+            else if (gem.GetTotal(Stat.攻击速度) > 0)
+                return Stat.攻击速度;
 
-            else if (gem.GetTotal(Stat.Agility) > 0)
-                return Stat.Agility;
+            else if (gem.GetTotal(Stat.敏捷) > 0)
+                return Stat.敏捷;
 
-            else if (gem.GetTotal(Stat.Accuracy) > 0)
-                return Stat.Accuracy;
+            else if (gem.GetTotal(Stat.准确) > 0)
+                return Stat.准确;
 
             else if (gem.GetTotal(Stat.PoisonAttack) > 0)
                 return Stat.PoisonAttack;
@@ -11812,9 +11812,9 @@ namespace Server.MirObjects
                     if (boxtype > 1) dropitem.AddedStats[Stat.MaxMAC] = 5;
                     break;
                 case 6://speed low/med/high
-                    dropitem.AddedStats[Stat.AttackSpeed] = 2;
-                    if (boxtype > 0) dropitem.AddedStats[Stat.AttackSpeed] = 3;
-                    if (boxtype > 1) dropitem.AddedStats[Stat.AttackSpeed] = 4;
+                    dropitem.AddedStats[Stat.攻击速度] = 2;
+                    if (boxtype > 0) dropitem.AddedStats[Stat.攻击速度] = 3;
+                    if (boxtype > 1) dropitem.AddedStats[Stat.攻击速度] = 4;
                     break;
             }
 

@@ -243,9 +243,9 @@ namespace Server
             MaxSCTextBox.Text = info.Stats[Stat.MaxSC].ToString();
             HPTextBox.Text = info.Stats[Stat.HP].ToString();
             MPTextBox.Text = info.Stats[Stat.MP].ToString();
-            AccuracyTextBox.Text = info.Stats[Stat.Accuracy].ToString();
-            AgilityTextBox.Text = info.Stats[Stat.Agility].ToString();
-            ASpeedTextBox.Text = info.Stats[Stat.AttackSpeed].ToString();
+            AccuracyTextBox.Text = info.Stats[Stat.准确].ToString();
+            AgilityTextBox.Text = info.Stats[Stat.敏捷].ToString();
+            ASpeedTextBox.Text = info.Stats[Stat.攻击速度].ToString();
             LuckTextBox.Text = info.Stats[Stat.Luck].ToString();
 
             WWeightTextBox.Text = info.Stats[Stat.WearWeight].ToString();
@@ -361,9 +361,9 @@ namespace Server
                 if (MaxSCTextBox.Text != info.Stats[Stat.MaxSC].ToString()) MaxSCTextBox.Text = string.Empty;
                 if (HPTextBox.Text != info.Stats[Stat.HP].ToString()) HPTextBox.Text = string.Empty;
                 if (MPTextBox.Text != info.Stats[Stat.MP].ToString()) MPTextBox.Text = string.Empty;
-                if (AccuracyTextBox.Text != info.Stats[Stat.Accuracy].ToString()) AccuracyTextBox.Text = string.Empty;
-                if (AgilityTextBox.Text != info.Stats[Stat.Agility].ToString()) AgilityTextBox.Text = string.Empty;
-                if (ASpeedTextBox.Text != info.Stats[Stat.AttackSpeed].ToString()) ASpeedTextBox.Text = string.Empty;
+                if (AccuracyTextBox.Text != info.Stats[Stat.准确].ToString()) AccuracyTextBox.Text = string.Empty;
+                if (AgilityTextBox.Text != info.Stats[Stat.敏捷].ToString()) AgilityTextBox.Text = string.Empty;
+                if (ASpeedTextBox.Text != info.Stats[Stat.攻击速度].ToString()) ASpeedTextBox.Text = string.Empty;
                 if (LuckTextBox.Text != info.Stats[Stat.Luck].ToString()) LuckTextBox.Text = string.Empty;
 
                 if (WWeightTextBox.Text != info.Stats[Stat.WearWeight].ToString()) WWeightTextBox.Text = string.Empty;
@@ -915,7 +915,7 @@ namespace Server
 
 
             for (int i = 0; i < _selectedItemInfos.Count; i++)
-                _selectedItemInfos[i].Stats[Stat.Accuracy] = temp;
+                _selectedItemInfos[i].Stats[Stat.准确] = temp;
         }
         private void AgilityTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -933,7 +933,7 @@ namespace Server
 
 
             for (int i = 0; i < _selectedItemInfos.Count; i++)
-                _selectedItemInfos[i].Stats[Stat.Agility] = temp;
+                _selectedItemInfos[i].Stats[Stat.敏捷] = temp;
         }
         private void ASpeedTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -951,7 +951,7 @@ namespace Server
 
 
             for (int i = 0; i < _selectedItemInfos.Count; i++)
-                _selectedItemInfos[i].Stats[Stat.AttackSpeed] = temp;
+                _selectedItemInfos[i].Stats[Stat.攻击速度] = temp;
         }
         private void LuckTextBox_TextChanged(object sender, EventArgs e)
         {

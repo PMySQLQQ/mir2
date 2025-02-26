@@ -53,9 +53,9 @@ namespace Server
                 DCBox.Text = $"{Character.Player.Stats[Stat.MinDC]}-{Character.Player.Stats[Stat.MaxDC]}";
                 MCBox.Text = $"{Character.Player.Stats[Stat.MinMC]}-{Character.Player.Stats[Stat.MaxMC]}";
                 SCBox.Text = $"{Character.Player.Stats[Stat.MinSC]}-{Character.Player.Stats[Stat.MaxSC]}";
-                ACCBox.Text = $"{Character.Player.Stats[Stat.Accuracy]}";
-                AGILBox.Text = $"{Character.Player.Stats[Stat.Agility]}";
-                ATKSPDBox.Text = $"{Character.Player.Stats[Stat.AttackSpeed]}";
+                ACCBox.Text = $"{Character.Player.Stats[Stat.准确]}";
+                AGILBox.Text = $"{Character.Player.Stats[Stat.敏捷]}";
+                ATKSPDBox.Text = $"{Character.Player.Stats[Stat.攻击速度]}";
             }
             else
             {

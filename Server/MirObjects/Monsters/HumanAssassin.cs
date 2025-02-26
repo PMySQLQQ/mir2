@@ -295,7 +295,7 @@ namespace Server.MirObjects.Monsters
 
         private void ExplosionDie()
         {
-            int criticalDamage = Envir.Random.Next(0, 100) <= Stats[Stat.Accuracy] ? Stats[Stat.MaxDC] * 2 : Stats[Stat.MinDC] * 2;
+            int criticalDamage = Envir.Random.Next(0, 100) <= Stats[Stat.准确] ? Stats[Stat.MaxDC] * 2 : Stats[Stat.MinDC] * 2;
             int damage = (Stats[Stat.MinDC] / 5 + 4 * (Level / 20)) * criticalDamage / 20 + Stats[Stat.MaxDC];
 
             for (int i = 0; i < 16; i++)

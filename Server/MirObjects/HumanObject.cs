@@ -1755,14 +1755,14 @@ namespace Server.MirObjects
             Stats[Stat.MaxDC] += (Stats[Stat.MaxDC] * Stats[Stat.MaxDCRatePercent]) / 100;
             Stats[Stat.MaxMC] += (Stats[Stat.MaxMC] * Stats[Stat.MaxMCRatePercent]) / 100;
             Stats[Stat.MaxSC] += (Stats[Stat.MaxSC] * Stats[Stat.MaxSCRatePercent]) / 100;
-            Stats[Stat.AttackSpeed] += (Stats[Stat.AttackSpeed] * Stats[Stat.AttackSpeedRatePercent]) / 100;
+            Stats[Stat.攻击速度] += (Stats[Stat.攻击速度] * Stats[Stat.AttackSpeedRatePercent]) / 100;
 
             RefreshStatCaps();
 
             if (HP > Stats[Stat.HP]) SetHP(Stats[Stat.HP]);
             if (MP > Stats[Stat.MP]) SetMP(Stats[Stat.MP]);
 
-            AttackSpeed = 1400 - ((Stats[Stat.AttackSpeed] * 60) + Math.Min(370, (Level * 14)));
+            AttackSpeed = 1400 - ((Stats[Stat.攻击速度] * 60) + Math.Min(370, (Level * 14)));
 
             if (AttackSpeed < 550) AttackSpeed = 550;
         }
@@ -1986,7 +1986,7 @@ namespace Server.MirObjects
                 if ((s.Set == ItemSet.Smash) &&
                     ((s.Type.Contains(ItemType.Ring) && s.Type.Contains(ItemType.Bracelet)) || (s.Type.Contains(ItemType.Ring) && s.Type.Contains(ItemType.Necklace)) || (s.Type.Contains(ItemType.Bracelet) && s.Type.Contains(ItemType.Necklace))))
                 {
-                    Stats[Stat.AttackSpeed] += 2;
+                    Stats[Stat.攻击速度] += 2;
                 }
 
                 if ((s.Set == ItemSet.Purity) && (s.Type.Contains(ItemType.Ring)) && (s.Type.Contains(ItemType.Bracelet)))
@@ -2020,7 +2020,7 @@ namespace Server.MirObjects
                         Stats[Stat.MP] += 30;
                         break;
                     case ItemSet.RedOrchid:
-                        Stats[Stat.Accuracy] += 2;
+                        Stats[Stat.准确] += 2;
                         break;
                     case ItemSet.RedFlower:
                         Stats[Stat.HP] += 50;
@@ -2046,7 +2046,7 @@ namespace Server.MirObjects
                     case ItemSet.Spirit:
                         Stats[Stat.MinDC] += 2;
                         Stats[Stat.MaxDC] += 5;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                     case ItemSet.Bone:
                         Stats[Stat.MaxAC] += 2;
@@ -2067,7 +2067,7 @@ namespace Server.MirObjects
                     case ItemSet.WhiteGoldH:
                         Stats[Stat.MaxDC] += 3;
                         Stats[Stat.HP] += 30;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                     case ItemSet.RedJade:
                         Stats[Stat.MaxMC] += 2;
@@ -2076,7 +2076,7 @@ namespace Server.MirObjects
                     case ItemSet.RedJadeH:
                         Stats[Stat.MaxMC] += 2;
                         Stats[Stat.MP] += 40;
-                        Stats[Stat.Agility] += 2;
+                        Stats[Stat.敏捷] += 2;
                         break;
                     case ItemSet.Nephrite:
                         Stats[Stat.MaxSC] += 2;
@@ -2088,7 +2088,7 @@ namespace Server.MirObjects
                         Stats[Stat.HP] += 15;
                         Stats[Stat.MP] += 20;
                         Stats[Stat.Holy] += 1;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         break;
                     case ItemSet.Whisker1:
                         Stats[Stat.MaxDC] += 1;
@@ -2115,7 +2115,7 @@ namespace Server.MirObjects
                         Stats[Stat.HP] += 15;
                         Stats[Stat.MP] += 20;
                         Stats[Stat.Holy] += 1;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         break;
                     case ItemSet.Monitor:
                         Stats[Stat.MagicResist] += 1;
@@ -2123,7 +2123,7 @@ namespace Server.MirObjects
                         break;
                     case ItemSet.Oppressive:
                         Stats[Stat.MaxAC] += 1;
-                        Stats[Stat.Agility] += 1;
+                        Stats[Stat.敏捷] += 1;
                         break;
                     case ItemSet.BlueFrost:
                         Stats[Stat.MinDC] += 1;
@@ -2137,12 +2137,12 @@ namespace Server.MirObjects
                         Stats[Stat.MinDC] += 1;
                         Stats[Stat.MaxDC] += 2;
                         Stats[Stat.MaxMC] += 2;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         Stats[Stat.HP] += 50;
                         break;
                     case ItemSet.DarkGhost:
                         Stats[Stat.MP] += 25;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                 }
             }
@@ -2155,7 +2155,7 @@ namespace Server.MirObjects
                 Stats[Stat.MaxMAC] += 1;
                 Stats[Stat.BagWeight] += 70;
                 Stats[Stat.Luck] += 2;
-                Stats[Stat.AttackSpeed] += 2;
+                Stats[Stat.攻击速度] += 2;
                 Stats[Stat.HP] += 70;
                 Stats[Stat.MP] += 80;
                 Stats[Stat.MagicResist] += 6;
@@ -2191,7 +2191,7 @@ namespace Server.MirObjects
                 Stats[Stat.MaxDC] += 2;
                 Stats[Stat.MaxMC] += 1;
                 Stats[Stat.MaxSC] += 1;
-                Stats[Stat.Agility] += 1;
+                Stats[Stat.敏捷] += 1;
             }
             if (MirSet.Contains(EquipmentSlot.Armour) && MirSet.Contains(EquipmentSlot.Boots) && MirSet.Contains(EquipmentSlot.Belt))
             {
@@ -2286,16 +2286,16 @@ namespace Server.MirObjects
                 switch (magic.Spell)
                 {
                     case Spell.Fencing:
-                        Stats[Stat.Accuracy] += magic.Level * 3;
+                        Stats[Stat.准确] += magic.Level * 3;
                         // Stats[Stat.MaxAC] += (magic.Level + 1) * 3;
                         break;
                     // case Spell.FatalSword:
                     case Spell.Slaying:
-                        Stats[Stat.Accuracy] += magic.Level;
+                        Stats[Stat.准确] += magic.Level;
                         Stats[Stat.MaxDC] += slayingLvPlus[magic.Level];
                         break;
                     case Spell.SpiritSword:
-                        Stats[Stat.Accuracy] += spiritSwordLvPlus[magic.Level];
+                        Stats[Stat.准确] += spiritSwordLvPlus[magic.Level];
                         // Stats[Stat.Accuracy] += magic.Level;
                         // Stats[Stat.MaxDC] += (int)(Stats[Stat.MaxSC] * (magic.Level + 1) * 0.1F);
                         break;
@@ -3059,7 +3059,7 @@ namespace Server.MirObjects
 
                 if (magic != null)
                 {
-                    int baseCount = 1 + Stats[Stat.Accuracy] / 2;
+                    int baseCount = 1 + Stats[Stat.准确] / 2;
                     int maxCount = baseCount + magic.Level * 5;
                     MPEaterCount += Envir.Random.Next(baseCount, maxCount);
                     if (MPEater)
@@ -3071,7 +3071,7 @@ namespace Server.MirObjects
                         S.ObjectEffect p = new S.ObjectEffect { ObjectID = ob.ObjectID, Effect = SpellEffect.MPEater, EffectType = ObjectID };
                         CurrentMap.Broadcast(p, ob.CurrentLocation);
 
-                        int addMp = 5 * (magic.Level + Stats[Stat.Accuracy] / 4);
+                        int addMp = 5 * (magic.Level + Stats[Stat.准确] / 4);
 
                         if (ob.Race == ObjectType.Player)
                         {
@@ -3287,7 +3287,7 @@ namespace Server.MirObjects
                 if (Mine.StonesLeft > 0)
                 {
                     Mine.StonesLeft--;
-                    if (Envir.Random.Next(100) < (Mine.Mine.HitRate + (Info.Equipment[(int)EquipmentSlot.Weapon].GetTotal(Stat.Accuracy)) * 10))
+                    if (Envir.Random.Next(100) < (Mine.Mine.HitRate + (Info.Equipment[(int)EquipmentSlot.Weapon].GetTotal(Stat.准确)) * 10))
                     {
                         //create some rubble on the floor (or increase whats there)
                         SpellObject Rubble = null;
@@ -5103,7 +5103,7 @@ namespace Server.MirObjects
             if (CounterAttack == false) return;
 
             int damageBase = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-            if (Envir.Random.Next(0, 100) <= Stats[Stat.Accuracy])
+            if (Envir.Random.Next(0, 100) <= Stats[Stat.准确])
                 damageBase += damageBase;//crit should do something like double dmg, not double max dc dmg!
             int damageFinal = magic.GetDamage(damageBase);
 
@@ -5246,7 +5246,7 @@ namespace Server.MirObjects
         private void CrescentSlash(UserMagic magic)
         {
             int damageBase = GetAttackPower(Stats[Stat.MinDC], Stats[Stat.MaxDC]);
-            if (Envir.Random.Next(0, 100) <= Stats[Stat.Accuracy])
+            if (Envir.Random.Next(0, 100) <= Stats[Stat.准确])
                 damageBase += damageBase;//crit should do something like double dmg, not double max dc dmg!
             int damageFinal = magic.GetDamage(damageBase);
 
@@ -6017,7 +6017,7 @@ namespace Server.MirObjects
 
                 case Spell.Haste:
                     {
-                        AddBuff(BuffType.Haste, this, (Settings.Second * 25) + (Settings.Second * magic.Level * 15), new Stats { [Stat.AttackSpeed] = (magic.Level * 2) + 2 });
+                        AddBuff(BuffType.Haste, this, (Settings.Second * 25) + (Settings.Second * magic.Level * 15), new Stats { [Stat.攻击速度] = (magic.Level * 2) + 2 });
                         LevelMagic(magic);
                     }
                     break;
@@ -6028,7 +6028,7 @@ namespace Server.MirObjects
 
                 case Spell.Fury:
                     {
-                        AddBuff(BuffType.Fury, this, (Settings.Second * 60) + (magic.Level * 10000), new Stats { [Stat.AttackSpeed] = 4 });
+                        AddBuff(BuffType.Fury, this, (Settings.Second * 60) + (magic.Level * 10000), new Stats { [Stat.攻击速度] = 4 });
                         LevelMagic(magic);
                     }
                     break;
@@ -6055,7 +6055,7 @@ namespace Server.MirObjects
 
                 case Spell.LightBody:
                     {
-                        AddBuff(BuffType.LightBody, this, (magic.Level + 1) * (Settings.Second * 30), new Stats { [Stat.Agility] = (magic.Level + 1) * 2 });
+                        AddBuff(BuffType.LightBody, this, (magic.Level + 1) * (Settings.Second * 30), new Stats { [Stat.敏捷] = (magic.Level + 1) * 2 });
                         LevelMagic(magic);
                     }
                     break;
@@ -7312,7 +7312,7 @@ namespace Server.MirObjects
                     break;
                 case PoisonType.Blindness:
                     {
-                        AddBuff(BuffType.Blindness, Caster, (int)(p.Duration * p.TickSpeed), new Stats { [Stat.Accuracy] = p.Value * -1 });
+                        AddBuff(BuffType.Blindness, Caster, (int)(p.Duration * p.TickSpeed), new Stats { [Stat.准确] = p.Value * -1 });
                         ReceiveChat(GameLanguage.BeenPoisoned, ChatType.System2);
                     }
                     break;
@@ -7394,14 +7394,14 @@ namespace Server.MirObjects
             else if ((gem.Info.Durability) > 0)
                 return item.Info.Durability > item.MaxDura ? 0 : ((item.MaxDura - item.Info.Durability) / 1000);
 
-            else if (gem.GetTotal(Stat.AttackSpeed) > 0)
-                return item.AddedStats[Stat.AttackSpeed];
+            else if (gem.GetTotal(Stat.攻击速度) > 0)
+                return item.AddedStats[Stat.攻击速度];
 
-            else if (gem.GetTotal(Stat.Agility) > 0)
-                return item.AddedStats[Stat.Agility];
+            else if (gem.GetTotal(Stat.敏捷) > 0)
+                return item.AddedStats[Stat.敏捷];
 
-            else if (gem.GetTotal(Stat.Accuracy) > 0)
-                return item.AddedStats[Stat.Accuracy];
+            else if (gem.GetTotal(Stat.准确) > 0)
+                return item.AddedStats[Stat.准确];
 
             else if (gem.GetTotal(Stat.PoisonAttack) > 0)
                 return item.AddedStats[Stat.PoisonAttack];

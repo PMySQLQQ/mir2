@@ -102,9 +102,9 @@ namespace Client.MirScenes.Dialogs
                 ManaLabel.Text = string.Format("{0}/{1}", actor.MP, actor.Stats[Stat.MP]);
                 CritRLabel.Text = string.Format("{0}%", actor.Stats[Stat.CriticalRate]);
                 CritDLabel.Text = string.Format("{0}", actor.Stats[Stat.CriticalDamage]);
-                AttkSpdLabel.Text = string.Format("{0}", actor.Stats[Stat.AttackSpeed]);
-                AccLabel.Text = string.Format("+{0}", actor.Stats[Stat.Accuracy]);
-                AgilLabel.Text = string.Format("+{0}", actor.Stats[Stat.Agility]);
+                AttkSpdLabel.Text = string.Format("{0}", actor.Stats[Stat.攻击速度]);
+                AccLabel.Text = string.Format("+{0}", actor.Stats[Stat.准确]);
+                AgilLabel.Text = string.Format("+{0}", actor.Stats[Stat.敏捷]);
                 LuckLabel.Text = string.Format("{0}", actor.Stats[Stat.Luck]);
             };
 

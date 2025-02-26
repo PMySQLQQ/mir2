@@ -464,7 +464,7 @@ namespace Server.MirObjects
             switch (type)
             {
                 case DefenceType.ACAgility:
-                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
+                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -480,7 +480,7 @@ namespace Server.MirObjects
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
                     }
-                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
+                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;
@@ -496,7 +496,7 @@ namespace Server.MirObjects
                     armour = GetDefencePower(Stats[Stat.MinMAC], Stats[Stat.MaxMAC]);
                     break;
                 case DefenceType.Agility:
-                    if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy])
+                    if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确])
                     {
                         BroadcastDamageIndicator(DamageType.Miss);
                         hit = false;

@@ -111,11 +111,11 @@ public class ItemInfo
             Stats[Stat.MaxSC] = reader.ReadByte();
             Stats[Stat.HP] = reader.ReadUInt16();
             Stats[Stat.MP] = reader.ReadUInt16();
-            Stats[Stat.Accuracy] = reader.ReadByte();
-            Stats[Stat.Agility] = reader.ReadByte();
+            Stats[Stat.准确] = reader.ReadByte();
+            Stats[Stat.敏捷] = reader.ReadByte();
 
             Stats[Stat.Luck] = reader.ReadSByte();
-            Stats[Stat.AttackSpeed] = reader.ReadSByte();
+            Stats[Stat.攻击速度] = reader.ReadSByte();
         }
 
         StartItem = reader.ReadBoolean();
@@ -362,12 +362,12 @@ public class UserItem
             AddedStats[Stat.MaxMC] = reader.ReadByte();
             AddedStats[Stat.MaxSC] = reader.ReadByte();
 
-            AddedStats[Stat.Accuracy] = reader.ReadByte();
-            AddedStats[Stat.Agility] = reader.ReadByte();
+            AddedStats[Stat.准确] = reader.ReadByte();
+            AddedStats[Stat.敏捷] = reader.ReadByte();
             AddedStats[Stat.HP] = reader.ReadByte();
             AddedStats[Stat.MP] = reader.ReadByte();
 
-            AddedStats[Stat.AttackSpeed] = reader.ReadSByte();
+            AddedStats[Stat.攻击速度] = reader.ReadSByte();
             AddedStats[Stat.Luck] = reader.ReadSByte();
         }
 

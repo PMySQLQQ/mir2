@@ -63,7 +63,7 @@ namespace Server.MirObjects.Monsters
             }
             else
             {
-                if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy]) return 0;
+                if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确]) return 0;
                 armour = GetAttackPower(Stats[Stat.MinAC], Stats[Stat.MaxAC]);
             }
 
@@ -130,7 +130,7 @@ namespace Server.MirObjects.Monsters
             }
             else
             {
-                if (Envir.Random.Next(Stats[Stat.Agility] + 1) > attacker.Stats[Stat.Accuracy]) return 0;
+                if (Envir.Random.Next(Stats[Stat.敏捷] + 1) > attacker.Stats[Stat.准确]) return 0;
                 armour = GetAttackPower(Stats[Stat.MinAC], Stats[Stat.MaxAC]);
             }
 

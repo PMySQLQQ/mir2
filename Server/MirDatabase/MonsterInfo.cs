@@ -112,8 +112,8 @@ namespace Server.MirDatabase
 
             if (Envir.LoadVersion <= 84)
             {
-                Stats[Stat.Accuracy] = reader.ReadByte();
-                Stats[Stat.Agility] = reader.ReadByte();
+                Stats[Stat.准确] = reader.ReadByte();
+                Stats[Stat.敏捷] = reader.ReadByte();
             }
 
             Light = reader.ReadByte();

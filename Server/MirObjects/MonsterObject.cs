@@ -2616,7 +2616,7 @@ namespace Server.MirObjects
             {
                 var stats = new Stats
                 {
-                    [Stat.Accuracy] = p.Value * -1
+                    [Stat.准确] = p.Value * -1
                 };
 
                 AddBuff(BuffType.Blindness, Caster, (int)(p.Duration * p.TickSpeed), stats);

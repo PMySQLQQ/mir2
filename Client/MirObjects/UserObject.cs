@@ -159,12 +159,12 @@ namespace Client.MirObjects
             Stats[Stat.MaxDC] += (Stats[Stat.MaxDC] * Stats[Stat.MaxDCRatePercent]) / 100;
             Stats[Stat.MaxMC] += (Stats[Stat.MaxMC] * Stats[Stat.MaxMCRatePercent]) / 100;
             Stats[Stat.MaxSC] += (Stats[Stat.MaxSC] * Stats[Stat.MaxSCRatePercent]) / 100;
-            Stats[Stat.AttackSpeed] += (Stats[Stat.AttackSpeed] * Stats[Stat.AttackSpeedRatePercent]) / 100;
+            Stats[Stat.攻击速度] += (Stats[Stat.攻击速度] * Stats[Stat.AttackSpeedRatePercent]) / 100;
 
             RefreshStatCaps();
 
             if (this == User && Light < 3) Light = 3;
-            AttackSpeed = 1400 - ((Stats[Stat.AttackSpeed] * 60) + Math.Min(370, (Level * 14)));
+            AttackSpeed = 1400 - ((Stats[Stat.攻击速度] * 60) + Math.Min(370, (Level * 14)));
             if (AttackSpeed < 550) AttackSpeed = 550;
 
             PercentHealth = (byte)(HP / (float)Stats[Stat.HP] * 100);
@@ -353,7 +353,7 @@ namespace Client.MirObjects
                 if ((s.Set == ItemSet.Smash) &&
                     ((s.Type.Contains(ItemType.Ring) && s.Type.Contains(ItemType.Bracelet)) || (s.Type.Contains(ItemType.Ring) && s.Type.Contains(ItemType.Necklace)) || (s.Type.Contains(ItemType.Bracelet) && s.Type.Contains(ItemType.Necklace))))
                 {
-                    Stats[Stat.AttackSpeed] += 2;
+                    Stats[Stat.攻击速度] += 2;
                 }
 
                 if ((s.Set == ItemSet.Purity) && (s.Type.Contains(ItemType.Ring)) && (s.Type.Contains(ItemType.Bracelet)))
@@ -387,7 +387,7 @@ namespace Client.MirObjects
                         Stats[Stat.MP] += 30;
                         break;
                     case ItemSet.RedOrchid:
-                        Stats[Stat.Accuracy] += 2;
+                        Stats[Stat.准确] += 2;
                         break;
                     case ItemSet.RedFlower:
                         Stats[Stat.HP] += 50;
@@ -413,7 +413,7 @@ namespace Client.MirObjects
                     case ItemSet.Spirit:
                         Stats[Stat.MinDC] += 2;
                         Stats[Stat.MaxDC] += 5;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                     case ItemSet.Bone:
                         Stats[Stat.MaxAC] += 2;
@@ -434,7 +434,7 @@ namespace Client.MirObjects
                     case ItemSet.WhiteGoldH:
                         Stats[Stat.MaxDC] += 3;
                         Stats[Stat.HP] += 30;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                     case ItemSet.RedJade:
                         Stats[Stat.MaxMC] += 2;
@@ -443,7 +443,7 @@ namespace Client.MirObjects
                     case ItemSet.RedJadeH:
                         Stats[Stat.MaxMC] += 2;
                         Stats[Stat.MP] += 40;
-                        Stats[Stat.Agility] += 2;
+                        Stats[Stat.敏捷] += 2;
                         break;
                     case ItemSet.Nephrite:
                         Stats[Stat.MaxSC] += 2;
@@ -455,7 +455,7 @@ namespace Client.MirObjects
                         Stats[Stat.HP] += 15;
                         Stats[Stat.MP] += 20;
                         Stats[Stat.Holy] += 1;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         break;
                     case ItemSet.Whisker1:
                         Stats[Stat.MaxDC] += 1;
@@ -482,7 +482,7 @@ namespace Client.MirObjects
                         Stats[Stat.HP] += 15;
                         Stats[Stat.MP] += 20;
                         Stats[Stat.Holy] += 1;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         break;
                     case ItemSet.Monitor:
                         Stats[Stat.MagicResist] += 1;
@@ -490,7 +490,7 @@ namespace Client.MirObjects
                         break;
                     case ItemSet.Oppressive:
                         Stats[Stat.MaxAC] += 1;
-                        Stats[Stat.Agility] += 1;
+                        Stats[Stat.敏捷] += 1;
                         break;
                     case ItemSet.BlueFrost:
                         Stats[Stat.MinDC] += 1;
@@ -504,12 +504,12 @@ namespace Client.MirObjects
                         Stats[Stat.MinDC] += 1;
                         Stats[Stat.MaxDC] += 2;
                         Stats[Stat.MaxMC] += 2;
-                        Stats[Stat.Accuracy] += 1;
+                        Stats[Stat.准确] += 1;
                         Stats[Stat.HP] += 50;
                         break;
                     case ItemSet.DarkGhost:
                         Stats[Stat.MP] += 25;
-                        Stats[Stat.AttackSpeed] += 2;
+                        Stats[Stat.攻击速度] += 2;
                         break;
                 }
             }
@@ -523,7 +523,7 @@ namespace Client.MirObjects
                 Stats[Stat.MaxMAC] += 1;
                 Stats[Stat.BagWeight] += 70;
                 Stats[Stat.Luck] += 2;
-                Stats[Stat.AttackSpeed] += 2;
+                Stats[Stat.攻击速度] += 2;
                 Stats[Stat.HP] += 70;
                 Stats[Stat.MP] += 80;
                 Stats[Stat.MagicResist] += 6;
@@ -559,7 +559,7 @@ namespace Client.MirObjects
                 Stats[Stat.MaxDC] += 2;
                 Stats[Stat.MaxMC] += 1;
                 Stats[Stat.MaxSC] += 1;
-                Stats[Stat.Agility] += 1;
+                Stats[Stat.敏捷] += 1;
             }
             if (MirSet.Contains(EquipmentSlot.Armour) && MirSet.Contains(EquipmentSlot.Boots) && MirSet.Contains(EquipmentSlot.Belt))
             {
@@ -590,16 +590,16 @@ namespace Client.MirObjects
                 switch (magic.Spell)
                 {
                     case Spell.Fencing:
-                        Stats[Stat.Accuracy] += magic.Level * 3;
+                        Stats[Stat.准确] += magic.Level * 3;
                         //Stats[Stat.MaxAC] += (magic.Level + 1) * 3;
                         break;
                     case Spell.Slaying:
                     // case Spell.FatalSword:
-                        Stats[Stat.Accuracy] += magic.Level;
+                        Stats[Stat.准确] += magic.Level;
                         Stats[Stat.MaxDC] += slayingLvPlus[magic.Level];
                         break;
                     case Spell.SpiritSword:
-                        Stats[Stat.Accuracy] += spiritSwordLvPlus[magic.Level];
+                        Stats[Stat.准确] += spiritSwordLvPlus[magic.Level];
                         // Stats[Stat.Accuracy] += magic.Level;
                         // Stats[Stat.MaxDC] += (int)(Stats[Stat.MaxSC] * (magic.Level + 1) * 0.1F);
                         break;

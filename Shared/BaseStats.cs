@@ -22,8 +22,8 @@
                 Stats.Add(new BaseStat(Stat.MaxAC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MinDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 5, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MaxDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 5, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Agility) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Accuracy) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.敏捷) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.准确) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
                 break;
             #endregion
             #region Wizard
@@ -37,8 +37,8 @@
                 Stats.Add(new BaseStat(Stat.MaxDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MinMC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MaxMC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Agility) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Accuracy) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.敏捷) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.准确) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
                 break;
             #endregion
             #region Taoist
@@ -54,8 +54,8 @@
                 Stats.Add(new BaseStat(Stat.MaxDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MinSC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MaxSC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 7, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Agility) { FormulaType = StatFormula.Stat, Base = 18, Gain = 0, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Accuracy) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.敏捷) { FormulaType = StatFormula.Stat, Base = 18, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.准确) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
                 break;
             #endregion
             #region Assassin
@@ -67,8 +67,8 @@
                 Stats.Add(new BaseStat(Stat.HandWeight) { FormulaType = StatFormula.Weight, Base = 12, Gain = 30F, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MinDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 8, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MaxDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 8, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Agility) { FormulaType = StatFormula.Stat, Base = 20, Gain = 0, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Accuracy) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.敏捷) { FormulaType = StatFormula.Stat, Base = 20, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.准确) { FormulaType = StatFormula.Stat, Base = 5, Gain = 0, GainRate = 0F, Max = 0 });
                 break;
             #endregion
             #region Archer
@@ -82,8 +82,8 @@
                 Stats.Add(new BaseStat(Stat.MaxDC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 8, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MinMC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 8, GainRate = 0F, Max = 0 });
                 Stats.Add(new BaseStat(Stat.MaxMC) { FormulaType = StatFormula.Stat, Base = 0, Gain = 8, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Agility) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
-                Stats.Add(new BaseStat(Stat.Accuracy) { FormulaType = StatFormula.Stat, Base = 8, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.敏捷) { FormulaType = StatFormula.Stat, Base = 15, Gain = 0, GainRate = 0F, Max = 0 });
+                Stats.Add(new BaseStat(Stat.准确) { FormulaType = StatFormula.Stat, Base = 8, Gain = 0, GainRate = 0F, Max = 0 });
                 break;
                 #endregion
         }

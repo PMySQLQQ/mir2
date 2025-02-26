@@ -7351,9 +7351,9 @@ namespace Client.MirScenes
 
             #region ACC
 
-            minValue = realItem.Stats[Stat.Accuracy];
+            minValue = realItem.Stats[Stat.准确];
             maxValue = 0;
-            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.Accuracy] : 0;
+            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.准确] : 0;
 
             if (minValue > 0 || maxValue > 0 || addValue > 0)
             {
@@ -7407,9 +7407,9 @@ namespace Client.MirScenes
 
             #region ASPEED
 
-            minValue = realItem.Stats[Stat.AttackSpeed];
+            minValue = realItem.Stats[Stat.攻击速度];
             maxValue = 0;
-            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.AttackSpeed] : 0;
+            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.攻击速度] : 0;
 
             if (minValue != 0 || maxValue != 0 || addValue != 0)
             {
@@ -8105,9 +8105,9 @@ namespace Client.MirScenes
 
             #region AGILITY
 
-            minValue = realItem.Stats[Stat.Agility];
+            minValue = realItem.Stats[Stat.敏捷];
             maxValue = 0;
-            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.Agility] : 0;
+            addValue = (!hideAdded && (!HoverItem.Info.NeedIdentify || HoverItem.Identified)) ? HoverItem.AddedStats[Stat.敏捷] : 0;
 
             if (minValue > 0 || maxValue > 0 || addValue > 0)
             {
